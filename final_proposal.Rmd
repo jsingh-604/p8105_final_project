@@ -1,0 +1,39 @@
+---
+title: "p8105_final_project_proposal"
+output: github_document
+---
+
+## Name & UNI
+Jagjit Singh (js5958), Grace Jang (gej2116)
+ 
+## Title
+Inter and Intra county Spatio-temporal Analysis of COVID-19 in New York State 2020-2022
+ 
+## Motivation
+We are interested in observing the change in COVID-19 trend in New York State for each county.      Specifically, we would like to see how COVID-19 is spatially autocorrelated across different counties and test whether health behaviors and socioeconomic (SES)  factors are associated with COVID-19 changes in each county from 2020 to 2022.
+
+## Final Products
+We will have a quantitative estimate of how health behaviors and SES are related to number of COVID-19 cases in each county. We will create a chloropleth map using ggplot to summarize the spatial association of COVID-19 across different counties in New York.
+
+## Data Sources
+1.	US Census Bureau: Demographics
+2.	U of Wisconsin, Population Health Insititute: New York State Health Ranking
+3.	NY.gov: COVID-19 cases in New York from 2020-2022
+
+## Planned Analyses, Visualizations, Coding Challenges
+
+### Planned Analyses: 
+Run multivariate regression test for each county to see whether there is an association among COVID-19 cases, health factors, and SES.
+
+### Visualization:
+•	Create a chloropleth map to vizualize the density of COVID-19 cases by county  
+•	Generate density plots, bar graphs, or scatterplot to summarize findings  
+
+### Coding Challenges:
+Spatial regression and chloropleth map
+
+## Planned Timeline:
+●	Finish data cleaning, manipulation in 4-5 days  
+●	Spend 5-7 days on analysis  
+●	Spend 4-5 days creating plots  
+●	Spend 2 days on writing the report  
