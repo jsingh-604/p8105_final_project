@@ -7,8 +7,8 @@ Jagjit Singh (js5958), Grace Jang (gej2116)
 
 ## Title
 
-Inter and Intra county Spatio-temporal Analysis of COVID-19 in New York
-State 2020-2022
+Spatio-temporal Association of Health and Socioeconomic Measures with
+COVID-19 Risk in NY
 
 ## Motivation
 
