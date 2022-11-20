@@ -34,6 +34,11 @@ scale_fill_discrete = scale_fill_viridis_d
 ### health ranking data
 
 ```{r}
+ny_hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-ends_with("z"), -fips)
+
 ny_hr2020 = read_excel('data1/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -53,19 +58,17 @@ ny_hr2022 = read_excel('data1/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRank
 ### covid data
 
 ```{r}
-ny_test = read_csv('data1/ny_covidtest.csv') %>% 
+ny_test = read_csv('grace/ny_covidtest.csv') %>% 
 janitor::clean_names() %>% 
 rename(date_mdy = test_date)
 
-ny_death = read_csv("data1/ny_coviddeaths.csv") %>% 
+ny_death = read_csv("grace/ny_coviddeaths.csv") %>% 
 janitor::clean_names() %>% 
 rename(date_mdy = report_date)
 
-ny_vax = read_csv("data1/ny_covidvax.csv") %>% 
+ny_vax = read_csv("grace/ny_covidvax.csv") %>% 
 janitor::clean_names() %>% 
 select(-region) %>%
 rename(date_mdy = report_as_of)
-
-#ny_covidcomb = left_join(
 ```
 
