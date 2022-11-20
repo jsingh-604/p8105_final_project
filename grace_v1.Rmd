@@ -1,0 +1,71 @@
+---
+title: "r_final_proj"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+library(readxl)
+library(readr)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+## data import 
+
+### health ranking data
+
+```{r}
+ny_hr2020 = read_excel('data1/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-ends_with("z"), -fips)
+
+ny_hr2021 = read_excel('data1/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-ends_with("z"), -fips)
+
+ny_hr2022 = read_excel('data1/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-ends_with("z"), -fips)
+```
+
+### covid data
+
+```{r}
+ny_test = read_csv('data1/ny_covidtest.csv') %>% 
+janitor::clean_names() %>% 
+rename(date_mdy = test_date)
+
+ny_death = read_csv("data1/ny_coviddeaths.csv") %>% 
+janitor::clean_names() %>% 
+rename(date_mdy = report_date)
+
+ny_vax = read_csv("data1/ny_covidvax.csv") %>% 
+janitor::clean_names() %>% 
+select(-region) %>%
+rename(date_mdy = report_as_of)
+
+#ny_covidcomb = left_join(
+```
+
