@@ -21,6 +21,7 @@ NY_df <- get_decennial(state = "ny",
                        variables = vars,
                        geometry = T,
                        output = "wide")
+View(NY_df)
 
 NY_df = NY_df %>%
   mutate(

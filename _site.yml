@@ -1,0 +1,27 @@
+name: ""
+output_dir: "."
+navbar:
+  title: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY"
+  left:
+    - text: "Screencast"
+      href: video.html
+  right:
+    - text: "Data"
+      href: data.html
+    - text: "Analysis"
+      menu:
+        - text: "Trends over time"
+          href: 
+        - text: "Health Factors"
+          href: 
+        - text: "To be donw"
+          href: 
+        - text: "Spatial trends/visualization"
+          href: spatial_maps.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<js5958@cumc.columbia.edu>
+    - icon: fa-github fa-lg
+      href: https://github.com/jsingh-604/p8105_final_project/
+output:
+  html_document:
+    theme: flatly
