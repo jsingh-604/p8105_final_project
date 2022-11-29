@@ -4,6 +4,9 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
+require(data.table)
+require(tidycensus)
+require(ggplot2)
 library(tidyverse)
 library(ggridges)
 library(patchwork)
@@ -31,6 +34,36 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ## data import 
 
+```{r}
+census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
+
+census_data <- load_variables(2019, "acs5", cache=T)
+fwrite(census_data, "census_variables.csv")
+
+vars <- c(tpop = 'P001001',
+          medage = 'P013001',
+          wpop = 'P003002',
+          bpop = 'P003003',
+          apop = 'P003005',
+          hpop = 'P004003')
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+
+NY_df  %>%
+  ggplot(aes(fill = medage)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma") 
+```
+
+
 ### health ranking data
 
 ```{r}
@@ -54,7 +87,7 @@ ny_hr2022 = read_excel('data1/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRank
   slice(-c(1)) %>% 
   select(-ends_with("z"), -fips)
 ```
-
+###
 ### covid data
 
 ```{r}
@@ -71,4 +104,6 @@ janitor::clean_names() %>%
 select(-region) %>%
 rename(date_mdy = report_as_of)
 ```
+
+
 
