@@ -189,6 +189,7 @@ ny_hr2022_fin = merge(x=ny_hr2022, y=ny_demo2022,
 2. Imported 3 separate csv files (ny_covidtest, ny_coviddeaths, ny_covidvax)
 3. Selected variables of interest
 4. Merged 3 separate dataframes into one by `date` and `county`
+5. Converted `date` data type from character to date
 
 ```{r covid_data, message = FALSE}
 ny_test = read_csv('grace/ny_covidtest.csv') %>% 
@@ -208,6 +209,8 @@ rename(date = report_as_of) %>%
 select(-region, -series_complete)
 
 ny_covid_v1 = left_join(ny_test, ny_death, by = c("date", "county"))
-ny_covid_fin = left_join(ny_covid_v1, ny_vax, by = c("date", "county"))
+ny_covid_fin = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>% 
+  mutate(date = lubridate::mdy(date))
 ```
+
 
