@@ -77,4 +77,7 @@ ny_demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data',
   slice(-c(1)) %>% 
   select('county', 'household_income', 'number_african_american', 'number_american_indian_alaskan_native', 'number_asian', 'number_native_hawaiian_other_pacific_islander', 'number_hispanic', 'number_non_hispanic_white') %>% 
   rename(median_income = household_income, n_black = number_african_american, n_american_ind_al_native = number_american_indian_alaskan_native, n_asian = number_asian, n_nat_ha_other_pac_is = number_native_hawaiian_other_pacific_islander, n_latino = number_hispanic, n_white = number_non_hispanic_white)
+
+ny_hr2019_fin = merge(x=ny_hr2019, y=ny_demo2019, 
+          by="county", all.x=TRUE)
 ```
