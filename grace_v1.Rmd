@@ -34,7 +34,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ## Importing Census Data (df = ny_df)
 
-```{r census_data}
+```{r census_data, message = FALSE}
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
 census_data <- load_variables(2019, "acs5", cache=T)
@@ -58,15 +58,16 @@ ny_df = ny_df %>%
     county = gsub(" County, New York","",NAME))
 ```
 
-## Importing 2019-2022 Health Ranking Data 
+## Importing 2019-2022 NY Health Ranking Data 
 
 1. Import excel
 2. Select sheets: outcomes & factors subrankings, additional measure data (mainly for demographics info)
 3. Selected necessary variables from each sheet
 4. Renamed variables 
-5. Merged dataframe generated from each sheet
+5. Merged data frames generated from each sheet
 
-```{r 2019}
+### 2019 Health Ranking & Demographics Df
+```{r 2019, message = FALSE}
 ny_hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -93,7 +94,8 @@ ny_demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data',
 ny_hr2019_fin = merge(x=ny_hr2019, y=ny_demo2019, by="county", all.x=TRUE)
 ```
 
-```{r 2020}
+### 2020 Health Ranking & Demographics Df
+```{r 2020, message = FALSE}
 ny_hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -121,7 +123,8 @@ ny_demo2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Additional Measure Data'
 ny_hr2020_fin = merge(x=ny_hr2020, y=ny_demo2020, by="county", all.x=TRUE)
 ```
 
-```{r 2021}
+### 2021 Health Ranking & Demographics Df
+```{r 2021, message = FALSE}
 ny_hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -147,6 +150,36 @@ ny_demo2021 = read_excel('grace/ny_hr20.xlsx', sheet = 'Additional Measure Data'
          n_white = number_non_hispanic_white)
 
 ny_hr2021_fin = merge(x=ny_hr2021, y=ny_demo2021, 
+          by="county", all.x=TRUE)
+```
+
+### 2022 Health Ranking & Demographics Df
+```{r 2022, message = FALSE}
+ny_hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-ends_with("z"), -fips)
+
+ny_demo2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select('county', 
+         'median_household_income', 
+         'number_black', 
+         'number_american_indian_alaska_native', 
+         'number_asian', 
+         'number_native_hawaiian_other_pacific_islander', 
+         'number_hispanic', 
+         'number_non_hispanic_white') %>% 
+  rename(median_income = median_household_income, 
+         n_black = number_black, 
+         n_american_ind_al_native = number_american_indian_alaska_native, 
+         n_asian = number_asian, 
+         n_nat_ha_other_pac_is = number_native_hawaiian_other_pacific_islander, 
+         n_latino = number_hispanic, 
+         n_white = number_non_hispanic_white)
+
+ny_hr2022_fin = merge(x=ny_hr2022, y=ny_demo2022, 
           by="county", all.x=TRUE)
 ```
 
