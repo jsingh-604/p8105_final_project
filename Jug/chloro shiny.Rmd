@@ -1,0 +1,43 @@
+---
+title: "Shiny Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+```{r}
+require(data.table)
+require(tidycensus)
+require(ggplot2)
+library(dplyr)
+library(tidyverse)
+census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
+
+census_data <- load_variables(2018, "acs5", cache=T)
+fwrite(census_data, "census_variables.csv")
+
+vars <- c(tpop = 'P001001',
+          medage = 'P013001',
+          wpop = 'P003002',
+          bpop = 'P003003',
+          apop = 'P003005',
+          hpop = 'P004003')
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+
+
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+```{r}
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+    
+```
