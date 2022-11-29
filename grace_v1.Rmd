@@ -183,3 +183,31 @@ ny_hr2022_fin = merge(x=ny_hr2022, y=ny_demo2022,
           by="county", all.x=TRUE)
 ```
 
+## Importing 2020 to November 2022 NY COVID-19 Data
+
+1. Decided to look at variables related to covid testing (i.e., # positive cases, # tests performed), covid vaccination rate, and covid-related fatalities.
+2. Imported 3 separate csv files (ny_covidtest, ny_coviddeaths, ny_covidvax)
+3. Selected variables of interest
+4. Merged 3 separate dataframes into one by `date` and `county`
+
+```{r covid_data, message = FALSE}
+ny_test = read_csv('grace/ny_covidtest.csv') %>% 
+janitor::clean_names() %>% 
+filter(geography == 'COUNTY') %>% 
+select(-geography) %>% 
+rename(date = test_date)
+
+ny_death = read_csv("grace/ny_coviddeaths.csv") %>% 
+janitor::clean_names() %>% 
+rename(date = report_date, n_fatality = place_of_fatality) %>% 
+select(-deaths_by_county_of_residence) 
+
+ny_vax = read_csv("grace/ny_covidvax.csv") %>% 
+janitor::clean_names() %>% 
+rename(date = report_as_of) %>% 
+select(-region, -series_complete)
+
+ny_covid_v1 = left_join(ny_test, ny_death, by = c("date", "county"))
+ny_covid_fin = left_join(ny_covid_v1, ny_vax, by = c("date", "county"))
+```
+

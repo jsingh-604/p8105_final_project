@@ -322,17 +322,13 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=                                                                     |   2%
   |                                                                            
-  |==                                                                    |   2%
-  |                                                                            
   |==                                                                    |   3%
+  |                                                                            
+  |==                                                                    |   4%
   |                                                                            
   |===                                                                   |   4%
   |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
   |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   6%
   |                                                                            
   |=====                                                                 |   7%
   |                                                                            
@@ -342,9 +338,7 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |======                                                                |   9%
   |                                                                            
-  |=======                                                               |   9%
-  |                                                                            
-  |=======                                                               |  10%
+  |=======                                                               |  11%
   |                                                                            
   |========                                                              |  11%
   |                                                                            
@@ -352,29 +346,17 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=========                                                             |  12%
   |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
   |==========                                                            |  14%
   |                                                                            
   |==========                                                            |  15%
   |                                                                            
   |===========                                                           |  16%
   |                                                                            
-  |============                                                          |  17%
+  |=============                                                         |  18%
   |                                                                            
-  |==============                                                        |  20%
+  |====================                                                  |  28%
   |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |===========================                                           |  39%
-  |                                                                            
-  |============================                                          |  40%
-  |                                                                            
-  |==============================                                        |  43%
+  |================================                                      |  45%
   |                                                                            
   |=====================================                                 |  52%
   |                                                                            
@@ -384,25 +366,9 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=============================================                         |  64%
   |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |=====================================================                 |  75%
-  |                                                                            
-  |=====================================================                 |  76%
-  |                                                                            
-  |=======================================================               |  78%
-  |                                                                            
-  |=======================================================               |  79%
-  |                                                                            
-  |========================================================              |  79%
-  |                                                                            
-  |========================================================              |  80%
-  |                                                                            
   |=========================================================             |  81%
   |                                                                            
-  |====================================================================  |  98%
+  |====================================================================  |  97%
   |                                                                            
   |======================================================================| 100%</code></pre>
 <pre class="r"><code>ny_df = ny_df %&gt;%
@@ -533,6 +499,38 @@ ny_demo2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Additional M
 ny_hr2022_fin = merge(x=ny_hr2022, y=ny_demo2022, 
           by=&quot;county&quot;, all.x=TRUE)</code></pre>
 </div>
+</div>
+<div id="importing-2020-to-november-2022-ny-covid-19-data"
+class="section level2">
+<h2>Importing 2020 to November 2022 NY COVID-19 Data</h2>
+<ol style="list-style-type: decimal">
+<li>Decided to look at variables related to covid testing (i.e., #
+positive cases, # tests performed), covid vaccination rate, and
+covid-related fatalities.</li>
+<li>Imported 3 separate csv files (ny_covidtest, ny_coviddeaths,
+ny_covidvax)</li>
+<li>Selected variables of interest</li>
+<li>Merged 3 separate dataframes into one by <code>date</code> and
+<code>county</code></li>
+</ol>
+<pre class="r"><code>ny_test = read_csv(&#39;grace/ny_covidtest.csv&#39;) %&gt;% 
+janitor::clean_names() %&gt;% 
+filter(geography == &#39;COUNTY&#39;) %&gt;% 
+select(-geography) %&gt;% 
+rename(date = test_date)
+
+ny_death = read_csv(&quot;grace/ny_coviddeaths.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_date, n_fatality = place_of_fatality) %&gt;% 
+select(-deaths_by_county_of_residence) 
+
+ny_vax = read_csv(&quot;grace/ny_covidvax.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_as_of) %&gt;% 
+select(-region, -series_complete)
+
+ny_covid_v1 = left_join(ny_test, ny_death, by = c(&quot;date&quot;, &quot;county&quot;))
+ny_covid_fin = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;))</code></pre>
 </div>
 
 
