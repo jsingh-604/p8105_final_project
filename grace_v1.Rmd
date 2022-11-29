@@ -32,9 +32,9 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-## data import 
+## Importing Census Data (df = ny_df)
 
-```{r}
+```{r census_data}
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
 census_data <- load_variables(2019, "acs5", cache=T)
@@ -47,63 +47,34 @@ vars <- c(tpop = 'P001001',
           apop = 'P003005',
           hpop = 'P004003')
 
-NY_df <- get_decennial(state = "ny", 
+ny_df <- get_decennial(state = "ny", 
                        geography = "county",
                        variables = vars,
                        geometry = T,
                        output = "wide")
 
-NY_df = NY_df %>%
+ny_df = ny_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
-
-NY_df  %>%
-  ggplot(aes(fill = medage)) + 
-  geom_sf(color = NA) + 
-  scale_fill_viridis_c(option = "magma") 
 ```
 
+## Importing 2019-2022 Health Ranking Data 
 
-### health ranking data
+1. Import excel
+2. Select sheets: outcomes & factors subrankings, additional measure data (mainly for demographics info)
+3. Selected necessary variables from each sheet
+4. Renamed variables 
+5. Merged dataframe generated from each sheet
 
-```{r}
+```{r 2019}
 ny_hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-ends_with("z"), -fips)
 
-ny_hr2020 = read_excel('data1/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+ny_demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips)
-
-ny_hr2021 = read_excel('data1/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
-  janitor::clean_names() %>% 
-  slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips)
-
-ny_hr2022 = read_excel('data1/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
-  janitor::clean_names() %>% 
-  slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips)
+  select('county', 'household_income', 'number_african_american', 'number_american_indian_alaskan_native', 'number_asian', 'number_native_hawaiian_other_pacific_islander', 'number_hispanic', 'number_non_hispanic_white') %>% 
+  rename(median_income = household_income, n_black = number_african_american, n_american_ind_al_native = number_american_indian_alaskan_native, n_asian = number_asian, n_nat_ha_other_pac_is = number_native_hawaiian_other_pacific_islander, n_latino = number_hispanic, n_white = number_non_hispanic_white)
 ```
-###
-### covid data
-
-```{r}
-ny_test = read_csv('grace/ny_covidtest.csv') %>% 
-janitor::clean_names() %>% 
-rename(date_mdy = test_date)
-
-ny_death = read_csv("grace/ny_coviddeaths.csv") %>% 
-janitor::clean_names() %>% 
-rename(date_mdy = report_date)
-
-ny_vax = read_csv("grace/ny_covidvax.csv") %>% 
-janitor::clean_names() %>% 
-select(-region) %>%
-rename(date_mdy = report_as_of)
-```
-
-
-
