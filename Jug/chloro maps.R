@@ -83,3 +83,10 @@ df_list[[4]] %>%
   ggplot() +
   geom_sf(aes(fill = total_covid, geometry = geometry)) + 
   scale_fill_viridis_c(option = "viridis") 
+
+######################3
+v = total %>%
+  filter(
+    test_date %in% mon[[1]]:mon[[2]]
+  )
+
