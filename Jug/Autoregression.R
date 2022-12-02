@@ -6,7 +6,17 @@ ny_covid = read.csv('data/covid_testing.csv')  %>%
 ###############################
 ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
 sub_df = ny_covid[ny_covid$county == 'New York City', ]
-plot(sub_df$new_positives)
+sub_df<- sub_df[seq(dim(sub_df)[1],1),]
+
+# basic scatterplot
+ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
+  geom_point(alpha = 10/100, colour = "red") + 
+  scale_x_date(date_labels = "%m-%Y") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = "New positives per month in NYC")
+#################################  
+  
+#################################
 counties = levels(as.factor(ny_covid$county))
 county_df_list = list()
 # loop version 2
@@ -33,10 +43,10 @@ ggcorrplot(corr, sig.level=0.05, lab_size = 4.5, p.mat = NULL,
   # Order: top, right, bottom, left
   theme(axis.text.x = element_text(margin=margin(-2,0,0,0), size = 5),
         axis.text.y = element_text(margin=margin(0,-2,0,0), size = 5))
+#######################################
 
 
-
-################## ACF plot ############
+################## ACF plot ###############
 library(forecast)
 conf.level <- 0.95
 ciline <- qnorm((1 - conf.level)/2)/sqrt(length(sub_df$new_positives))
@@ -49,7 +59,14 @@ q <- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
 q
 
 ############## Auto regression ############
-reg1 = auto.arima(net_df$`New York City`)
+reg1 = auto.arima(sub_df$new_positives)
 summary(reg1)
-plot(net_df$`New York City`,col="red")
-lines(fitted(reg1),col="blue")
+ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
+  geom_point(alpha = 20/100, colour = "red") + 
+  scale_x_date(date_labels = "%m-%Y") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = "New positives per month in NYC") +
+  geom_line(aes(y=fitted(reg1)))
+
+
+
