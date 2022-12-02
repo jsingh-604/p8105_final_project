@@ -1,0 +1,28 @@
+---
+title: "Autogressive Trends"
+output: html_document
+date: "2022-12-02"
+---
+
+\begin{aligned}
+y_t &= (1 - 0.4347L - (-0.2671)L^2)^{-1} (1 + (-0.3374)L) \epsilon_t \\
+&= (1.2671L^2 - 0.4347L + 1) (1 - 0.3374L) \epsilon_t \\
+&= (1.2671L^2 - 0.4347L + 1 - 0.3374L + 0.3374L^2) \epsilon_t \\
+&= (1.6305L^2 - 0.7681L + 1) \epsilon_t \\
+&= \epsilon_t + 1.6305 \epsilon_{t-1} - 0.7681 \epsilon_{t-2}
+\end{aligned}
+
+\begin{aligned}
+y_t &= (1 - 1.1041L - (-0.3583)L^2 - (0.2278)L^3)^{-1} \epsilon_t + 2923.30 \\
+&= (1.2278L^3 - 0.3583L^2 - 1.1041L + 1) \epsilon_t + 2923.30 \\
+&= (1.2278L^3 - 0.3583L^2 - 1.1041L + 1 + 1.1041L^3 - 0.3583L^2 + 1.1041L - 1) \epsilon_t + 2923.30 \\
+&= (1.5861L^3 - 1.4656L^2 + 0.0418L) \epsilon_t + 2923.30 \\
+&= 0.0418 \epsilon_t + 1.5861 \epsilon_{t-1} - 1.4656 \epsilon_{t-2} + 2923.30
+\end{aligned}
+
+\begin{aligned}
+y_t &= \epsilon_t + 2923.30 \\
+&= \epsilon_t + 2923.30 + 1.2278L^3 - 0.3583L^2 - 1.1041L + 1 \\
+&= \epsilon_t + 2923.30 + 1.2278L^3 - 0.3583L^2 - 1.1041L + 1 + 1.1041L^3 - 0.3583L^2 + 1.1041L - 1 \\
+&= \epsilon_t + 2923.30 + 1.5861L^3 - 1.4656L^2 + 0.0418L
+\end{aligned}

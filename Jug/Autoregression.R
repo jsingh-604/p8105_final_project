@@ -61,12 +61,17 @@ q
 ############## Auto regression ############
 reg1 = auto.arima(sub_df$new_positives)
 summary(reg1)
-ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
-  geom_point(alpha = 20/100, colour = "red") + 
-  scale_x_date(date_labels = "%m-%Y") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  labs(title = "New positives per month in NYC") +
-  geom_line(aes(y=fitted(reg1)))
+ar = fitted(reg1)
 
+ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
+  geom_point(alpha = 20/100, color = "red") + 
+  scale_x_date(date_labels = "%m-%Y",date_breaks = "1 month") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = "Scatter Plot of Daily Postive Cases in New York City from 2020-2022
+       with ARIMA trend line", x= "Test Date",
+       y = 'Positive Cases Detected') +
+  geom_line(aes(y=ar,color = "ARIMA trend line")) +  
+  scale_color_manual(values = c("ARIMA trend line" = "black"),
+                                          labels = "Fitted Arima Model")
 
 
