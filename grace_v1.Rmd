@@ -378,8 +378,9 @@ ny2021_fin %>%
 ny2021_fin %>% 
   lm(new_cases ~ longevity_r + qol_r + health_beh_r + clinical_care_r + ses_r + env_r + medage, data = .) %>% 
   broom::tidy() %>% 
-  knitr::kable(digits = 3) 
+  knitr::kable(digits = 5) 
 ```
+Based on the result, among the 5 health ranking variables, ranks for health behavior, clinical care, and socioeconomic factors were significantly correlated with the number of covid cases. Additionally, median age for each county was statistically significant. Among the statistically significant predictors, health behavior ranking and median age are negatively correlated to the number of covid cases.
 
 ### Model 2:
 1. Outcome: # individuals who got the first dose of vaccine
@@ -395,8 +396,9 @@ ny2021_fin %>%
 ny2021_fin %>% 
   lm(vax_dose1 ~ longevity_r + qol_r + health_beh_r + clinical_care_r + ses_r + env_r + medage, data = .) %>% 
   broom::tidy() %>% 
-  knitr::kable(digits = 3) 
+  knitr::kable(digits = 5) 
 ```
+The table shows that health behavior rank, socioeconomic factor rank, and median age are statistically significant. Of these variables, health behavior rank and median age negatively correlated to the number of individuals who received the first dose of the COVID vaccine.
 
 ### Model 3:
 1. Outcome: # covid cases
@@ -421,8 +423,9 @@ ny2021_fit %>%
 ny2021_fit %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 10)
+  knitr::kable(digits = 5)
 ```
+The results demonstrate that all the socioeconomic variables in the model are significantly correlated with the number of covid cases. This indicates that factors such as poverty and inequity, as seen in many studies and reports, may be key determinants of COVID incidence.
 
 ### Model 4:
 1. Outcome: # individuals who got the first dose of vaccine
@@ -447,3 +450,4 @@ ny2021_fit %>%
   select(term, estimate, p.value) %>% 
   knitr::kable(digits = 10)
 ```
+Similar to model 3, the results indicate that race/ethnicity and socioeconomic may be key determinants of COVID incidence.
