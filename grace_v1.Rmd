@@ -294,22 +294,24 @@ ny_test = read_csv('grace/ny_covidtest.csv') %>%
 janitor::clean_names() %>% 
 filter(geography == 'COUNTY') %>% 
 select(-geography) %>% 
-rename(date = test_date)
+rename(date = test_date) %>% 
+mutate(date = lubridate::mdy(date))  
 
 ny_death = read_csv("grace/ny_coviddeaths.csv") %>% 
 janitor::clean_names() %>% 
-rename(date = report_date, n_fatality = place_of_fatality) %>% 
-select(-deaths_by_county_of_residence) 
+rename(date = report_date, n_fatality = place_of_fatality) %>%
+select(-deaths_by_county_of_residence) %>% 
+mutate(date = lubridate::mdy(date))
 
 ny_vax = read_csv("grace/ny_covidvax.csv") %>% 
 janitor::clean_names() %>% 
 rename(date = report_as_of) %>% 
-select(-region, -series_complete)
+select(-region, -series_complete) %>% 
+mutate(date = lubridate::mdy(date))
 
 ny_covid_v1 = left_join(ny_test, ny_death, by = c("date", "county"))
 
 covid_df = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>% 
-  mutate(date = lubridate::mdy(date)) %>% 
   separate(date, c("year", "month", "day"), sep = "-") %>% 
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
