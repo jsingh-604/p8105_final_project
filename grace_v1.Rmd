@@ -90,13 +90,13 @@ Health Ranking Data
 hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
+  select(-starts_with("z"), -fips) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 ```
 
 Demographics Data
@@ -138,13 +138,13 @@ Health Ranking Data
 hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
+  select(-starts_with("z"), -fips) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 ```
 
 Demographics Data
@@ -187,13 +187,13 @@ Health Ranking Data
 hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
+  select(-starts_with("z"), -fips) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 ```
 
 Demographics Data
@@ -236,13 +236,13 @@ Health Ranking Data
 hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
+  select(-starts_with("z"), -fips) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 ```
 
 Demographics Data
