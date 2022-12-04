@@ -83,7 +83,7 @@ ny_df = ny_df %>%
 4. Rename variables
 5. Merge so demographics & HR data are in one data frame
 
-### 2019 HR & Demogrphics (DO WE NEED 2019??)
+### 2019 HR & Demogrphics 
 
 Health Ranking Data
 ```{r} 
@@ -131,7 +131,7 @@ Merge HR & Demo Data Frames
 merge2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE)
 ```
 
-### 2020 HR & Demogrphics 
+### 2020 HR & Demographics 
 
 Health Ranking Data
 ```{r, message = FALSE}
@@ -359,7 +359,10 @@ ny2022_fin = left_join(ny2022, ny_df, by = "county")
 ```
 
 ## Regression Test:
-We are using data for 2021 since 2022 data is incomplete (only have data up to November)
+We are using 2021 data for the following reasons:  
+* 2019: no info on # covid cases or # individuals who got vaccinated.  
+* 2020: no info on # of individuals who got vaccinated
+* 2022: data incomplete, only have information up to 11/2022
 
 ### Model 1:
 1. Outcome: # covid cases
