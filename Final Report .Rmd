@@ -44,3 +44,116 @@ Overall, studying the change in COVID-19 trend in New York State for each county
 
 ## Data Processing and Cleaning 
 
+
+
+
+
+
+## Exploratory Data Analysis
+
+In order to have a better understanding of the existing socioeconomic and health factor status of the counties we conducted some exploratory data analysis mainly through visualization. We first tried to see which counties have the highest socio-economic and heath factor scores
+
+```{r}
+library(plotly)
+data = read.csv("./data/bubble.csv") %>%
+  mutate(County = as.factor(County),
+         health = as.numeric(health),
+         socio = as.numeric(socio)) %>%
+  janitor::clean_names()
+
+
+total <- merge(data,NY_df,by="county")
+
+fig <- plot_ly(total, x = ~health, y = ~socio, text = ~county, type = 'scatter',
+               mode = 'markers', size = ~tpop, color = ~county, colors = 'Paired',
+               marker = list(opacity = 0.5, sizemode = 'diameter'))
+fig <- fig %>% layout(title = 'health-socio',
+                      xaxis = list(showgrid = FALSE),
+                      yaxis = list(showgrid = FALSE),
+                      showlegend = FALSE)
+
+fig
+
+```
+
+From the plot we can see that New York, Queens and Kings have the highest socio economic score, but have the lowest health factors ranks. The size of the bubble signifies total population of the county. Nassau, Suffolk, Westcher have low health and socio-ecnomic scores. 
+
+Below is a colorpleth map to good understanding on the above in a spatial context: 
+
+```{r}
+require(data.table)
+require(tidycensus)
+require(ggplot2)
+library(dplyr)
+library(tidyverse)
+census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
+
+census_data <- load_variables(2018, "acs5", cache=T)
+fwrite(census_data, "census_variables.csv")
+
+vars <- c(tpop = 'P001001',
+          medage = 'P013001',
+          wpop = 'P003002',
+          bpop = 'P003003',
+          apop = 'P003005',
+          hpop = 'P004003')
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+View(NY_df)
+
+
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+
+
+NY_df  %>%
+  ggplot(aes(fill = medage)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma") 
+
+ny_covid = read.csv('data/covid_testing.csv')
+
+
+```
+
+
+# Statistical Analysis ###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ###
+ 
+
+
+
+
