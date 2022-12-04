@@ -32,7 +32,8 @@ scale_fill_discrete = scale_fill_viridis_d
 ```
 
 
-```{r}
+
+```{r NY vax plot}
 
 ny_vax =
   read_csv("./grace/ny_covidvax.csv") %>% 
@@ -62,7 +63,12 @@ vax_plotly
 
 
 
-```{r}
+From the plot created of the cumulative distribution of people who have at-least the first dose of any COVID-19 vaccine by 11/14/2022, the highest ranking counties are all located in three major regions of New York State: New York City, Long Island, and Hudson Valley. Erie and Monroe counties also have high counts and they are from Western NY and Finger Lakes. This is expected as these are some of the most populous counties in New York State.
+
+
+
+
+```{r NY death plot}
 
 ny_death =
   read_csv("./grace/ny_coviddeaths.csv") %>% 
@@ -88,7 +94,12 @@ deaths_plotly =
 
 deaths_plotly
 
-
 ```
+
+
+
+
+From the plot created of the cumulative distribution of people who have died from COVID-19 by 11/14/2022, the highest ranking counties are also all located in three major regions of New York State: New York City, Long Island, and Hudson Valley, along with Erie and Monroe counties from Western NY and Finger Lakes. Again, this is expected as these are some of the most populous counties in New York State. 
+
 
 
