@@ -333,7 +333,8 @@ vax_plot_first</code></pre>
   janitor::clean_names() %&gt;%
   rename(date = report_date, n_fatality = place_of_fatality) %&gt;% 
   mutate(date = lubridate::mdy(date)) %&gt;%
-  select(-deaths_by_county_of_residence) </code></pre>
+  select(-deaths_by_county_of_residence) %&gt;%
+  filter(county != &quot;Statewide Total&quot;)</code></pre>
 <pre><code>## Rows: 57728 Columns: 4
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;

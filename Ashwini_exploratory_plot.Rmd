@@ -14,6 +14,7 @@ library(patchwork)
 library(viridis)
 library(readxl)
 library(lubridate)
+library(Hmisc)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -64,7 +65,8 @@ ny_death =
   janitor::clean_names() %>%
   rename(date = report_date, n_fatality = place_of_fatality) %>% 
   mutate(date = lubridate::mdy(date)) %>%
-  select(-deaths_by_county_of_residence) 
+  select(-deaths_by_county_of_residence) %>%
+  filter(county != "Statewide Total")
 
 
 deaths_plot =
