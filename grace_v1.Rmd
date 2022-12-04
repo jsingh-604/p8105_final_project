@@ -212,5 +212,3 @@ ny_covid_v1 = left_join(ny_test, ny_death, by = c("date", "county"))
 ny_covid_fin = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>% 
   mutate(date = lubridate::mdy(date))
 ```
-
-
