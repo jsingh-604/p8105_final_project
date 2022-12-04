@@ -13,6 +13,7 @@ library(viridis)
 library(modelr)
 library(mgcv)
 library(readxl)
+library(plotly)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -60,6 +61,18 @@ ny_df <- get_decennial(state = "ny",
 ny_df = ny_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
+
+###Compute Simpson's Diversity Index **D = ((SUM n(n-1))/N(N-1))**
+###Higher value indicates higher diversity
+
+ny_df$race_div <- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
+                          (ny_df$bpop*(ny_df$bpop-1))+
+                          (ny_df$hpop*(ny_df$hpop-1))+
+                          (ny_df$apop*(ny_df$apop-1)))/
+                         (ny_df$tpop*(ny_df$tpop-1)))
+
+ny_df = ny_df %>% 
+  select(tpop, medage, county, race_div)
 ```
 
 ## 2019-2022 Health Ranking (HR) & Demographics Data: Load & Clean
@@ -308,9 +321,9 @@ covid_df_yr = covid_df %>%
 # max(n_fataility) coming up as 0...??
 ```
 
-## Model + Tests
+## Merge Data for Analysis
 
-Merge covid & hr/demo data
+Merge covid & hr/demo data by year
 
 2020
 ```{r}
@@ -319,6 +332,8 @@ covid2020 = covid_df_yr %>%
 
 ny2020 = left_join(covid2020, merge2020, by = c("county", "year")) %>% 
   mutate(n_minority = n_black + n_hispanic)
+
+ny2020_fin = left_join(ny2020, ny_df, by = "county")
 ```
 
 2021
@@ -328,6 +343,8 @@ covid2021 = covid_df_yr %>%
   
 ny2021 = left_join(covid2021, merge2021, by = c("county", "year")) %>%
   mutate(n_minority = n_black + n_hispanic)
+
+ny2021_fin = left_join(ny2021, ny_df, by = "county")
 ```
 
 2022
@@ -336,21 +353,63 @@ covid2022 = covid_df_yr %>%
   filter(year == '2022')
   
 ny2022 = left_join(covid2022, merge2022, by = c("county", "year"))
+
+ny2022_fin = left_join(ny2022, ny_df, by = "county")
 ```
 
-### Regression Test: 2021  
-SES factors vs. # covid cases  
-* predictors = median income, number of minorities (black + hispanic), segregation score, and ses rank  
-* outcome = # covid cases
+## Regression Test:
+We are using data for 2021 since 2022 data is incomplete (only have data up to November)
+
+### Model 1:
+1. Outcome: # covid cases
+2. Predictors: health ranking variables (ses_r, env_r, etc.), median age (medage)
 
 ```{r}
-ny2021
+ny2021_fin %>% 
+  lm(new_cases ~ longevity_r + qol_r + health_beh_r + clinical_care_r + ses_r + env_r + race_div + medage, data = .) %>% 
+  broom::tidy() %>% 
+  knitr::kable(digits = 3)
+# decided to remove race_div (makes all variable appear insignificant)
+
+ny2021_fin %>% 
+  lm(new_cases ~ longevity_r + qol_r + health_beh_r + clinical_care_r + ses_r + env_r + medage, data = .) %>% 
+  broom::tidy() %>% 
+  knitr::kable(digits = 3) 
+```
+
+### Model 2:
+1. Outcome: # individuals who got the first dose of vaccine
+2. Predictors: health ranking variables (ses_r, env_r, etc.), racial diversity score (race_div), median age (med_age)
+
+```{r}
+ny2021_fin %>% 
+  lm(vax_dose1 ~ longevity_r + qol_r + health_beh_r + clinical_care_r + ses_r + env_r + race_div + medage, data = .) %>% 
+  broom::tidy() %>% 
+  knitr::kable(digits = 3) 
+# decided to remove race_div (makes all variable appear insignificant)
+
+ny2021_fin %>% 
+  lm(vax_dose1 ~ longevity_r + qol_r + health_beh_r + clinical_care_r + ses_r + env_r + medage, data = .) %>% 
+  broom::tidy() %>% 
+  knitr::kable(digits = 3) 
+```
+
+### Model 3:
+1. Outcome: # covid cases
+2. Predictors: median income, number of minorities, segregation score, and ses rank
+
+```{r}
+ny2021_fin
 
 ny2021_fit =
-  ny2021 %>% 
+  ny2021_fin %>% 
   lm(new_cases ~ median_income + n_minority + segregation_score + ses_r, data = .)
 
-summary(ny2021_fit) #remove ses_r?
+summary(ny2021_fit) # remove ses_r
+
+ny2021_fit =
+  ny2021_fin %>% 
+  lm(new_cases ~ median_income + n_minority + segregation_score, data = .)
 
 ny2021_fit %>% 
   broom::glance()
@@ -358,13 +417,29 @@ ny2021_fit %>%
 ny2021_fit %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3)
+  knitr::kable(digits = 10)
 ```
 
-SES factors alone significantly correlated with number of COVID cases in each county.
+### Model 4:
+1. Outcome: # individuals who got the first dose of vaccine
+2. Predictors: median income, number of minorities, segregation score, and ses rank
 
-### QQ: want compare OR n_vax for minority vs. white... QQ
+```{r}
+ny2021_fit =
+  ny2021_fin %>% 
+  lm(vax_dose1 ~ median_income + n_minority + segregation_score + ses_r, data = .)
 
+summary(ny2021_fit) # remove ses_r
 
+ny2021_fit =
+  ny2021_fin %>% 
+  lm(vax_dose1 ~ median_income + n_minority + segregation_score, data = .)
 
+ny2021_fit %>% 
+  broom::glance()
 
+ny2021_fit %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 10)
+```
