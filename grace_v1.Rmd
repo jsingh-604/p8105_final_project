@@ -320,7 +320,6 @@ covid_df_yr = covid_df %>%
   summarise(new_cases = sum(new_positives),
             covid_tests = sum(total_number_of_tests_performed),
             vax_dose1 = max(first_dose))
-# max(n_fataility) coming up as 0...??
 ```
 
 ## Merge Data for Analysis
