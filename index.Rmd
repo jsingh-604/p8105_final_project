@@ -1,5 +1,5 @@
 ---
-title: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY"
+title: ""
 authors: "Jagjit, Grace, Ashwini" 
 ---
 

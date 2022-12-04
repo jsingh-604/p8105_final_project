@@ -1,7 +1,7 @@
-name: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY"
+name: "Project Overview"
 output_dir: "."
 navbar:
-  title: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY"
+  title: "Project Overview"
   left:
     - text: "Screencast"
       href: video.html

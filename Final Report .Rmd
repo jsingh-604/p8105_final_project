@@ -1,0 +1,46 @@
+---
+title: "Final Report"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: cosmo
+---
+
+```{r}
+
+library(tidyverse)
+library(tidytext)  
+library(ggplot2)
+library(httr)
+library(rvest)
+library(lubridate)
+library(plotly)
+library(patchwork)
+library(lmtest)
+library(dplyr)
+library(tidycensus)
+```
+
+
+## Motivation
+
+
+In 2020, the world entered into a pandemic and now two years later as we recover and try to move on with life, things are different. The pandemic brought with it a new lens that showed disparities based on SES, geographical location, etc. that always existed but were never taken seriously. Research has shown that people of color and those from a low SES are at higher risk to contracting COVID-19; as such, public health professionals should be aware of such gaps and make it an effort to especially focus on these groups at higher risk (Khanijahani et al., 2021).
+
+
+
+## Analysis and Relevance:
+
+Our project looks at the change in COVID-19 trends in New York State for each county, specifically how COVID-19 is spatially autocorrelated across the different counties and the extent auto-correlation within New York City, the most populated county. We also looked at whether health behaviors and socioeconomic (SES) factors are associated with this change in trends by county. These analyses can be helpful to public health officials in the following ways:
+  
+First, understanding the spatial patterns of COVID-19 trends can help public health officials to identify areas that are at higher risk for the spread of the virus. This information can be used to target interventions and resources to these areas in order to reduce the spread of COVID-19 and protect the health of the population.
+
+Second, examining the relationship between health behaviors and SES factors and the change in COVID-19 trend can help public health officials to identify potential risk factors for the spread of the virus. This information can be used to develop targeted interventions and policies that aim to reduce the risk of COVID-19 transmission by addressing these factors.
+
+Overall, studying the change in COVID-19 trend in New York State for each county, and examining spatial autocorrelation and the relationship with health behaviors and SES factors, can provide valuable insights. These discoveries can help public health officials to better understand the spread of COVID-19 and take effective action to reduce the risk of transmission in communities at higher risk and address presisting health disparities.
+
+## Data Processing and Cleaning 
+
