@@ -3,25 +3,23 @@ title: "Spatio-temporal Association of Health and Socioeconomic Measures with CO
 authors: "Jagjit, Grace, Ashwini" 
 ---
 
-### Motivation
+# Motivation
+
+TEXT
+
+#  DATA
+
+TEXT
+
+#  Research questions
+
+TEXT
 
 
-- [The American Pit Bull Foundation](https://americanpitbullfoundation.com) provides resources for adoption and responsible pet ownership.
-- News organizations publish [articles](https://www.huffingtonpost.com/chris-white/myths-lies-and-misconceptions-pit-bulls_b_8072204.html) that advocate for pitbulls. 
-- Social media platforms like [Facebook](https://www.facebook.com/PitBullAdvocates1/) and [Twitter](https://twitter.com/pitbulladvocate?lang=en) provide a space for advocates to come together.
+# Main results
 
+TEXT
 
-A screencast of our project can be found ....
+# Discussion
 
-#### DATA
-
-We used data publicly available on [NYC Open Data](https://opendata.cityofnewyork.us). More detailed information on the datasets used can be found in the Data tab. A Google Drive folder of the datasets can be found [here](https://drive.google.com/drive/folders/1wZfIbv9UWAoI-YO1mwRgoXmU-ucr0inX).
-
-
-
-### Research questions
-
-
-
-
-### Main results
+TEXT
