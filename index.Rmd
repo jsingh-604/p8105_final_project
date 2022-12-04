@@ -1,0 +1,25 @@
+---
+title: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY"
+authors: "Jagjit, Grace, Ashwini" 
+---
+
+# Motivation
+
+TEXT
+
+#  DATA
+
+TEXT
+
+#  Research questions
+
+TEXT
+
+
+# Main results
+
+TEXT
+
+# Discussion
+
+TEXT

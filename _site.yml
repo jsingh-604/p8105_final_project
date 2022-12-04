@@ -1,4 +1,4 @@
-name: ""
+name: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY"
 output_dir: "."
 navbar:
   title: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY"

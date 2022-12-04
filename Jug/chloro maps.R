@@ -23,9 +23,27 @@ NY_df <- get_decennial(state = "ny",
                        output = "wide")
 View(NY_df)
 
+
 NY_df = NY_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 NY_df  %>%
   ggplot(aes(fill = medage)) + 
