@@ -11,7 +11,7 @@
 
 
 
-<title>r_final_proj</title>
+<title>data_cleaning</title>
 
 <script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -240,7 +240,7 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Project Overview</a>
+      <a class="navbar-brand" href="index.html">Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -288,15 +288,13 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">r_final_proj</h1>
+<h1 class="title toc-ignore">data_cleaning</h1>
 
 </div>
 
 
-<div id="part-i-observingcleaning-data" class="section level1">
-<h1>Part I: Observing/Cleaning Data</h1>
-<div id="census-data-load-clean" class="section level2">
-<h2>Census Data: Load &amp; Clean</h2>
+<div id="census-data-load-clean" class="section level1">
+<h1>Census Data: Load &amp; Clean</h1>
 <ol style="list-style-type: decimal">
 <li>Load Data</li>
 <li>Choose variables</li>
@@ -327,111 +325,23 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=                                                                     |   1%
   |                                                                            
-  |=                                                                     |   2%
-  |                                                                            
-  |==                                                                    |   2%
-  |                                                                            
-  |==                                                                    |   3%
-  |                                                                            
-  |===                                                                   |   4%
-  |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
   |====                                                                  |   5%
-  |                                                                            
-  |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   6%
-  |                                                                            
-  |======                                                                |   8%
-  |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=======                                                               |   9%
-  |                                                                            
-  |=======                                                               |  10%
-  |                                                                            
-  |=======                                                               |  11%
   |                                                                            
   |========                                                              |  11%
   |                                                                            
-  |========                                                              |  12%
-  |                                                                            
-  |=========                                                             |  12%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |==========                                                            |  15%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |===========                                                           |  16%
-  |                                                                            
-  |============                                                          |  16%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |============                                                          |  18%
-  |                                                                            
-  |=============                                                         |  18%
-  |                                                                            
-  |=============                                                         |  19%
-  |                                                                            
-  |==============                                                        |  20%
-  |                                                                            
-  |==============                                                        |  21%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |=================                                                     |  24%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
   |==================                                                    |  26%
-  |                                                                            
-  |===================                                                   |  27%
-  |                                                                            
-  |====================                                                  |  28%
   |                                                                            
   |====================                                                  |  29%
   |                                                                            
-  |=====================                                                 |  29%
-  |                                                                            
   |=====================                                                 |  30%
   |                                                                            
+  |=====================                                                 |  31%
+  |                                                                            
   |======================                                                |  31%
-  |                                                                            
-  |======================                                                |  32%
-  |                                                                            
-  |=======================                                               |  32%
-  |                                                                            
-  |=======================                                               |  33%
-  |                                                                            
-  |========================                                              |  34%
-  |                                                                            
-  |========================                                              |  35%
-  |                                                                            
-  |=========================                                             |  35%
-  |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |===========================                                           |  39%
   |                                                                            
   |============================                                          |  39%
   |                                                                            
   |============================                                          |  40%
-  |                                                                            
-  |=============================                                         |  41%
-  |                                                                            
-  |=============================                                         |  42%
   |                                                                            
   |==============================                                        |  43%
   |                                                                            
@@ -439,59 +349,27 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |===============================                                       |  45%
   |                                                                            
+  |================================                                      |  45%
+  |                                                                            
   |================================                                      |  46%
+  |                                                                            
+  |=================================                                     |  46%
   |                                                                            
   |=================================                                     |  47%
   |                                                                            
-  |=================================                                     |  48%
-  |                                                                            
-  |==================================                                    |  49%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |===================================                                   |  51%
-  |                                                                            
-  |====================================                                  |  51%
-  |                                                                            
-  |====================================                                  |  52%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |======================================                                |  54%
-  |                                                                            
-  |======================================                                |  55%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |========================================                              |  58%
-  |                                                                            
-  |=========================================                             |  58%
-  |                                                                            
-  |=========================================                             |  59%
-  |                                                                            
-  |==========================================                            |  60%
-  |                                                                            
   |===========================================                           |  61%
-  |                                                                            
-  |===========================================                           |  62%
-  |                                                                            
-  |=============================================                         |  65%
-  |                                                                            
-  |==============================================                        |  65%
-  |                                                                            
-  |==============================================                        |  66%
-  |                                                                            
-  |===============================================                       |  67%
   |                                                                            
   |================================================                      |  68%
   |                                                                            
-  |=================================================                     |  70%
+  |================================================                      |  69%
   |                                                                            
-  |=================================================                     |  71%
+  |=================================================                     |  70%
   |                                                                            
   |==================================================                    |  71%
   |                                                                            
   |==================================================                    |  72%
+  |                                                                            
+  |===================================================                   |  72%
   |                                                                            
   |===================================================                   |  73%
   |                                                                            
@@ -503,63 +381,21 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=====================================================                 |  76%
   |                                                                            
-  |======================================================                |  76%
-  |                                                                            
   |======================================================                |  77%
+  |                                                                            
+  |======================================================                |  78%
   |                                                                            
   |=======================================================               |  78%
   |                                                                            
   |=======================================================               |  79%
   |                                                                            
-  |========================================================              |  79%
-  |                                                                            
-  |========================================================              |  80%
-  |                                                                            
-  |=========================================================             |  81%
-  |                                                                            
-  |=========================================================             |  82%
-  |                                                                            
-  |==========================================================            |  82%
-  |                                                                            
   |==========================================================            |  83%
-  |                                                                            
-  |==========================================================            |  84%
   |                                                                            
   |===========================================================           |  84%
   |                                                                            
   |===========================================================           |  85%
   |                                                                            
-  |============================================================          |  85%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |=============================================================         |  87%
-  |                                                                            
-  |=============================================================         |  88%
-  |                                                                            
   |==============================================================        |  88%
-  |                                                                            
-  |==============================================================        |  89%
-  |                                                                            
-  |===============================================================       |  90%
-  |                                                                            
-  |===============================================================       |  91%
-  |                                                                            
-  |================================================================      |  91%
-  |                                                                            
-  |================================================================      |  92%
-  |                                                                            
-  |=================================================================     |  93%
-  |                                                                            
-  |====================================================================  |  97%
-  |                                                                            
-  |====================================================================  |  98%
-  |                                                                            
-  |===================================================================== |  98%
-  |                                                                            
-  |===================================================================== |  99%
-  |                                                                            
-  |======================================================================|  99%
   |                                                                            
   |======================================================================| 100%</code></pre>
 <pre class="r"><code>ny_df = ny_df %&gt;%
@@ -579,9 +415,9 @@ ny_df = ny_df %&gt;%
   select(tpop, medage, county, race_div)</code></pre>
 </div>
 <div id="health-ranking-hr-demographics-data-load-clean"
-class="section level2">
-<h2>2019-2022 Health Ranking (HR) &amp; Demographics Data: Load &amp;
-Clean</h2>
+class="section level1">
+<h1>2019-2022 Health Ranking (HR) &amp; Demographics Data: Load &amp;
+Clean</h1>
 <ol style="list-style-type: decimal">
 <li>Load data using <code>read_excel</code></li>
 <li>Select sheets: ooutcomes &amp; factors subrankings (contains HR
@@ -591,9 +427,11 @@ data, etc. are included)</li>
 <li>Rename variables</li>
 <li>Merge so demographics &amp; HR data are in one data frame</li>
 </ol>
-<div id="hr-demogrphics" class="section level3">
-<h3>2019 HR &amp; Demogrphics</h3>
-<p>Health Ranking Data</p>
+<div id="hr-demogrphics" class="section level2">
+<h2>2019 HR &amp; Demogrphics</h2>
+</div>
+<div id="health-ranking-data" class="section level2">
+<h2>Health Ranking Data</h2>
 <pre class="r"><code>hr2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -604,7 +442,9 @@ data, etc. are included)</li>
          clinical_care_r = clinical_care_rank,
          ses_r = ses_rank,
          env_r = physical_env_r)</code></pre>
-<p>Demographics Data</p>
+</div>
+<div id="demographics-data" class="section level2">
+<h2>Demographics Data</h2>
 <pre class="r"><code>demo2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -670,12 +510,15 @@ data, etc. are included)</li>
 ## • `95% CI - High` -&gt; `95% CI - High...89`
 ## • `95% CI - Low` -&gt; `95% CI - Low...107`
 ## • `95% CI - High` -&gt; `95% CI - High...108`</code></pre>
-<p>Merge HR &amp; Demo Data Frames</p>
+</div>
+<div id="merge-hr-demo-data-frames" class="section level2">
+<h2>Merge HR &amp; Demo Data Frames</h2>
 <pre class="r"><code>merge2019 = merge(x = hr2019, y = demo2019, by = &quot;county&quot;, all.x = TRUE)</code></pre>
 </div>
-<div id="hr-demographics" class="section level3">
-<h3>2020 HR &amp; Demographics</h3>
-<p>Health Ranking Data</p>
+<div id="hr-demographics" class="section level2">
+<h2>2020 HR &amp; Demographics</h2>
+<div id="health-ranking-data-1" class="section level3">
+<h3>Health Ranking Data</h3>
 <pre class="r"><code>hr2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -686,7 +529,9 @@ data, etc. are included)</li>
          clinical_care_r = clinical_care_rank,
          ses_r = ses_rank,
          env_r = physical_env_r)</code></pre>
-<p>Demographics Data</p>
+</div>
+<div id="demographics-data-1" class="section level3">
+<h3>Demographics Data</h3>
 <pre class="r"><code>demo2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -777,13 +622,17 @@ data, etc. are included)</li>
 ## • `95% CI - High` -&gt; `95% CI - High...248`
 ## • `95% CI - Low` -&gt; `95% CI - Low...266`
 ## • `95% CI - High` -&gt; `95% CI - High...267`</code></pre>
-<p>Merge</p>
+</div>
+<div id="merge" class="section level3">
+<h3>Merge</h3>
 <pre class="r"><code>merge2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
   mutate(year = 2020)</code></pre>
 </div>
-<div id="hr-demographics-1" class="section level3">
-<h3>2021 HR &amp; Demographics</h3>
-<p>Health Ranking Data</p>
+</div>
+<div id="hr-demographics-1" class="section level2">
+<h2>2021 HR &amp; Demographics</h2>
+<div id="health-ranking-data-2" class="section level3">
+<h3>Health Ranking Data</h3>
 <pre class="r"><code>hr2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -794,7 +643,9 @@ data, etc. are included)</li>
          clinical_care_r = clinical_care_rank,
          ses_r = ses_rank,
          env_r = physical_env_r)</code></pre>
-<p>Demographics Data</p>
+</div>
+<div id="demographics-data-2" class="section level3">
+<h3>Demographics Data</h3>
 <pre class="r"><code>demo2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -818,13 +669,17 @@ data, etc. are included)</li>
          n_white = number_non_hispanic_white,
          segregation_score = segregation_index_2) %&gt;% 
   mutate(n_uninsured = number_uninsured_135 + number_uninsured_139)</code></pre>
-<p>Merge</p>
+</div>
+<div id="merge-1" class="section level3">
+<h3>Merge</h3>
 <pre class="r"><code>merge2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
   mutate(year = 2021)</code></pre>
 </div>
-<div id="hr-demographics-2" class="section level3">
-<h3>2022 HR &amp; Demographics</h3>
-<p>Health Ranking Data</p>
+</div>
+<div id="hr-demographics-2" class="section level2">
+<h2>2022 HR &amp; Demographics</h2>
+<div id="health-ranking-data-3" class="section level3">
+<h3>Health Ranking Data</h3>
 <pre class="r"><code>hr2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -835,7 +690,9 @@ data, etc. are included)</li>
          clinical_care_r = clinical_care_rank,
          ses_r = ses_rank,
          env_r = physical_env_r)</code></pre>
-<p>Demographics Data</p>
+</div>
+<div id="demographics-data-3" class="section level3">
+<h3>Demographics Data</h3>
 <pre class="r"><code>demo2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
@@ -859,14 +716,16 @@ data, etc. are included)</li>
          n_white = number_non_hispanic_white,
          segregation_score = segregation_index) %&gt;% 
   mutate(n_uninsured = number_uninsured_137 + number_uninsured_141)</code></pre>
-<p>Merge</p>
+</div>
+<div id="merge-2" class="section level3">
+<h3>Merge</h3>
 <pre class="r"><code>merge2022 = merge(x = hr2022, y = demo2022, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
   mutate(year = 2022)</code></pre>
 </div>
 </div>
-<div id="load-2020-to-november-2022-ny-covid-19-data"
-class="section level2">
-<h2>Load 2020 to November 2022 NY COVID-19 Data</h2>
+</div>
+<div id="to-2022-nys-covid-data" class="section level1">
+<h1>2020 to 2022 NYS COVID Data</h1>
 <p>Decided to look at variables related to covid testing (i.e., #
 positive cases, # tests performed), covid vaccination rate, and
 covid-related fatalities<br />
@@ -908,10 +767,12 @@ covid_df_yr = covid_df %&gt;%
             covid_tests = sum(total_number_of_tests_performed),
             vax_dose1 = max(first_dose))</code></pre>
 </div>
-<div id="merge-data-for-analysis" class="section level2">
-<h2>Merge Data for Analysis</h2>
-<p>Merge covid &amp; hr/demo data by year</p>
-<p>2020</p>
+<div id="merge-covid-hrdemo-data-for-analysis" class="section level1">
+<h1>Merge COVID &amp; HR/Demo Data for Analysis</h1>
+<div id="merge-by-year" class="section level2">
+<h2>Merge by Year</h2>
+<div id="section" class="section level3">
+<h3>2020</h3>
 <pre class="r"><code>covid2020 = covid_df_yr %&gt;% 
   filter(year == &#39;2020&#39;) 
 
@@ -919,7 +780,9 @@ ny2020 = left_join(covid2020, merge2020, by = c(&quot;county&quot;, &quot;year&q
   mutate(n_minority = n_black + n_hispanic)
 
 ny2020_fin = left_join(ny2020, ny_df, by = &quot;county&quot;)</code></pre>
-<p>2021</p>
+</div>
+<div id="section-1" class="section level3">
+<h3>2021</h3>
 <pre class="r"><code>covid2021 = covid_df_yr %&gt;% 
   filter(year == &#39;2021&#39;)
   
@@ -927,380 +790,15 @@ ny2021 = left_join(covid2021, merge2021, by = c(&quot;county&quot;, &quot;year&q
   mutate(n_minority = n_black + n_hispanic)
 
 ny2021_fin = left_join(ny2021, ny_df, by = &quot;county&quot;)</code></pre>
-<p>2022</p>
+</div>
+<div id="section-2" class="section level3">
+<h3>2022</h3>
 <pre class="r"><code>covid2022 = covid_df_yr %&gt;% 
   filter(year == &#39;2022&#39;)
   
 ny2022 = left_join(covid2022, merge2022, by = c(&quot;county&quot;, &quot;year&quot;))
 
 ny2022_fin = left_join(ny2022, ny_df, by = &quot;county&quot;)</code></pre>
-</div>
-</div>
-<div id="regression-test" class="section level1">
-<h1>Regression Test:</h1>
-<p>We are using 2021 data for the following reasons:<br />
-* 2019: no info on # covid cases or # individuals who got
-vaccinated.<br />
-* 2020: no info on # of individuals who got vaccinated * 2022: data
-incomplete, only have information up to 11/2022</p>
-<p>Models: 1. Model 1: outcome = # covid cases, predictors = health rank
-variables, median age 2. Model 2: outcome = # individuals who got the
-first dose of the vaccine, predictors = health rank variables, median
-age 3. Model 3: outcome = # covid cases, predictors = median income,
-n_minority, segregation_score 4. Model 4: outcome = # individuals who
-received dose 1 of the vaccine, predictors = median income, n_minority,
-segregation_scor</p>
-<div id="checking-assumptions" class="section level2">
-<h2>Checking Assumptions:</h2>
-<p>Model 1</p>
-<pre class="r"><code>model1 = ny2021_fin %&gt;% 
-  lm(new_cases ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + race_div + medage, data = .) 
-
-plot(model1)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-17-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-17-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-17-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-17-4.png" width="90%" /></p>
-<pre class="r"><code># residual vs. leverage -- test for influential points. No points falls outside Cook&#39;s distance, indicating there are no major outliers
-
-# residual vs. fitted -- no strong trend, so okay but demonstrates that there is more to be explored.
-
-# normal q-q -- since most points fall along the line, no extreme skewness and the data is fairly normally distributed. Several deviations at the lowest/highest quartile indicate that random fluctuations may be seen at extreme ends.
-
-# scale-location -- homoscedascity off
-
-res_plot1 = ny2021_fin %&gt;% 
-  modelr::add_residuals(model1) %&gt;% 
-  modelr::add_predictions(model1) %&gt;% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = &quot;Model 1: Residual vs. Fitted Values&quot;,
-    x = &quot;Fitted Values&quot;,
-    y = &quot;Residuals&quot;)
-
-res_plot1</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-17-5.png" width="90%" /></p>
-<pre class="r"><code># residual vs. fitted: potentially non-constant variance, indicating that the model could be improved (i.e., adding more SES factors)</code></pre>
-<p>Model 2</p>
-<pre class="r"><code>model2 =
-ny2021_fin %&gt;% 
-  lm(vax_dose1 ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + ses_r + medage, data = .) 
-
-plot(model2)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-18-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-18-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-18-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-18-4.png" width="90%" /></p>
-<pre class="r"><code># residual vs. lev = ok, nothing outside cook&#39;s
-# residual vs. fitted = more to be explored
-# normal q-q: okay
-# scale-location: x homoscadascity
-
-res_plot2 = ny2021_fin %&gt;% 
-  modelr::add_residuals(model2) %&gt;% 
-  modelr::add_predictions(model2) %&gt;% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = &quot;Model 2: Residual vs. Fitted Values&quot;,
-    x = &quot;Fitted Values&quot;,
-    y = &quot;Residuals&quot;)
-
-res_plot2</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-18-5.png" width="90%" /></p>
-<p>Model 3</p>
-<pre class="r"><code>model3 =
-  ny2021_fin %&gt;% 
-  lm(new_cases ~ median_income + n_minority + segregation_score, data = .)
-
-plot(model3)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-19-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-19-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-19-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-19-4.png" width="90%" /></p>
-<pre class="r"><code>res_plot3 = ny2021_fin %&gt;% 
-  modelr::add_residuals(model3) %&gt;% 
-  modelr::add_predictions(model3) %&gt;% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = &quot;Model 3: Residual vs. Fitted Values&quot;,
-    x = &quot;Fitted Values&quot;,
-    y = &quot;Residuals&quot;)
-
-res_plot3</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-19-5.png" width="90%" /></p>
-<p>Model 4</p>
-<pre class="r"><code>model4 =
-  ny2021_fin %&gt;% 
-  lm(vax_dose1 ~ median_income + n_minority + segregation_score, data = .)
-
-plot(model4)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-20-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-20-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-20-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-20-4.png" width="90%" /></p>
-<pre class="r"><code>res_plot4 = ny2021_fin %&gt;% 
-  modelr::add_residuals(model4) %&gt;% 
-  modelr::add_predictions(model4) %&gt;% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = &quot;Model 4: Residual vs. Fitted Values&quot;,
-    x = &quot;Fitted Values&quot;,
-    y = &quot;Residuals&quot;)
-
-res_plot4</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-20-5.png" width="90%" /></p>
-<div id="model-1" class="section level3">
-<h3>Model 1:</h3>
-<pre class="r"><code># decided to remove race_div (makes all variable appear insignificant and does not vary much from county to county)
-
-model1 = ny2021_fin %&gt;% 
-  lm(new_cases ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + race_div + medage, data = .) 
-
-model1 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 5)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-54065.36595</td>
-<td align="right">0.59115</td>
-</tr>
-<tr class="even">
-<td align="left">longevity_r</td>
-<td align="right">-534.85145</td>
-<td align="right">0.29224</td>
-</tr>
-<tr class="odd">
-<td align="left">qol_r</td>
-<td align="right">3.34777</td>
-<td align="right">0.99435</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-512.89212</td>
-<td align="right">0.44221</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">818.75473</td>
-<td align="right">0.05135</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">-134.15312</td>
-<td align="right">0.70320</td>
-</tr>
-<tr class="odd">
-<td align="left">race_div</td>
-<td align="right">367790.21248</td>
-<td align="right">0.00000</td>
-</tr>
-<tr class="even">
-<td align="left">medage</td>
-<td align="right">691.93029</td>
-<td align="right">0.75225</td>
-</tr>
-</tbody>
-</table>
-<p>Based on the result, among the 5 health ranking variables, ranks for
-health behavior, clinical care, and socioeconomic factors were
-significantly correlated with the number of covid cases. Additionally,
-median age for each county was statistically significant. Among the
-statistically significant predictors, health behavior ranking and median
-age are negatively correlated to the number of covid cases.</p>
-</div>
-<div id="model-2" class="section level3">
-<h3>Model 2:</h3>
-<ol style="list-style-type: decimal">
-<li>Outcome: # individuals who got the first dose of vaccine</li>
-<li>Predictors: health ranking variables (ses_r, env_r, etc.), racial
-diversity score (race_div), median age (med_age)</li>
-</ol>
-<pre class="r"><code># decided to remove race_div
-
-model2 =
-ny2021_fin %&gt;% 
-  lm(vax_dose1 ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + ses_r + medage, data = .) 
-
-model2 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 5) </code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1680734.061</td>
-<td align="right">0.00257</td>
-</tr>
-<tr class="even">
-<td align="left">longevity_r</td>
-<td align="right">-6378.192</td>
-<td align="right">0.07576</td>
-</tr>
-<tr class="odd">
-<td align="left">qol_r</td>
-<td align="right">4723.999</td>
-<td align="right">0.13849</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-18570.509</td>
-<td align="right">0.00001</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">5547.020</td>
-<td align="right">0.06052</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">1458.937</td>
-<td align="right">0.55311</td>
-</tr>
-<tr class="odd">
-<td align="left">ses_r</td>
-<td align="right">8341.958</td>
-<td align="right">0.02319</td>
-</tr>
-<tr class="even">
-<td align="left">medage</td>
-<td align="right">-31869.647</td>
-<td align="right">0.01568</td>
-</tr>
-</tbody>
-</table>
-<p>The table shows that health behavior rank, socioeconomic factor rank,
-and median age are statistically significant. Of these variables, health
-behavior rank and median age negatively correlated to the number of
-individuals who received the first dose of the COVID vaccine.</p>
-</div>
-<div id="model-3" class="section level3">
-<h3>Model 3:</h3>
-<ol style="list-style-type: decimal">
-<li>Outcome: # covid cases</li>
-<li>Predictors: median income, number of minorities, segregation score,
-and ses rank</li>
-</ol>
-<pre class="r"><code># decided to remove ses_r as it is not statistically significant (p &gt; .05)
-
-model3 =
-  ny2021_fin %&gt;% 
-  lm(new_cases ~ median_income + n_minority + segregation_score, data = .)
-
-model3 %&gt;% 
-  broom::glance()</code></pre>
-<pre><code>## # A tibble: 1 × 12
-##   r.squared adj.r.squ…¹  sigma stati…²  p.value    df logLik   AIC   BIC devia…³
-##       &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
-## 1     0.925       0.921 21573.    234. 5.27e-32     3  -693. 1396. 1407. 2.65e10
-## # … with 2 more variables: df.residual &lt;int&gt;, nobs &lt;int&gt;, and abbreviated
-## #   variable names ¹​adj.r.squared, ²​statistic, ³​deviance</code></pre>
-<pre class="r"><code>model3 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 5)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-82980.63633</td>
-<td align="right">0.0000</td>
-</tr>
-<tr class="even">
-<td align="left">median_income</td>
-<td align="right">1.10467</td>
-<td align="right">0.0000</td>
-</tr>
-<tr class="odd">
-<td align="left">n_minority</td>
-<td align="right">0.23754</td>
-<td align="right">0.0000</td>
-</tr>
-<tr class="even">
-<td align="left">segregation_score</td>
-<td align="right">746.01372</td>
-<td align="right">0.0027</td>
-</tr>
-</tbody>
-</table>
-<p>The results demonstrate that all the socioeconomic variables in the
-model are significantly correlated with the number of covid cases. This
-indicates that factors such as poverty and inequity, as seen in many
-studies and reports, may be key determinants of COVID incidence.</p>
-</div>
-<div id="model-4" class="section level3">
-<h3>Model 4:</h3>
-<ol style="list-style-type: decimal">
-<li>Outcome: # individuals who got the first dose of vaccine</li>
-<li>Predictors: median income, number of minorities, segregation score,
-and ses rank</li>
-</ol>
-<pre class="r"><code># removed ses_r
-model4 =
-  ny2021_fin %&gt;% 
-  lm(vax_dose1 ~ median_income + n_minority + segregation_score, data = .)
-
-model4 %&gt;% 
-  broom::glance()</code></pre>
-<pre><code>## # A tibble: 1 × 12
-##   r.squared adj.r.squ…¹  sigma stati…²  p.value    df logLik   AIC   BIC devia…³
-##       &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
-## 1     0.921       0.917 1.30e5    222. 2.19e-31     3  -803. 1616. 1627. 9.69e11
-## # … with 2 more variables: df.residual &lt;int&gt;, nobs &lt;int&gt;, and abbreviated
-## #   variable names ¹​adj.r.squared, ²​statistic, ³​deviance</code></pre>
-<pre class="r"><code>model4 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 5)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-490884.49770</td>
-<td align="right">0.00000</td>
-</tr>
-<tr class="even">
-<td align="left">median_income</td>
-<td align="right">6.40047</td>
-<td align="right">0.00000</td>
-</tr>
-<tr class="odd">
-<td align="left">n_minority</td>
-<td align="right">1.39538</td>
-<td align="right">0.00000</td>
-</tr>
-<tr class="even">
-<td align="left">segregation_score</td>
-<td align="right">4652.57212</td>
-<td align="right">0.00202</td>
-</tr>
-</tbody>
-</table>
-<p>Similar to model 3, the results indicate that race/ethnicity and
-socioeconomic may be key determinants of COVID incidence.</p>
 </div>
 </div>
 </div>
