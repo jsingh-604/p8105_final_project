@@ -11,7 +11,7 @@
 
 
 
-<title>data_cleaning</title>
+<title>r_data_cleaning</title>
 
 <script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -240,7 +240,7 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY</a>
+      <a class="navbar-brand" href="index.html">Project Overview</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -288,13 +288,15 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">data_cleaning</h1>
+<h1 class="title toc-ignore">r_data_cleaning</h1>
 
 </div>
 
 
-<div id="census-data-load-clean" class="section level1">
-<h1>Census Data: Load &amp; Clean</h1>
+<div id="part-i-observingcleaning-data" class="section level1">
+<h1>Part I: Observing/Cleaning Data</h1>
+<div id="census-data-load-clean" class="section level2">
+<h2>Census Data: Load &amp; Clean</h2>
 <ol style="list-style-type: decimal">
 <li>Load Data</li>
 <li>Choose variables</li>
@@ -325,47 +327,89 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=                                                                     |   1%
   |                                                                            
+  |=                                                                     |   2%
+  |                                                                            
+  |==                                                                    |   2%
+  |                                                                            
+  |==                                                                    |   3%
+  |                                                                            
+  |==                                                                    |   4%
+  |                                                                            
+  |===                                                                   |   4%
+  |                                                                            
+  |===                                                                   |   5%
+  |                                                                            
   |====                                                                  |   5%
+  |                                                                            
+  |====                                                                  |   6%
+  |                                                                            
+  |=====                                                                 |   7%
+  |                                                                            
+  |=====                                                                 |   8%
+  |                                                                            
+  |======                                                                |   8%
+  |                                                                            
+  |=======                                                               |  10%
   |                                                                            
   |========                                                              |  11%
   |                                                                            
-  |==================                                                    |  26%
+  |========                                                              |  12%
+  |                                                                            
+  |=========                                                             |  12%
+  |                                                                            
+  |=========                                                             |  13%
+  |                                                                            
+  |==========                                                            |  14%
+  |                                                                            
+  |================                                                      |  23%
+  |                                                                            
+  |===================                                                   |  27%
+  |                                                                            
+  |===================                                                   |  28%
   |                                                                            
   |====================                                                  |  29%
   |                                                                            
-  |=====================                                                 |  30%
+  |=====================                                                 |  29%
   |                                                                            
-  |=====================                                                 |  31%
+  |=====================                                                 |  30%
   |                                                                            
   |======================                                                |  31%
   |                                                                            
-  |============================                                          |  39%
+  |=======================                                               |  32%
+  |                                                                            
+  |=======================                                               |  33%
+  |                                                                            
+  |=======================                                               |  34%
+  |                                                                            
+  |========================                                              |  34%
+  |                                                                            
+  |========================                                              |  35%
+  |                                                                            
+  |=========================                                             |  35%
   |                                                                            
   |============================                                          |  40%
   |                                                                            
-  |==============================                                        |  43%
+  |=============================                                         |  41%
   |                                                                            
-  |===============================                                       |  44%
+  |=============================                                         |  42%
+  |                                                                            
+  |==============================                                        |  42%
   |                                                                            
   |===============================                                       |  45%
   |                                                                            
-  |================================                                      |  45%
-  |                                                                            
   |================================                                      |  46%
   |                                                                            
-  |=================================                                     |  46%
+  |=================================                                     |  48%
   |                                                                            
-  |=================================                                     |  47%
+  |==================================                                    |  49%
   |                                                                            
-  |===========================================                           |  61%
+  |===================================                                   |  49%
   |                                                                            
-  |================================================                      |  68%
+  |===================================                                   |  50%
   |                                                                            
-  |================================================                      |  69%
+  |==============================================                        |  66%
   |                                                                            
   |=================================================                     |  70%
-  |                                                                            
-  |==================================================                    |  71%
   |                                                                            
   |==================================================                    |  72%
   |                                                                            
@@ -374,10 +418,6 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |===================================================                   |  73%
   |                                                                            
   |====================================================                  |  74%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |=====================================================                 |  75%
   |                                                                            
   |=====================================================                 |  76%
   |                                                                            
@@ -389,21 +429,22 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=======================================================               |  79%
   |                                                                            
+  |==========================================================            |  82%
+  |                                                                            
   |==========================================================            |  83%
   |                                                                            
   |===========================================================           |  84%
   |                                                                            
-  |===========================================================           |  85%
+  |====================================================================  |  97%
   |                                                                            
-  |==============================================================        |  88%
+  |====================================================================  |  98%
+  |                                                                            
+  |===================================================================== |  99%
   |                                                                            
   |======================================================================| 100%</code></pre>
 <pre class="r"><code>ny_df = ny_df %&gt;%
   mutate(
     county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
-
-###Compute Simpson&#39;s Diversity Index **D = ((SUM n(n-1))/N(N-1))**
-###Higher value indicates higher diversity
 
 ny_df$race_div &lt;- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
                           (ny_df$bpop*(ny_df$bpop-1))+
@@ -414,60 +455,60 @@ ny_df$race_div &lt;- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
 ny_df = ny_df %&gt;% 
   select(tpop, medage, county, race_div)</code></pre>
 </div>
-<div id="health-ranking-hr-demographics-data-load-clean"
-class="section level1">
-<h1>2019-2022 Health Ranking (HR) &amp; Demographics Data: Load &amp;
-Clean</h1>
-<ol style="list-style-type: decimal">
-<li>Load data using <code>read_excel</code></li>
-<li>Select sheets: ooutcomes &amp; factors subrankings (contains HR
-data), additional measure data (contains demographics data)</li>
-<li>Filter so only variables of interest (i.e., race/ethnicity, SES
-data, etc. are included)</li>
-<li>Rename variables</li>
-<li>Merge so demographics &amp; HR data are in one data frame</li>
-</ol>
-<div id="hr-demogrphics" class="section level2">
-<h2>2019 HR &amp; Demogrphics</h2>
-</div>
-<div id="health-ranking-data" class="section level2">
-<h2>Health Ranking Data</h2>
+<div id="health-ranking-hr-data-load-clean" class="section level2">
+<h2>2019-2022 Health Ranking (HR) Data: Load &amp; Clean</h2>
+<div id="hr-data" class="section level3">
+<h3>2019 HR Data</h3>
 <pre class="r"><code>hr2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
-  select(-ends_with(&quot;z&quot;), -fips) %&gt;% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)</code></pre>
-</div>
-<div id="demographics-data" class="section level2">
-<h2>Demographics Data</h2>
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)</code></pre>
+<pre><code>## New names:
+## • `Z-Score` -&gt; `Z-Score...4`
+## • `Rank` -&gt; `Rank...5`
+## • `Z-Score` -&gt; `Z-Score...6`
+## • `Rank` -&gt; `Rank...7`
+## • `Z-Score` -&gt; `Z-Score...8`
+## • `Rank` -&gt; `Rank...9`
+## • `Z-Score` -&gt; `Z-Score...10`
+## • `Rank` -&gt; `Rank...11`
+## • `Z-Score` -&gt; `Z-Score...12`
+## • `Rank` -&gt; `Rank...13`
+## • `Z-Score` -&gt; `Z-Score...14`
+## • `Rank` -&gt; `Rank...15`</code></pre>
 <pre class="r"><code>demo2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
          &#39;segregation_index_2&#39;,
-         &#39;number_uninsured_55&#39;,
-         &#39;number_uninsured_59&#39;,
          &#39;household_income&#39;, 
          &#39;number_african_american&#39;, 
+         &#39;percent_african_american&#39;,
          &#39;number_american_indian_alaskan_native&#39;, 
          &#39;number_asian&#39;, 
          &#39;number_native_hawaiian_other_pacific_islander&#39;, 
          &#39;number_hispanic&#39;, 
-         &#39;number_non_hispanic_white&#39;) %&gt;% 
+         &#39;percent_hispanic&#39;,
+         &#39;number_non_hispanic_white&#39;,
+         &#39;percent_non_hispanic_white&#39;) %&gt;% 
   rename(median_income = household_income,
          n_black = number_african_american,
+         p_black = percent_african_american,
          n_aian = number_american_indian_alaskan_native,
          n_asian = number_asian,
          n_nhpi = number_native_hawaiian_other_pacific_islander,
          n_hispanic = number_hispanic,
+         p_hispanic = percent_hispanic,
          n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
          segregation_score = segregation_index_2) %&gt;% 
-  mutate(n_uninsured = number_uninsured_55 + number_uninsured_59)</code></pre>
+  mutate(p_minority = p_hispanic + p_black)</code></pre>
 <pre><code>## New names:
 ## • `95% CI - Low` -&gt; `95% CI - Low...5`
 ## • `95% CI - High` -&gt; `95% CI - High...6`
@@ -510,51 +551,125 @@ data, etc. are included)</li>
 ## • `95% CI - High` -&gt; `95% CI - High...89`
 ## • `95% CI - Low` -&gt; `95% CI - Low...107`
 ## • `95% CI - High` -&gt; `95% CI - High...108`</code></pre>
+<pre class="r"><code>rank2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors Rankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)</code></pre>
+<pre><code>## New names:
+## • `Z-Score` -&gt; `Z-Score...4`
+## • `Rank` -&gt; `Rank...5`
+## • `Z-Score` -&gt; `Z-Score...6`
+## • `Rank` -&gt; `Rank...7`</code></pre>
+<pre class="r"><code>merge2019_v1 = merge(x = hr2019, y = demo2019, by = &quot;county&quot;, all.x = TRUE) 
+total2019 = merge(x = merge2019_v1, y = rank2019, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+  mutate(year = 2019)</code></pre>
 </div>
-<div id="merge-hr-demo-data-frames" class="section level2">
-<h2>Merge HR &amp; Demo Data Frames</h2>
-<pre class="r"><code>merge2019 = merge(x = hr2019, y = demo2019, by = &quot;county&quot;, all.x = TRUE)</code></pre>
-</div>
-<div id="hr-demographics" class="section level2">
-<h2>2020 HR &amp; Demographics</h2>
-<div id="health-ranking-data-1" class="section level3">
-<h3>Health Ranking Data</h3>
+<div id="hr-data-1" class="section level3">
+<h3>2020 HR Data</h3>
 <pre class="r"><code>hr2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
-  select(-ends_with(&quot;z&quot;), -fips) %&gt;% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)</code></pre>
-</div>
-<div id="demographics-data-1" class="section level3">
-<h3>Demographics Data</h3>
-<pre class="r"><code>demo2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
          &#39;median_household_income&#39;, 
          &#39;segregation_index_2&#39;,
-         &#39;number_uninsured_135&#39;,
-         &#39;number_uninsured_139&#39;,
-         &#39;number_black&#39;, 
+         &#39;number_black&#39;,
+         &#39;percent_black&#39;,
          &#39;number_american_indian_alaska_native&#39;, 
          &#39;number_asian&#39;, 
          &#39;number_native_hawaiian_other_pacific_islander&#39;, 
-         &#39;number_hispanic&#39;, 
-         &#39;number_non_hispanic_white&#39;) %&gt;% 
+         &#39;number_hispanic&#39;,
+         &#39;percent_hispanic&#39;,
+         &#39;number_non_hispanic_white&#39;,
+         &#39;percent_non_hispanic_white&#39;) %&gt;% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
+         n_black = number_black,
+         p_black = percent_black,
          n_aian = number_american_indian_alaska_native, 
          n_asian = number_asian, 
          n_nhpi = number_native_hawaiian_other_pacific_islander, 
          n_hispanic = number_hispanic, 
+         p_hispanic = percent_hispanic,
          n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
          segregation_score = segregation_index_2) %&gt;% 
-  mutate(n_uninsured = number_uninsured_135 + number_uninsured_139)</code></pre>
+  mutate(p_minority = p_hispanic + p_black)
+
+rank2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors Rankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)
+
+merge2020_v1 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRUE) 
+total2020 = merge(x = merge2020_v1, y = rank2020, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+  mutate(year = 2020)</code></pre>
+</div>
+<div id="hr-data-2" class="section level3">
+<h3>2021 HR Data</h3>
+<pre class="r"><code>hr2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)</code></pre>
+<pre><code>## New names:
+## • `Z-Score` -&gt; `Z-Score...4`
+## • `Rank` -&gt; `Rank...5`
+## • `Z-Score` -&gt; `Z-Score...6`
+## • `Rank` -&gt; `Rank...7`
+## • `Z-Score` -&gt; `Z-Score...8`
+## • `Rank` -&gt; `Rank...9`
+## • `Z-Score` -&gt; `Z-Score...10`
+## • `Rank` -&gt; `Rank...11`
+## • `Z-Score` -&gt; `Z-Score...12`
+## • `Rank` -&gt; `Rank...13`
+## • `Z-Score` -&gt; `Z-Score...14`
+## • `Rank` -&gt; `Rank...15`</code></pre>
+<pre class="r"><code>demo2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;number_black&#39;,
+         &#39;percent_black&#39;,
+         &#39;number_american_indian_alaska_native&#39;, 
+         &#39;number_asian&#39;, 
+         &#39;number_native_hawaiian_other_pacific_islander&#39;, 
+         &#39;number_hispanic&#39;,
+         &#39;percent_hispanic&#39;,
+         &#39;number_non_hispanic_white&#39;,
+         &#39;percent_non_hispanic_white&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         n_black = number_black,
+         p_black = percent_black,
+         n_aian = number_american_indian_alaska_native, 
+         n_asian = number_asian, 
+         n_nhpi = number_native_hawaiian_other_pacific_islander, 
+         n_hispanic = number_hispanic, 
+         p_hispanic = percent_hispanic,
+         n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
+         segregation_score = segregation_index_2) %&gt;% 
+  mutate(p_minority = p_hispanic + p_black)</code></pre>
 <pre><code>## New names:
 ## • `95% CI - Low` -&gt; `95% CI - Low...5`
 ## • `95% CI - High` -&gt; `95% CI - High...6`
@@ -587,145 +702,117 @@ data, etc. are included)</li>
 ## • `% Uninsured` -&gt; `% Uninsured...140`
 ## • `95% CI - Low` -&gt; `95% CI - Low...141`
 ## • `95% CI - High` -&gt; `95% CI - High...142`
-## • `95% CI - Low` -&gt; `95% CI - Low...146`
-## • `95% CI - High` -&gt; `95% CI - High...147`
-## • `Average Grade Performance` -&gt; `Average Grade Performance...148`
+## • `95% CI - Low` -&gt; `95% CI - Low...148`
+## • `95% CI - High` -&gt; `95% CI - High...149`
+## • `Average Grade Performance` -&gt; `Average Grade Performance...150`
 ## • `Average Grade Performance (Asian)` -&gt; `Average Grade Performance
-##   (Asian)...149`
+##   (Asian)...151`
 ## • `Average Grade Performance (Black)` -&gt; `Average Grade Performance
-##   (Black)...150`
+##   (Black)...152`
 ## • `Average Grade Performance (Hispanic)` -&gt; `Average Grade Performance
-##   (Hispanic)...151`
+##   (Hispanic)...153`
 ## • `Average Grade Performance (White)` -&gt; `Average Grade Performance
-##   (White)...152`
-## • `Average Grade Performance` -&gt; `Average Grade Performance...153`
+##   (White)...154`
+## • `Average Grade Performance` -&gt; `Average Grade Performance...155`
 ## • `Average Grade Performance (Asian)` -&gt; `Average Grade Performance
-##   (Asian)...154`
+##   (Asian)...156`
 ## • `Average Grade Performance (Black)` -&gt; `Average Grade Performance
-##   (Black)...155`
+##   (Black)...157`
 ## • `Average Grade Performance (Hispanic)` -&gt; `Average Grade Performance
-##   (Hispanic)...156`
+##   (Hispanic)...158`
 ## • `Average Grade Performance (White)` -&gt; `Average Grade Performance
-##   (White)...157`
-## • `95% CI - Low` -&gt; `95% CI - Low...159`
-## • `95% CI - High` -&gt; `95% CI - High...160`
-## • `95% CI - Low` -&gt; `95% CI - Low...180`
-## • `95% CI - High` -&gt; `95% CI - High...181`
-## • `# Deaths` -&gt; `# Deaths...197`
-## • `95% CI - Low` -&gt; `95% CI - Low...199`
-## • `95% CI - High` -&gt; `95% CI - High...200`
-## • `95% CI - Low` -&gt; `95% CI - Low...219`
-## • `95% CI - High` -&gt; `95% CI - High...220`
-## • `95% CI - Low` -&gt; `95% CI - Low...243`
-## • `95% CI - High` -&gt; `95% CI - High...244`
-## • `95% CI - Low` -&gt; `95% CI - Low...247`
-## • `95% CI - High` -&gt; `95% CI - High...248`
-## • `95% CI - Low` -&gt; `95% CI - Low...266`
-## • `95% CI - High` -&gt; `95% CI - High...267`</code></pre>
-</div>
-<div id="merge" class="section level3">
-<h3>Merge</h3>
-<pre class="r"><code>merge2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
-  mutate(year = 2020)</code></pre>
-</div>
-</div>
-<div id="hr-demographics-1" class="section level2">
-<h2>2021 HR &amp; Demographics</h2>
-<div id="health-ranking-data-2" class="section level3">
-<h3>Health Ranking Data</h3>
-<pre class="r"><code>hr2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+##   (White)...159`
+## • `95% CI - Low` -&gt; `95% CI - Low...161`
+## • `95% CI - High` -&gt; `95% CI - High...162`
+## • `95% CI - Low` -&gt; `95% CI - Low...182`
+## • `95% CI - High` -&gt; `95% CI - High...183`
+## • `# Deaths` -&gt; `# Deaths...199`
+## • `95% CI - Low` -&gt; `95% CI - Low...201`
+## • `95% CI - High` -&gt; `95% CI - High...202`
+## • `95% CI - Low` -&gt; `95% CI - Low...221`
+## • `95% CI - High` -&gt; `95% CI - High...222`
+## • `95% CI - Low` -&gt; `95% CI - Low...245`
+## • `95% CI - High` -&gt; `95% CI - High...246`
+## • `95% CI - Low` -&gt; `95% CI - Low...249`
+## • `95% CI - High` -&gt; `95% CI - High...250`
+## • `95% CI - Low` -&gt; `95% CI - Low...253`
+## • `95% CI - High` -&gt; `95% CI - High...254`
+## • `95% CI - Low` -&gt; `95% CI - Low...272`
+## • `95% CI - High` -&gt; `95% CI - High...273`</code></pre>
+<pre class="r"><code>rank2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors Rankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
-  select(-ends_with(&quot;z&quot;), -fips) %&gt;% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)</code></pre>
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)</code></pre>
+<pre><code>## New names:
+## • `Z-Score` -&gt; `Z-Score...4`
+## • `Rank` -&gt; `Rank...5`
+## • `Z-Score` -&gt; `Z-Score...6`
+## • `Rank` -&gt; `Rank...7`</code></pre>
+<pre class="r"><code>merge2021_v1 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) 
+total2021 = merge(x = merge2021_v1, y = rank2021, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+  mutate(year = 2021)</code></pre>
 </div>
-<div id="demographics-data-2" class="section level3">
-<h3>Demographics Data</h3>
-<pre class="r"><code>demo2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+<div id="hr-data-3" class="section level3">
+<h3>2022 HR Data:</h3>
+<p>Health Ranking Data</p>
+<pre class="r"><code>hr2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
          &#39;median_household_income&#39;, 
-         &#39;segregation_index_2&#39;,
-         &#39;number_uninsured_135&#39;,
-         &#39;number_uninsured_139&#39;,
-         &#39;number_black&#39;, 
-         &#39;number_american_indian_alaska_native&#39;, 
-         &#39;number_asian&#39;, 
-         &#39;number_native_hawaiian_other_pacific_islander&#39;, 
-         &#39;number_hispanic&#39;, 
-         &#39;number_non_hispanic_white&#39;) %&gt;% 
-  rename(median_income = median_household_income, 
-         n_black = number_black, 
-         n_aian = number_american_indian_alaska_native, 
-         n_asian = number_asian, 
-         n_nhpi = number_native_hawaiian_other_pacific_islander, 
-         n_hispanic = number_hispanic, 
-         n_white = number_non_hispanic_white,
-         segregation_score = segregation_index_2) %&gt;% 
-  mutate(n_uninsured = number_uninsured_135 + number_uninsured_139)</code></pre>
-</div>
-<div id="merge-1" class="section level3">
-<h3>Merge</h3>
-<pre class="r"><code>merge2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
-  mutate(year = 2021)</code></pre>
-</div>
-</div>
-<div id="hr-demographics-2" class="section level2">
-<h2>2022 HR &amp; Demographics</h2>
-<div id="health-ranking-data-3" class="section level3">
-<h3>Health Ranking Data</h3>
-<pre class="r"><code>hr2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-ends_with(&quot;z&quot;), -fips) %&gt;% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)</code></pre>
-</div>
-<div id="demographics-data-3" class="section level3">
-<h3>Demographics Data</h3>
-<pre class="r"><code>demo2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(&#39;county&#39;,
-         &#39;median_household_income&#39;, 
          &#39;segregation_index&#39;,
-         &#39;number_uninsured_137&#39;,
-         &#39;number_uninsured_141&#39;,
-         &#39;number_black&#39;, 
+         &#39;number_black&#39;,
+         &#39;percent_black&#39;,
          &#39;number_american_indian_alaska_native&#39;, 
          &#39;number_asian&#39;, 
          &#39;number_native_hawaiian_other_pacific_islander&#39;, 
-         &#39;number_hispanic&#39;, 
-         &#39;number_non_hispanic_white&#39;) %&gt;% 
+         &#39;number_hispanic&#39;,
+         &#39;percent_hispanic&#39;,
+         &#39;number_non_hispanic_white&#39;,
+         &#39;percent_non_hispanic_white&#39;) %&gt;% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
+         n_black = number_black,
+         p_black = percent_black,
          n_aian = number_american_indian_alaska_native, 
          n_asian = number_asian, 
          n_nhpi = number_native_hawaiian_other_pacific_islander, 
          n_hispanic = number_hispanic, 
+         p_hispanic = percent_hispanic,
          n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
          segregation_score = segregation_index) %&gt;% 
-  mutate(n_uninsured = number_uninsured_137 + number_uninsured_141)</code></pre>
-</div>
-<div id="merge-2" class="section level3">
-<h3>Merge</h3>
-<pre class="r"><code>merge2022 = merge(x = hr2022, y = demo2022, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+  mutate(p_minority = p_hispanic + p_black)
+
+rank2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors Rankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)
+
+merge2022_v1 = merge(x = hr2022, y = demo2022, by = &quot;county&quot;, all.x = TRUE) 
+total2022 = merge(x = merge2022_v1, y = rank2022, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
   mutate(year = 2022)</code></pre>
+<p>Combine 2019-2022</p>
+<pre class="r"><code>hr_all = rbind(total2019, total2020, total2021, total2022)</code></pre>
 </div>
 </div>
-</div>
-<div id="to-2022-nys-covid-data" class="section level1">
-<h1>2020 to 2022 NYS COVID Data</h1>
+<div id="load-2020-to-november-2022-ny-covid-19-data"
+class="section level2">
+<h2>Load 2020 to November 2022 NY COVID-19 Data</h2>
 <p>Decided to look at variables related to covid testing (i.e., #
 positive cases, # tests performed), covid vaccination rate, and
 covid-related fatalities<br />
@@ -734,9 +821,7 @@ ny_covidvax) 3. Select variables of interest 4. Merge 3 sdata framess
 into one by <code>date</code> and <code>county</code> 5. Convert
 <code>date</code> data type from char to date 6. Separate date into day,
 month, &amp; year for analysis</p>
-<pre class="r"><code>## 2020 n_fatality availbable in demographics dataset? How to merge?
-
-ny_test = read_csv(&#39;grace/ny_covidtest.csv&#39;) %&gt;% 
+<pre class="r"><code>ny_test = read_csv(&#39;grace/ny_covidtest.csv&#39;) %&gt;% 
 janitor::clean_names() %&gt;% 
 filter(geography == &#39;COUNTY&#39;) %&gt;% 
 select(-geography) %&gt;% 
@@ -757,49 +842,16 @@ mutate(date = lubridate::mdy(date))
 
 ny_covid_v1 = left_join(ny_test, ny_death, by = c(&quot;date&quot;, &quot;county&quot;))
 
-covid_df = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;)) %&gt;% 
+covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;)) %&gt;% 
   separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
-covid_df_yr = covid_df %&gt;% 
+covid_df = covid_df_v1 %&gt;% 
   group_by(county, year) %&gt;% 
   summarise(new_cases = sum(new_positives),
             covid_tests = sum(total_number_of_tests_performed),
-            vax_dose1 = max(first_dose))</code></pre>
-</div>
-<div id="merge-covid-hrdemo-data-for-analysis" class="section level1">
-<h1>Merge COVID &amp; HR/Demo Data for Analysis</h1>
-<div id="merge-by-year" class="section level2">
-<h2>Merge by Year</h2>
-<div id="section" class="section level3">
-<h3>2020</h3>
-<pre class="r"><code>covid2020 = covid_df_yr %&gt;% 
-  filter(year == &#39;2020&#39;) 
-
-ny2020 = left_join(covid2020, merge2020, by = c(&quot;county&quot;, &quot;year&quot;)) %&gt;% 
-  mutate(n_minority = n_black + n_hispanic)
-
-ny2020_fin = left_join(ny2020, ny_df, by = &quot;county&quot;)</code></pre>
-</div>
-<div id="section-1" class="section level3">
-<h3>2021</h3>
-<pre class="r"><code>covid2021 = covid_df_yr %&gt;% 
-  filter(year == &#39;2021&#39;)
-  
-ny2021 = left_join(covid2021, merge2021, by = c(&quot;county&quot;, &quot;year&quot;)) %&gt;%
-  mutate(n_minority = n_black + n_hispanic)
-
-ny2021_fin = left_join(ny2021, ny_df, by = &quot;county&quot;)</code></pre>
-</div>
-<div id="section-2" class="section level3">
-<h3>2022</h3>
-<pre class="r"><code>covid2022 = covid_df_yr %&gt;% 
-  filter(year == &#39;2022&#39;)
-  
-ny2022 = left_join(covid2022, merge2022, by = c(&quot;county&quot;, &quot;year&quot;))
-
-ny2022_fin = left_join(ny2022, ny_df, by = &quot;county&quot;)</code></pre>
-</div>
+            vax_dose1 = max(first_dose),
+            n_deaths = max(n_fatality, na.rm = TRUE))</code></pre>
 </div>
 </div>
 

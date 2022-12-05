@@ -1,5 +1,5 @@
 ---
-title: "data_cleaning"
+title: "r_data_cleaning"
 output: github_document
 ---
 
@@ -7,7 +7,13 @@ output: github_document
 library(data.table)
 library(tidycensus)
 library(tidyverse)
+library(ggridges)
+library(patchwork)
+library(viridis)
+library(modelr)
+library(mgcv)
 library(readxl)
+library(plotly)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -26,7 +32,9 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-# Census Data: Load & Clean
+# Part I: Observing/Cleaning Data
+
+## Census Data: Load & Clean
 
 1. Load Data
 2. Choose variables
@@ -54,9 +62,6 @@ ny_df = ny_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
 
-###Compute Simpson's Diversity Index **D = ((SUM n(n-1))/N(N-1))**
-###Higher value indicates higher diversity
-
 ny_df$race_div <- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
                           (ny_df$bpop*(ny_df$bpop-1))+
                           (ny_df$hpop*(ny_df$hpop-1))+
@@ -67,210 +72,231 @@ ny_df = ny_df %>%
   select(tpop, medage, county, race_div)
 ```
 
-# 2019-2022 Health Ranking (HR) & Demographics Data: Load & Clean
+## 2019-2022 Health Ranking (HR) Data: Load & Clean
 
-1. Load data using `read_excel`
-2. Select sheets: ooutcomes & factors subrankings (contains HR data), additional measure data (contains demographics data)
-3. Filter so only variables of interest (i.e., race/ethnicity, SES data, etc. are included)
-4. Rename variables
-5. Merge so demographics & HR data are in one data frame
+### 2019 HR Data
 
-## 2019 HR & Demogrphics 
-
-## Health Ranking Data
 ```{r} 
 hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
-```
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 
-## Demographics Data
-```{r}
 demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
          'segregation_index_2',
-         'number_uninsured_55',
-         'number_uninsured_59',
          'household_income', 
          'number_african_american', 
+         'percent_african_american',
          'number_american_indian_alaskan_native', 
          'number_asian', 
          'number_native_hawaiian_other_pacific_islander', 
          'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'percent_hispanic',
+         'number_non_hispanic_white',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = household_income,
          n_black = number_african_american,
+         p_black = percent_african_american,
          n_aian = number_american_indian_alaskan_native,
          n_asian = number_asian,
          n_nhpi = number_native_hawaiian_other_pacific_islander,
          n_hispanic = number_hispanic,
+         p_hispanic = percent_hispanic,
          n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
          segregation_score = segregation_index_2) %>% 
-  mutate(n_uninsured = number_uninsured_55 + number_uninsured_59)
+  mutate(p_minority = p_hispanic + p_black)
+
+rank2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors Rankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)
+
+merge2019_v1 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) 
+total2019 = merge(x = merge2019_v1, y = rank2019, by = "county", all.x = TRUE) %>% 
+  mutate(year = 2019)
 ```
 
-## Merge HR & Demo Data Frames
-```{r}
-merge2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE)
-```
+### 2020 HR Data
 
-## 2020 HR & Demographics 
-
-### Health Ranking Data
 ```{r, message = FALSE}
 hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
-```
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 
-### Demographics Data
-```{r}
 demo2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
          'median_household_income', 
          'segregation_index_2',
-         'number_uninsured_135',
-         'number_uninsured_139',
-         'number_black', 
+         'number_black',
+         'percent_black',
          'number_american_indian_alaska_native', 
          'number_asian', 
          'number_native_hawaiian_other_pacific_islander', 
-         'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'number_hispanic',
+         'percent_hispanic',
+         'number_non_hispanic_white',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
+         n_black = number_black,
+         p_black = percent_black,
          n_aian = number_american_indian_alaska_native, 
          n_asian = number_asian, 
          n_nhpi = number_native_hawaiian_other_pacific_islander, 
          n_hispanic = number_hispanic, 
+         p_hispanic = percent_hispanic,
          n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
          segregation_score = segregation_index_2) %>% 
-  mutate(n_uninsured = number_uninsured_135 + number_uninsured_139)
-```
+  mutate(p_minority = p_hispanic + p_black)
 
-### Merge
-```{r}
-merge2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>% 
+rank2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors Rankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)
+
+merge2020_v1 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) 
+total2020 = merge(x = merge2020_v1, y = rank2020, by = "county", all.x = TRUE) %>% 
   mutate(year = 2020)
 ```
 
-## 2021 HR & Demographics
+### 2021 HR Data
 
-### Health Ranking Data
-```{r, message = FALSE}
+```{r}
 hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
-```
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 
-### Demographics Data
-```{r, message = FALSE}
 demo2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
          'median_household_income', 
          'segregation_index_2',
-         'number_uninsured_135',
-         'number_uninsured_139',
-         'number_black', 
+         'number_black',
+         'percent_black',
          'number_american_indian_alaska_native', 
          'number_asian', 
          'number_native_hawaiian_other_pacific_islander', 
-         'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'number_hispanic',
+         'percent_hispanic',
+         'number_non_hispanic_white',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
+         n_black = number_black,
+         p_black = percent_black,
          n_aian = number_american_indian_alaska_native, 
          n_asian = number_asian, 
          n_nhpi = number_native_hawaiian_other_pacific_islander, 
          n_hispanic = number_hispanic, 
+         p_hispanic = percent_hispanic,
          n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
          segregation_score = segregation_index_2) %>% 
-  mutate(n_uninsured = number_uninsured_135 + number_uninsured_139)
-```
+  mutate(p_minority = p_hispanic + p_black)
 
-### Merge
-```{r, message = FALSE}
-merge2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>% 
+rank2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors Rankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)
+
+merge2021_v1 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) 
+total2021 = merge(x = merge2021_v1, y = rank2021, by = "county", all.x = TRUE) %>% 
   mutate(year = 2021)
 ```
 
-## 2022 HR & Demographics
+### 2022 HR Data:
 
-### Health Ranking Data
+Health Ranking Data
 ```{r, message = FALSE}
 hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-ends_with("z"), -fips) %>% 
-  rename(longevity_r = length_of_life_rank,
-         qol_r = quality_of_life_rank,
-         health_beh_r = health_beh_rank,
-         clinical_care_r = clinical_care_rank,
-         ses_r = ses_rank,
-         env_r = physical_env_r)
-```
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
 
-### Demographics Data
-```{r, message = FALSE}
 demo2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select('county',
+  select('county', 
          'median_household_income', 
          'segregation_index',
-         'number_uninsured_137',
-         'number_uninsured_141',
-         'number_black', 
+         'number_black',
+         'percent_black',
          'number_american_indian_alaska_native', 
          'number_asian', 
          'number_native_hawaiian_other_pacific_islander', 
-         'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'number_hispanic',
+         'percent_hispanic',
+         'number_non_hispanic_white',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
+         n_black = number_black,
+         p_black = percent_black,
          n_aian = number_american_indian_alaska_native, 
          n_asian = number_asian, 
          n_nhpi = number_native_hawaiian_other_pacific_islander, 
          n_hispanic = number_hispanic, 
+         p_hispanic = percent_hispanic,
          n_white = number_non_hispanic_white,
+         p_white = percent_non_hispanic_white,
          segregation_score = segregation_index) %>% 
-  mutate(n_uninsured = number_uninsured_137 + number_uninsured_141)
-```
+  mutate(p_minority = p_hispanic + p_black)
 
-### Merge
-```{r, message = FALSE}
-merge2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
+rank2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors Rankings', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
+  rename(health_outcome_r = rank_5,
+         health_factor_r = rank_7)
+
+merge2022_v1 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) 
+total2022 = merge(x = merge2022_v1, y = rank2022, by = "county", all.x = TRUE) %>% 
   mutate(year = 2022)
 ```
 
-# 2020 to 2022 NYS COVID Data
+Combine 2019-2022
+```{r}
+hr_all = rbind(total2019, total2020, total2021, total2022)
+```
+
+## Load 2020 to November 2022 NY COVID-19 Data
 
 Decided to look at variables related to covid testing (i.e., # positive cases, # tests performed), covid vaccination rate, and covid-related fatalities  
 1. Import 3 separate csv files (ny_covidtest, ny_coviddeaths, ny_covidvax)
@@ -280,8 +306,6 @@ Decided to look at variables related to covid testing (i.e., # positive cases, #
 6. Separate date into day, month, & year for analysis
 
 ```{r, message = FALSE}
-## 2020 n_fatality availbable in demographics dataset? How to merge?
-
 ny_test = read_csv('grace/ny_covidtest.csv') %>% 
 janitor::clean_names() %>% 
 filter(geography == 'COUNTY') %>% 
@@ -303,49 +327,13 @@ mutate(date = lubridate::mdy(date))
 
 ny_covid_v1 = left_join(ny_test, ny_death, by = c("date", "county"))
 
-covid_df = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>% 
+covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>% 
   separate(date, c("year", "month", "day"), sep = "-") %>% 
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
-covid_df_yr = covid_df %>% 
+covid_df = covid_df_v1 %>% 
   group_by(county, year) %>% 
   summarise(new_cases = sum(new_positives),
             covid_tests = sum(total_number_of_tests_performed),
-            vax_dose1 = max(first_dose))
-```
-
-# Merge COVID & HR/Demo Data for Analysis
-
-## Merge by Year
-
-### 2020
-```{r}
-covid2020 = covid_df_yr %>% 
-  filter(year == '2020') 
-
-ny2020 = left_join(covid2020, merge2020, by = c("county", "year")) %>% 
-  mutate(n_minority = n_black + n_hispanic)
-
-ny2020_fin = left_join(ny2020, ny_df, by = "county")
-```
-
-### 2021
-```{r}
-covid2021 = covid_df_yr %>% 
-  filter(year == '2021')
-  
-ny2021 = left_join(covid2021, merge2021, by = c("county", "year")) %>%
-  mutate(n_minority = n_black + n_hispanic)
-
-ny2021_fin = left_join(ny2021, ny_df, by = "county")
-```
-
-### 2022
-```{r}
-covid2022 = covid_df_yr %>% 
-  filter(year == '2022')
-  
-ny2022 = left_join(covid2022, merge2022, by = c("county", "year"))
-
-ny2022_fin = left_join(ny2022, ny_df, by = "county")
-```
+            vax_dose1 = max(first_dose),
+            n_deaths = max(n_fatality, na.rm = TRUE))
