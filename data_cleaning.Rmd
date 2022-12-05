@@ -337,3 +337,11 @@ covid_df = covid_df_v1 %>%
             covid_tests = sum(total_number_of_tests_performed),
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))
+```
+
+## Merge Data for Analysis
+
+```{r}
+covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
+comb = left_join(covid_hr, ny_df, by = 'county')
+```
