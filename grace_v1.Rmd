@@ -34,7 +34,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 # Part I: Observing/Cleaning Data
 
-## Census Data: Load & Clean
+## 2020 Census Data: Load & Clean (2021 data N/A as it is relased on 12/8)
 
 1. Load Data
 2. Choose variables
@@ -42,7 +42,7 @@ scale_fill_discrete = scale_fill_viridis_d
 ```{r census_data, message = FALSE}
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
-census_data <- load_variables(2019, "acs5", cache=T)
+census_data <- load_variables(2020, "acs5", cache=T)
 fwrite(census_data, "census_variables.csv")
 
 vars <- c(tpop = 'P001001',
@@ -62,9 +62,6 @@ ny_df = ny_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
 
-###Compute Simpson's Diversity Index **D = ((SUM n(n-1))/N(N-1))**
-###Higher value indicates higher diversity
-
 ny_df$race_div <- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
                           (ny_df$bpop*(ny_df$bpop-1))+
                           (ny_df$hpop*(ny_df$hpop-1))+
@@ -75,207 +72,128 @@ ny_df = ny_df %>%
   select(tpop, medage, county, race_div)
 ```
 
-## 2019-2022 Health Ranking (HR) & Demographics Data: Load & Clean
+## 2019-2022 Health Ranking (HR) Data: Load & Clean
 
-1. Load data using `read_excel`
-2. Select sheets: ooutcomes & factors subrankings (contains HR data), additional measure data (contains demographics data)
-3. Filter so only variables of interest (i.e., race/ethnicity, SES data, etc. are included)
-4. Rename variables
-5. Merge so demographics & HR data are in one data frame
+### 2019 HR Data
 
-### 2019 HR & Demogrphics 
-
-Health Ranking Data
 ```{r} 
 hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-starts_with("z"), -fips) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
   rename(longevity_r = rank_5,
          qol_r = rank_7,
          health_beh_r = rank_9,
          clinical_care_r = rank_11,
          ses_r = rank_13,
          env_r = rank_15)
-```
 
-Demographics Data
-```{r}
 demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
          'segregation_index_2',
-         'number_uninsured_55',
-         'number_uninsured_59',
-         'household_income', 
-         'number_african_american', 
-         'number_american_indian_alaskan_native', 
-         'number_asian', 
-         'number_native_hawaiian_other_pacific_islander', 
-         'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'household_income') %>% 
   rename(median_income = household_income,
-         n_black = number_african_american,
-         n_aian = number_american_indian_alaskan_native,
-         n_asian = number_asian,
-         n_nhpi = number_native_hawaiian_other_pacific_islander,
-         n_hispanic = number_hispanic,
-         n_white = number_non_hispanic_white,
-         segregation_score = segregation_index_2) %>% 
-  mutate(n_uninsured = number_uninsured_55 + number_uninsured_59)
+         segregation_score = segregation_index_2) %>%
+    mutate(segregation = case_when(segregation_score < 30 ~ 0,
+                                 segregation_score >= 30 ~ 1))
+
+total2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>% 
+  mutate(year = 2019)
 ```
 
-Merge HR & Demo Data Frames
-```{r}
-merge2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE)
-```
+### 2020 HR Data
 
-### 2020 HR & Demographics 
-
-Health Ranking Data
 ```{r, message = FALSE}
 hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-starts_with("z"), -fips) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
   rename(longevity_r = rank_5,
          qol_r = rank_7,
          health_beh_r = rank_9,
          clinical_care_r = rank_11,
          ses_r = rank_13,
          env_r = rank_15)
-```
 
-Demographics Data
-```{r}
 demo2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
          'median_household_income', 
-         'segregation_index_2',
-         'number_uninsured_135',
-         'number_uninsured_139',
-         'number_black', 
-         'number_american_indian_alaska_native', 
-         'number_asian', 
-         'number_native_hawaiian_other_pacific_islander', 
-         'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'segregation_index_2') %>% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
-         n_aian = number_american_indian_alaska_native, 
-         n_asian = number_asian, 
-         n_nhpi = number_native_hawaiian_other_pacific_islander, 
-         n_hispanic = number_hispanic, 
-         n_white = number_non_hispanic_white,
          segregation_score = segregation_index_2) %>% 
-  mutate(n_uninsured = number_uninsured_135 + number_uninsured_139)
-```
+    mutate(segregation = case_when(segregation_score < 30 ~ 0,
+                                 segregation_score >= 30 ~ 1))
 
-Merge
-```{r}
-merge2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>% 
+total2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>% 
   mutate(year = 2020)
 ```
 
-### 2021 HR & Demographics
+### 2021 HR Data
 
-Health Ranking Data
-```{r, message = FALSE}
+```{r}
 hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-starts_with("z"), -fips) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
   rename(longevity_r = rank_5,
          qol_r = rank_7,
          health_beh_r = rank_9,
          clinical_care_r = rank_11,
          ses_r = rank_13,
          env_r = rank_15)
-```
 
-Demographics Data
-```{r, message = FALSE}
 demo2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
          'median_household_income', 
-         'segregation_index_2',
-         'number_uninsured_135',
-         'number_uninsured_139',
-         'number_black', 
-         'number_american_indian_alaska_native', 
-         'number_asian', 
-         'number_native_hawaiian_other_pacific_islander', 
-         'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'segregation_index_2') %>% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
-         n_aian = number_american_indian_alaska_native, 
-         n_asian = number_asian, 
-         n_nhpi = number_native_hawaiian_other_pacific_islander, 
-         n_hispanic = number_hispanic, 
-         n_white = number_non_hispanic_white,
          segregation_score = segregation_index_2) %>% 
-  mutate(n_uninsured = number_uninsured_135 + number_uninsured_139)
-```
+    mutate(segregation = case_when(segregation_score < 30 ~ 0,
+                                 segregation_score >= 30 ~ 1))
 
-Merge
-```{r, message = FALSE}
-merge2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>% 
+total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>% 
   mutate(year = 2021)
 ```
 
-### 2022 HR & Demographics
+### 2022 HR Data:
 
 Health Ranking Data
 ```{r, message = FALSE}
 hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select(-starts_with("z"), -fips) %>% 
+  select(-starts_with("z"), -fips, -state) %>% 
   rename(longevity_r = rank_5,
          qol_r = rank_7,
          health_beh_r = rank_9,
          clinical_care_r = rank_11,
          ses_r = rank_13,
          env_r = rank_15)
-```
 
-Demographics Data
-```{r, message = FALSE}
 demo2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
-  select('county',
+    select('county', 
          'median_household_income', 
-         'segregation_index',
-         'number_uninsured_137',
-         'number_uninsured_141',
-         'number_black', 
-         'number_american_indian_alaska_native', 
-         'number_asian', 
-         'number_native_hawaiian_other_pacific_islander', 
-         'number_hispanic', 
-         'number_non_hispanic_white') %>% 
+         'segregation_index') %>% 
   rename(median_income = median_household_income, 
-         n_black = number_black, 
-         n_aian = number_american_indian_alaska_native, 
-         n_asian = number_asian, 
-         n_nhpi = number_native_hawaiian_other_pacific_islander, 
-         n_hispanic = number_hispanic, 
-         n_white = number_non_hispanic_white,
          segregation_score = segregation_index) %>% 
-  mutate(n_uninsured = number_uninsured_137 + number_uninsured_141)
+    mutate(segregation = case_when(segregation_score < 30 ~ 0,
+                                 segregation_score >= 30 ~ 1))
+
+total2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
+  mutate(year = 2022)
 ```
 
-Merge
-```{r, message = FALSE}
-merge2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
-  mutate(year = 2022)
+Combine 2019-2022
+```{r}
+hr_all = rbind(total2019, total2020, total2021, total2022)
 ```
 
 ## Load 2020 to November 2022 NY COVID-19 Data
@@ -288,8 +206,6 @@ Decided to look at variables related to covid testing (i.e., # positive cases, #
 6. Separate date into day, month, & year for analysis
 
 ```{r, message = FALSE}
-## 2020 n_fatality availbable in demographics dataset? How to merge?
-
 ny_test = read_csv('grace/ny_covidtest.csv') %>% 
 janitor::clean_names() %>% 
 filter(geography == 'COUNTY') %>% 
@@ -311,73 +227,32 @@ mutate(date = lubridate::mdy(date))
 
 ny_covid_v1 = left_join(ny_test, ny_death, by = c("date", "county"))
 
-covid_df = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>% 
+covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>% 
   separate(date, c("year", "month", "day"), sep = "-") %>% 
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
-covid_df_yr = covid_df %>% 
+covid_df = covid_df_v1 %>% 
   group_by(county, year) %>% 
-  summarise(new_cases = sum(new_positives),
-            covid_tests = sum(total_number_of_tests_performed),
-            vax_dose1 = max(first_dose))
+  summarise(n_cases = sum(new_positives),
+            vax_dose1 = max(first_dose),
+            n_deaths = max(n_fatality, na.rm = TRUE))
 ```
 
 ## Merge Data for Analysis
 
-Merge covid & hr/demo data by year
-
-2020
 ```{r}
-covid2020 = covid_df_yr %>% 
-  filter(year == '2020') 
-
-ny2020 = left_join(covid2020, merge2020, by = c("county", "year")) %>% 
-  mutate(n_minority = n_black + n_hispanic)
-
-ny2020_fin = left_join(ny2020, ny_df, by = "county")
-```
-
-2021
-```{r}
-covid2021 = covid_df_yr %>% 
-  filter(year == '2021')
-  
-ny2021 = left_join(covid2021, merge2021, by = c("county", "year")) %>%
-  mutate(n_minority = n_black + n_hispanic)
-
-ny2021_fin = left_join(ny2021, ny_df, by = "county")
-```
-
-2022
-```{r}
-covid2022 = covid_df_yr %>% 
-  filter(year == '2022')
-  
-ny2022 = left_join(covid2022, merge2022, by = c("county", "year"))
-
-ny2022_fin = left_join(ny2022, ny_df, by = "county")
+covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
+comb = left_join(covid_hr, ny_df, by = 'county') %>% 
+  mutate(tpop_50 = tpop/2,
+         vax_maj = case_when(vax_dose1 >= tpop/2 ~ 1,
+                             vax_dose1 < tpop/2 ~ 0))
 ```
 
 # Regression Test:
-We are using 2021 data for the following reasons:  
-* 2019: no info on # covid cases or # individuals who got vaccinated.  
-* 2020: no info on # of individuals who got vaccinated
-* 2022: data incomplete, only have information up to 11/2022
-
-Models:
-1. Model 1: outcome = # covid cases, predictors = health rank variables, median age
-2. Model 2: outcome = # individuals who got the first dose of the vaccine, predictors = health rank variables, median age
-3. Model 3: outcome = # covid cases, predictors = median income, n_minority, segregation_score
-4. Model 4: outcome = # individuals who received dose 1 of the vaccine, predictors = median income, n_minority, segregation_scor
 
 ## Checking Assumptions:
 
-Model 1
 ```{r}
-model1 = ny2021_fin %>% 
-  lm(new_cases ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + race_div + medage, data = .) 
-
-plot(model1)
 # residual vs. leverage -- test for influential points. No points falls outside Cook's distance, indicating there are no major outliers
 
 # residual vs. fitted -- no strong trend, so okay but demonstrates that there is more to be explored.
@@ -385,10 +260,28 @@ plot(model1)
 # normal q-q -- since most points fall along the line, no extreme skewness and the data is fairly normally distributed. Several deviations at the lowest/highest quartile indicate that random fluctuations may be seen at extreme ends.
 
 # scale-location -- homoscedascity off
+```
 
-res_plot1 = ny2021_fin %>% 
-  modelr::add_residuals(model1) %>% 
-  modelr::add_predictions(model1) %>% 
+Model 1  
+* x = health factor variables, median age, segregation score
+* y = number of covid cases in 2021
+
+```{r}
+m1 = comb %>% 
+  filter(year == '2021') %>% 
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage, data = .)
+
+m1 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
+
+plot(m1)
+
+plot1 = comb %>% 
+  filter(year == '2021') %>% 
+  modelr::add_residuals(m1) %>% 
+  modelr::add_predictions(m1) %>% 
   ggplot(aes(x = pred, y = resid)) +
   geom_point() +
   labs(
@@ -396,26 +289,26 @@ res_plot1 = ny2021_fin %>%
     x = "Fitted Values",
     y = "Residuals")
 
-res_plot1
-
-# residual vs. fitted: potentially non-constant variance, indicating that the model could be improved (i.e., adding more SES factors)
+plot1
 ```
 
 Model 2
 ```{r}
-model2 =
-ny2021_fin %>% 
-  lm(vax_dose1 ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + ses_r + medage, data = .) 
+m2 = comb %>% 
+  filter(year == '2021', county != "New York") %>% 
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + medage, data = .)
 
-plot(model2)
-# residual vs. lev = ok, nothing outside cook's
-# residual vs. fitted = more to be explored
-# normal q-q: okay
-# scale-location: x homoscadascity
+m2 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
 
-res_plot2 = ny2021_fin %>% 
-  modelr::add_residuals(model2) %>% 
-  modelr::add_predictions(model2) %>% 
+plot(m2)
+
+plot2 = comb %>% 
+  filter(year == '2021', county != "New York") %>% 
+  modelr::add_residuals(m2) %>% 
+  modelr::add_predictions(m2) %>% 
   ggplot(aes(x = pred, y = resid)) +
   geom_point() +
   labs(
@@ -423,121 +316,54 @@ res_plot2 = ny2021_fin %>%
     x = "Fitted Values",
     y = "Residuals")
 
-res_plot2
+plot2
 ```
 
 Model 3
 ```{r}
-model3 =
-  ny2021_fin %>% 
-  lm(new_cases ~ median_income + n_minority + segregation_score, data = .)
+m3 = comb %>% 
+  filter(year == '2021') %>% 
+  lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + ses_r + medage, data = .,)
 
-plot(model3)
+plot(m3)
 
-res_plot3 = ny2021_fin %>% 
-  modelr::add_residuals(model3) %>% 
-  modelr::add_predictions(model3) %>% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = "Model 3: Residual vs. Fitted Values",
-    x = "Fitted Values",
-    y = "Residuals")
+m3 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
 
-res_plot3
 ```
 
 Model 4
 ```{r}
-model4 =
-  ny2021_fin %>% 
-  lm(vax_dose1 ~ median_income + n_minority + segregation_score, data = .)
+m4 = comb %>% 
+  filter(year == '2021') %>% 
+  glm(vax_maj ~ segregation + medage + ses_r, data = .)
 
-plot(model4)
+summary(m4)
 
-res_plot4 = ny2021_fin %>% 
-  modelr::add_residuals(model4) %>% 
-  modelr::add_predictions(model4) %>% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = "Model 4: Residual vs. Fitted Values",
-    x = "Fitted Values",
-    y = "Residuals")
-
-res_plot4
+plot(m4)
+  
+m4 %>% 
+  broom::tidy() %>% 
+  mutate(OR = exp(estimate),
+         OR_CI_lower = exp(estimate - 1.96*(std.error)),
+         OR_CI_upper = exp(estimate + 1.96*(std.error))) %>% 
+  select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %>% 
+  knitr::kable()
 ```
 
-### Model 1:
-
+Model 5
 ```{r}
-# decided to remove race_div (makes all variable appear insignificant and does not vary much from county to county)
+m5 = comb %>% 
+  filter(year == '2021', county != "New York") %>% 
+  lm(n_deaths ~ segregation_score + median_income + medage, data = .)
 
-model1 = ny2021_fin %>% 
-  lm(new_cases ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + race_div + medage, data = .) 
+plot(m5)
 
-model1 %>% 
+m5 %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 5)
+  knitr::kable(digits = 3)
 ```
-Based on the result, among the 5 health ranking variables, ranks for health behavior, clinical care, and socioeconomic factors were significantly correlated with the number of covid cases. Additionally, median age for each county was statistically significant. Among the statistically significant predictors, health behavior ranking and median age are negatively correlated to the number of covid cases.
 
-### Model 2:
-1. Outcome: # individuals who got the first dose of vaccine
-2. Predictors: health ranking variables (ses_r, env_r, etc.), racial diversity score (race_div), median age (med_age)
-
-```{r}
-# decided to remove race_div
-
-model2 =
-ny2021_fin %>% 
-  lm(vax_dose1 ~ longevity_r + qol_r + health_beh_r + clinical_care_r + env_r + ses_r + medage, data = .) 
-
-model2 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 5) 
-```
-The table shows that health behavior rank, socioeconomic factor rank, and median age are statistically significant. Of these variables, health behavior rank and median age negatively correlated to the number of individuals who received the first dose of the COVID vaccine.
-
-### Model 3:
-1. Outcome: # covid cases
-2. Predictors: median income, number of minorities, segregation score, and ses rank
-
-```{r}
-# decided to remove ses_r as it is not statistically significant (p > .05)
-
-model3 =
-  ny2021_fin %>% 
-  lm(new_cases ~ median_income + n_minority + segregation_score, data = .)
-
-model3 %>% 
-  broom::glance()
-
-model3 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 5)
-```
-The results demonstrate that all the socioeconomic variables in the model are significantly correlated with the number of covid cases. This indicates that factors such as poverty and inequity, as seen in many studies and reports, may be key determinants of COVID incidence.
-
-### Model 4:
-1. Outcome: # individuals who got the first dose of vaccine
-2. Predictors: median income, number of minorities, segregation score, and ses rank
-
-```{r}
-# removed ses_r
-model4 =
-  ny2021_fin %>% 
-  lm(vax_dose1 ~ median_income + n_minority + segregation_score, data = .)
-
-model4 %>% 
-  broom::glance()
-
-model4 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 5)
-```
-Similar to model 3, the results indicate that race/ethnicity and socioeconomic may be key determinants of COVID incidence.
