@@ -93,11 +93,16 @@ demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data', sk
   slice(-c(1)) %>% 
   select('county', 
          'segregation_index_2',
-         'household_income') %>% 
+         'household_income',
+         'percent_hispanic',
+         'percent_african_american') %>% 
   rename(median_income = household_income,
-         segregation_score = segregation_index_2) %>%
+         segregation_score = segregation_index_2,
+         p_hispanic = percent_hispanic,
+         p_black = percent_african_american) %>%
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
-                                 segregation_score >= 30 ~ 1))
+                                 segregation_score >= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
 
 total2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>% 
   mutate(year = 2019)
@@ -122,11 +127,16 @@ demo2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Additional Measure Data', s
   slice(-c(1)) %>% 
   select('county', 
          'median_household_income', 
-         'segregation_index_2') %>% 
+         'segregation_index_2',
+         'percent_black',
+         'percent_hispanic') %>% 
   rename(median_income = median_household_income, 
-         segregation_score = segregation_index_2) %>% 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %>% 
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
-                                 segregation_score >= 30 ~ 1))
+                                 segregation_score >= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
 
 total2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>% 
   mutate(year = 2020)
@@ -151,11 +161,16 @@ demo2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Additional Measure Data', s
   slice(-c(1)) %>% 
   select('county', 
          'median_household_income', 
-         'segregation_index_2') %>% 
+         'segregation_index_2',
+         'percent_black',
+         'percent_hispanic') %>% 
   rename(median_income = median_household_income, 
-         segregation_score = segregation_index_2) %>% 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %>% 
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
-                                 segregation_score >= 30 ~ 1))
+                                 segregation_score >= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
 
 total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>% 
   mutate(year = 2021)
@@ -181,11 +196,16 @@ demo2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Additional Measure Data', s
   slice(-c(1)) %>% 
     select('county', 
          'median_household_income', 
-         'segregation_index') %>% 
+         'segregation_index',
+         'percent_black',
+         'percent_hispanic') %>% 
   rename(median_income = median_household_income, 
-         segregation_score = segregation_index) %>% 
+         segregation_score = segregation_index,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %>% 
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
-                                 segregation_score >= 30 ~ 1))
+                                 segregation_score >= 30 ~ 1),
+           p_minority = p_hispanic + p_black)
 
 total2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
   mutate(year = 2022)
@@ -201,7 +221,7 @@ hr_all = rbind(total2019, total2020, total2021, total2022)
 Decided to look at variables related to covid testing (i.e., # positive cases, # tests performed), covid vaccination rate, and covid-related fatalities  
 1. Import 3 separate csv files (ny_covidtest, ny_coviddeaths, ny_covidvax)
 3. Select variables of interest
-4. Merge 3 sdata framess into one by `date` and `county`
+4. Merge 3 data frames into one by `date` and `county`
 5. Convert `date` data type from char to date
 6. Separate date into day, month, & year for analysis
 
@@ -244,5 +264,5 @@ covid_df = covid_df_v1 %>%
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
 comb = left_join(covid_hr, ny_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 >= tpop/2 ~ 1,
-                             vax_dose1 < tpop/2 ~ 0))
+         vax_maj = case_when(vax_dose1 >= .73*(tpop) ~ 1,
+                             vax_dose1 < .73*(tpop) ~ 0))
