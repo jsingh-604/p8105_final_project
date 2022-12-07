@@ -63,7 +63,7 @@ sliderInput("month_year",
 
 ```
 
-Column {data-width=650}
+Rows {data-width=650}
 -----------------------------------------------------------------------
 
 ### Chart A
@@ -83,15 +83,6 @@ renderPlot({
     geom_sf(aes(fill = total_covid, geometry = geometry)) + 
     scale_fill_viridis_c(option = "viridis") 
 })
-
-
-```
-
-### Chart B
-```{r}
-
-
-
 
 
 ```

@@ -22,11 +22,13 @@ library(patchwork)
 library(lmtest)
 library(dplyr)
 library(tidycensus)
+require(data.table)
+library(gridExtra)
+library(ggplot2)
 ```
 
 
 ## Motivation
-
 
 In 2020, the world entered into a pandemic and now two years later as we recover and try to move on with life, things are different. The pandemic brought with it a new lens that showed disparities based on SES, geographical location, etc. that always existed but were never taken seriously. Research has shown that people of color and those from a low SES are at higher risk to contracting COVID-19; as such, public health professionals should be aware of such gaps and make it an effort to especially focus on these groups at higher risk (Khanijahani et al., 2021).
 
@@ -43,6 +45,13 @@ Second, examining the relationship between health behaviors and SES factors and 
 Overall, studying the change in COVID-19 trend in New York State for each county, and examining spatial autocorrelation and the relationship with health behaviors and SES factors, can provide valuable insights. These discoveries can help public health officials to better understand the spread of COVID-19 and take effective action to reduce the risk of transmission in communities at higher risk and address presisting health disparities.
 
 ## Data Processing and Cleaning 
+
+
+
+
+
+
+
 
 
 
@@ -78,14 +87,9 @@ fig
 
 From the plot we can see that New York, Queens and Kings have the highest socio economic score, but have the lowest health factors ranks. The size of the bubble signifies total population of the county. Nassau, Suffolk, Westcher have low health and socio-ecnomic scores. 
 
-Below is a colorpleth map to good understanding on the above in a spatial context: 
+Below is a colorpleth map to good understanding on the above in a spatial context,: 
 
 ```{r}
-require(data.table)
-require(tidycensus)
-require(ggplot2)
-library(dplyr)
-library(tidyverse)
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
 census_data <- load_variables(2018, "acs5", cache=T)
@@ -103,57 +107,184 @@ NY_df <- get_decennial(state = "ny",
                        variables = vars,
                        geometry = T,
                        output = "wide")
-View(NY_df)
-
 
 NY_df = NY_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
 
 
-NY_df  %>%
+p1 = NY_df  %>%
   ggplot(aes(fill = medage)) + 
   geom_sf(color = NA) + 
   scale_fill_viridis_c(option = "magma") 
 
-ny_covid = read.csv('data/covid_testing.csv')
+total$Geometry = total$geometry
+p2 =  total %>%
+  ggplot(aes(fill = health)) + 
+  geom_sf(color = NA) + 
+  scale_fill_viridis_c(option = "magma") 
+library(gridExtra)
+library(ggplot2)
+grid.arrange(p1,p2,nrow,x= 1)
+
+```
+
+On the left we can see a chloropleth mao of medage per county in new york on the right is a chloropleth map of health factor rank per county. 
+
+```{r NY vax plot}
+ny_vax =
+  read_csv("./grace/ny_covidvax.csv") %>% 
+  janitor::clean_names() %>% 
+  select(-region, -series_complete) %>% 
+  rename(date = report_as_of) %>% 
+  mutate(date = lubridate::mdy(date))
+vax_plotly =
+  ny_vax %>%
+  filter(date == "2022-11-14") %>%
+  mutate(county = fct_reorder(county, first_dose, .desc = TRUE)) %>%
+  mutate(text_label = str_c("County: ", county, "\nVaccinations: ", first_dose)) %>% 
+  plot_ly(x = ~county, 
+          y = ~first_dose, 
+          type = "bar", 
+          text = ~text_label) |>
+          layout(xaxis = list(title = "County in New York State"), 
+                 yaxis = list(title = "Cumulative Number of People with at least one dose"),          
+                 title = "Cumulative people with at least one dose of any COVID-19 vaccine by county by 11/14/2022")
+vax_plotly
+```
+From the plot created of the cumulative distribution of people who have at-least the first dose of any COVID-19 vaccine by 11/14/2022, the highest ranking counties are all located in three major regions of New York State: New York City, Long Island, and Hudson Valley. Erie and Monroe counties also have high counts and they are from Western NY and Finger Lakes. This is expected as these are some of the most populous counties in New York State.
+
+```{r}
+ny_death =
+  read_csv("./grace/ny_coviddeaths.csv") %>% 
+  janitor::clean_names() %>%
+  rename(date = report_date, n_fatality = place_of_fatality) %>% 
+  mutate(date = lubridate::mdy(date)) %>%
+  select(-deaths_by_county_of_residence) %>%
+  filter(county != "Statewide Total")
+deaths_plotly =
+  ny_death %>%
+  filter(date == "2022-11-14") %>%
+  mutate(county = fct_reorder(county, n_fatality, .desc = TRUE)) %>% 
+  mutate(text_label = str_c("County: ", county, "\nDeaths: ", n_fatality)) %>% 
+  plot_ly(x = ~county, 
+          y = ~n_fatality, 
+          type = "bar", 
+          text = ~text_label) |>
+          layout(xaxis = list(title = "County in New York State"), 
+                 yaxis = list(title = "Cumulative Number of Fatalities"),          
+                 title = "Cumulative COVID-19 deaths by county by 11/14/2022")
+deaths_plotly
+
+```
+From the plot created of the cumulative distribution of people who have died from COVID-19 by 11/14/2022, the highest ranking counties are also all located in three major regions of New York State: New York City, Long Island, and Hudson Valley, along with Erie and Monroe counties from Western NY and Finger Lakes. Again, this is expected as these are some of the most populous counties in New York State. 
+
+
+# Statistical Analysis 
+
+```{r}
+
+
+
+```
+
+# Spatial Analysis
+
+```{r}
+ny_covid = read.csv('data/covid_testing.csv')  %>%
+  janitor::clean_names()
+
+###############################
+ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
+##############################
+total <- merge(ny_covid,NY_df,by="county")
 
 
 ```
 
 
-# Statistical Analysis ###
+
+```{r}
+
+group_df =  sub_df %>% group_by(county)  %>%
+summarise(total_covid = sum(new_positives))
 
 
+mon = seq(as.Date("2021-01-01"), as.Date("2022-01-01"), by = "3 months")
+df_list = list()
+# loop version 2
+for (i in 1:4) {
+  print(i)
+  sub_df = total[total$test_date >= mon[[i]] & total$test_date <= mon[[i+1]], ]
+  group_df =  sub_df %>% group_by(county)  %>%
+    summarise(total_covid = sum(new_positives))
+  df = dplyr :: left_join(group_df, NY_df, by = 'county')
+  df_list[[i]] = df
+}
 
 
+p <- list()
+for(i in 1:4){
+  p[[i]] <- df_list[[i]] %>%
+    ggplot() +
+    geom_sf(aes(fill = total_covid, geometry = geometry)) + 
+    scale_fill_viridis_c(option = "viridis") 
+}
+do.call(grid.arrange,p)
+
+```
+
+# Autoregression
+
+```{r}
+ny_covid = read.csv('data/covid_testing.csv')  %>%
+  janitor::clean_names()
+
+######################################################
+ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
+sub_df = ny_covid[ny_covid$county == 'New York City', ]
+sub_df<- sub_df[seq(dim(sub_df)[1],1),]
+
+# basic scatterplot
+ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
+  geom_point(alpha = 10/100, colour = "red") + 
+  scale_x_date(date_labels = "%m-%Y") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = "New positives per month in NYC")
+
+```
+The above plot is a scatter plot of the daily positive cases in New York City from March 2020 up-till now. We can see the wave like trend, especially from hill shaped curves at the start of the 2020, start of 2021, start of 2022 when it peaked around mid 2022. This implies the existence of auto regressive behavior which we were interested to investigate. To better understand the auto-regressive trend we built a Autocorrelation Function (ACF) plot and Partial Autocorrelation Function (PACF) plot. The ACF and PACF plots are used to figure out the order of AR, MA, and ARMA models. Autocorrelation is the correlation between a time series with a lagged version.
+The partial autocorrelation at lag k is the autocorrelation between X_t_t and X_(t-k) that is not accounted for by lags 1 through 𝑘−1. 
 
 
+```{r}
+library(forecast)
+conf.level <- 0.95
+ciline <- qnorm((1 - conf.level)/2)/sqrt(length(sub_df$new_positives))
+bacf <- pacf(sub_df$new_positives, plot = FALSE)
+bacfdf <- with(bacf, data.frame(lag, acf))
 
+library(ggplot2)
+q <- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
+  geom_bar(stat = "identity", position = "identity",fill="lightblue")  
+q
 
+```
 
+```{r}
+reg1 = arima(sub_df$new_positives, order = c(3,0,0))
+summary(reg1)
+ar = fitted(reg1)
 
+ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
+  geom_point(alpha = 20/100, color = "red") + 
+  scale_x_date(date_labels = "%m-%Y",date_breaks = "1 month") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = "Scatter Plot of Daily Postive Cases in New York City from 2020-2022
+       with ARIMA trend line", x= "Test Date",
+       y = 'Positive Cases Detected') +
+  geom_line(aes(y=ar,color = "ARIMA trend line")) +  
+  scale_color_manual(values = c("ARIMA trend line" = "black"),
+                                          labels = "Fitted Arima Model")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- ###
- 
-
-
-
-
+```

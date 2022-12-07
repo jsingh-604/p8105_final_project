@@ -29,22 +29,6 @@ NY_df = NY_df %>%
     county = gsub(" County, New York","",NAME))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 NY_df  %>%
   ggplot(aes(fill = medage)) + 
   geom_sf(color = NA) + 
