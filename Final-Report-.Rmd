@@ -106,10 +106,6 @@ nys_df <- get_decennial(state = "ny",
                        output = "wide")
 
 NY_df = nys_df
-
-NY_df = NY_df %>%
-  janitor::clean_names()
-
 nys_df = nys_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))

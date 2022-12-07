@@ -1,8 +1,9 @@
-name: "Project Overview"
+name: "Spatio-temporal Association of Health and SES Measures with COVID-19 Risk in NY"
 output_dir: "."
 navbar:
   title: "Project Overview"
-  left:
+  href: index.html
+  left: 
     - text: "Screencast"
       href: video.html
   right:

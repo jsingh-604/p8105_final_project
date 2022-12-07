@@ -38,7 +38,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 1. Load Data
 2. Choose variables
-3. Create a data frame named ny_df
+3. Create a data frame named nys_df
 ```{r census_data, message = FALSE}
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
@@ -52,23 +52,23 @@ vars <- c(tpop = 'P001001',
           apop = 'P003005',
           hpop = 'P004003')
 
-ny_df <- get_decennial(state = "ny", 
+nys_df <- get_decennial(state = "ny", 
                        geography = "county",
                        variables = vars,
                        geometry = T,
                        output = "wide")
 
-ny_df = ny_df %>%
+nys_df = nys_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
 
-ny_df$race_div <- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
-                          (ny_df$bpop*(ny_df$bpop-1))+
-                          (ny_df$hpop*(ny_df$hpop-1))+
-                          (ny_df$apop*(ny_df$apop-1)))/
-                         (ny_df$tpop*(ny_df$tpop-1)))
+nys_df$race_div <- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
+                          (nys_df$bpop*(nys_df$bpop-1))+
+                          (nys_df$hpop*(nys_df$hpop-1))+
+                          (nys_df$apop*(nys_df$apop-1)))/
+                         (nys_df$tpop*(nys_df$tpop-1)))
 
-ny_df = ny_df %>% 
+nys_df = nys_df %>% 
   select(tpop, medage, county, race_div)
 ```
 
@@ -262,7 +262,7 @@ covid_df = covid_df_v1 %>%
 
 ```{r}
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
-comb = left_join(covid_hr, ny_df, by = 'county') %>% 
+comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 >= .73*(tpop) ~ 1,
                              vax_dose1 < .73*(tpop) ~ 0))

@@ -1,9 +1,16 @@
 ---
-title: "r_final_proj"
-output: github_document
+title: "FinalReport_draft"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: cosmo
 ---
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 library(data.table)
 library(tidycensus)
 library(tidyverse)
@@ -32,14 +39,27 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-# Part I: Observing/Cleaning Data
+## Data Processing and Cleaning
 
-## 2020 Census Data: Load & Clean (2021 data N/A as it is relased on 12/8)
+### Data Sources
+Our data were downloaded from three different sources:
 
-1. Load Data
-2. Choose variables
-3. Create a data frame named nys_df
-```{r census_data, message = FALSE}
+1. **New York State Demographics**: US Census Bureau's demographics data were imported using `tidycensus`.
+
+2. **New York State Health Ranking** [(dataset)](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources):
+Four data sets (2019, 2020, 2021 and 2022 New York State Health Ranking Data) were downloaded as .xls/xlsx. These data sets are provided by the University of Wisconsin Population Health Institute, which performs extensive analyses to calculate each New York county's score for health factors (health behaviors, clinical care, SES factors, and physical environment) and health outcome (quality of life, and length of life). 
+
+3. **New York State COVID-19** [(dataset)](https://data.ny.gov/browse?tags=covid-19):
+Three data sets (COVID testing, COVID vaccination, COVID fatalities from 2020 to 11/2022) were downloaded as .csv.
+
+### Data Cleaning
+1. **New York State Demographics**  
+We imported US Census Bureau's 2020 data because 2021 data is not available until 12/8/2022. As demographics data do not change significantly each year, 2020 data were used for analysis. Then we decided to include the following variables, as we would like to adjust them in our models:
+* total population in each county (tpop)
+* median age in each county (medage)
+* racial diversity index (race_div): calculated Simpson's Diversity Index in lines 65 to 69 (higher index indicates more racial diversity)
+
+```{r census_data, results = FALSE, message = FALSE}
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
 census_data <- load_variables(2020, "acs5", cache=T)
@@ -72,11 +92,15 @@ nys_df = nys_df %>%
   select(tpop, medage, county, race_div)
 ```
 
-## 2019-2022 Health Ranking (HR) Data: Load & Clean
+2. **New York State Health Ranking**  
+Same steps were taken for each year:
+As the original excel files contain multiple sheets. We only imported the sheets that contain variables of interest.  
+ <br>Each county's health ranking was imported from the sheet named "Outcomes & Factors SubRankings." From the sheet, only the following variables were selected for future analysis: each county's rank for health outcomes (quality of life, renamed to qol_r; length of life, renamed to longevity_r), health factors (health behaviors, renamed to health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic factors, renamed to ses_r; physical environment, renamed to env_r).
+ <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % hispanic, p_hispanic; % black, renamed p_black). As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (hispanic + black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30 [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)
 
-### 2019 HR Data
+```{r, results = FALSE, message = FALSE} 
+# 2019 HR Data
 
-```{r} 
 hr2019 = read_excel('data/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -106,11 +130,8 @@ demo2019 = read_excel('data/ny_hr19.xls', sheet = 'Additional Measure Data', ski
 
 total2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>% 
   mutate(year = 2019)
-```
 
-### 2020 HR Data
-
-```{r, message = FALSE}
+# 2020 HR Data
 hr2020 = read_excel('data/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -140,11 +161,8 @@ demo2020 = read_excel('data/ny_hr20.xlsx', sheet = 'Additional Measure Data', sk
 
 total2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>% 
   mutate(year = 2020)
-```
 
-### 2021 HR Data
-
-```{r}
+# 2021 HR Data
 hr2021 = read_excel('data/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -174,12 +192,8 @@ demo2021 = read_excel('data/ny_hr21.xlsx', sheet = 'Additional Measure Data', sk
 
 total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
   mutate(year = 2021)
-```
 
-### 2022 HR Data:
-
-Health Ranking Data
-```{r, message = FALSE}
+# 2022 HR Data
 hr2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
@@ -209,23 +223,15 @@ demo2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Additional Measure Data', sk
 
 total2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
   mutate(year = 2022)
-```
 
-Combine 2019-2022
-```{r}
+# Merge
 hr_all = rbind(total2019, total2020, total2021, total2022)
 ```
 
-## Load 2020 to November 2022 NY COVID-19 Data
+3. **New York State COVID-19**  
+From the three data sets we extracted the following variables of interest: number of new COVID cases per day, cumulative number of deaths reported per day, cumulative # of individuals who received the first dose of the vaccine. For the data set with cumulative number of deaths, the county "Manhattan" was replaced with "New York" for consistency. Next, the three data sets were merged by "date" and "county." The merged data set was then grouped according to "county" and "year" and the following variables were created: total number of new positive cases per year, called n_cases; total number of deaths per year, called n_deaths; and total number of individuals who received the first dose of the vaccine per year, called vax_dose1 (this data is not available for year 2020).
 
-Decided to look at variables related to covid testing (i.e., # positive cases, # tests performed), covid vaccination rate, and covid-related fatalities  
-1. Import 3 separate csv files (ny_covidtest, ny_coviddeaths, ny_covidvax)
-3. Select variables of interest
-4. Merge 3 data frames into one by `date` and `county`
-5. Convert `date` data type from char to date
-6. Separate date into day, month, & year for analysis
-
-```{r, message = FALSE}
+```{r, results = FALSE, message = FALSE, warnings = FALSE}
 ny_test = read_csv('data/ny_covidtest.csv') %>% 
 janitor::clean_names() %>% 
 filter(geography == 'COUNTY') %>% 
@@ -237,7 +243,7 @@ ny_death = read_csv("data/ny_coviddeaths.csv") %>%
 janitor::clean_names() %>% 
 rename(date = report_date, n_fatality = place_of_fatality) %>%
 select(-deaths_by_county_of_residence) %>% 
-mutate(date = lubridate::mdy(date))
+mutate(date = lubridate::mdy(date), county = replace(county, county == 'Manhattan', 'New York'))
 
 ny_vax = read_csv("data/ny_covidvax.csv") %>% 
 janitor::clean_names() %>% 
@@ -252,15 +258,16 @@ covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>%
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
 covid_df = covid_df_v1 %>% 
-  group_by(county, year) %>% 
+  group_by(year, county) %>% 
   summarise(n_cases = sum(new_positives),
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))
 ```
 
-## Merge Data for Analysis
+4. **Dataset for Analysis**  
+For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 73% as it was reported that nearly ~73% of the US population had completed at least the first dose of vaccine by the end of 2021. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states#:~:text=Percent%20of%20people%20receiving%20vaccines%20in%20the%20US&text=*%20In%20Dec.,vaccination%20coverage%20estimates%20between%20jurisdictions.)
 
-```{r}
+```{r, results = FALSE, message = FALSE}
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
 comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
@@ -268,122 +275,28 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
                              vax_dose1 < .73*(tpop) ~ 0))
 ```
 
-# Regression Test:
+## Statistical Analysis
 
-```{r}
-# residual vs. leverage -- test for influential points. No points falls outside Cook's distance, indicating there are no major outliers
+Question 1: Which health factors are associated with COVID-19 incidences?
 
-# residual vs. fitted -- no strong trend, so okay but demonstrates that there is more to be explored.
+Health factors -- health behaviors, clinical care, physical environment, and socioeconomic factors -- are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases. To do so, we ran a linear regression test
 
-# normal q-q -- since most points fall along the line, no extreme skewness and the data is fairly normally distributed. Several deviations at the lowest/highest quartile indicate that random fluctuations may be seen at extreme ends.
+<img src="images/model1.png" style="width:75%">
 
-# scale-location -- homoscedascity off
-```
 
-### Models 1 to 3 -- Health Factor/Outcome Ranking & COVID
 
-Model 1
-* x = health factor variables, median age, 
-* y = number of covid cases in 2021
+Health factors are com
 
-```{r}
-m1 = comb %>% 
-  filter(year == '2021') %>% 
-  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .)
+Health factors are conditions within each county that can be improved 
 
-plot(m1)
+Health factors represent community conditions that we can change to improve health and opportunity, such as access to
+quality education, living wage jobs, quality clinical care, nutritious foods, green spaces, and secure and affordable housing.
+We measure four health factor areas.
 
-plot1 = comb %>% 
-  filter(year == '2021') %>% 
-  modelr::add_residuals(m1) %>% 
-  modelr::add_predictions(m1) %>% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = "Model 1: Residual vs. Fitted Values",
-    x = "Fitted Values",
-    y = "Residuals")
 
-plot1
 
-m1 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
-```
+First, we were interested in testing whether health factor scores in each county are associated with COVID-19 incidences.
 
-Model 2
-```{r}
-m2 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
-  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
 
-plot(m2)
 
-plot2 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
-  modelr::add_residuals(m2) %>% 
-  modelr::add_predictions(m2) %>% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = "Model 2: Residual vs. Fitted Values",
-    x = "Fitted Values",
-    y = "Residuals")
-
-plot2
-
-m2 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
-```
-
-Model 3
-```{r}
-m3 = comb %>% 
-  filter(year == '2021') %>% 
-  lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .,)
-
-plot(m3)
-
-m3 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
-
-```
-
-### Models 4 to 6 -- SES, Race/Ethnicity & COVID
-Model 4
-```{r}
-m4 = comb %>% 
-  filter(year == '2021') %>% 
-  glm(vax_maj ~ segregation + p_minority + median_income + medage, data = .)
-
-plot(m4)
-
-summary(m4)
-
-m4 %>% 
-  broom::tidy() %>% 
-  mutate(OR = exp(estimate),
-         OR_CI_lower = exp(estimate - 1.96*(std.error)),
-         OR_CI_upper = exp(estimate + 1.96*(std.error))) %>% 
-  select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %>% 
-  knitr::kable()
-```
-
-Model 5
-```{r}
-m5 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
-  lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
-
-plot(m5)
-
-m5 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3)
-```
+2. **COVID-19 and SES/Race and Ethnicity**
