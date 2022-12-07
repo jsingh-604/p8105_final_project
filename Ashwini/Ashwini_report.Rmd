@@ -32,14 +32,24 @@ Khanijahani, A., Iezadi, S., Gholipour, K. et al. A systematic review of racial/
 
 ## Data Sources:
 
-To conduct our analysis, we considered three data sources:
+To conduct our analysis, we considered three publically available data sources:
 
 1. US Census Bureau: Demographics
 
+
+
 2. U of Wisconsin, Population Health Institute: New York State Health Ranking
+
+County Health Rankings & Roadmaps (CHR&R) is a program of the University of Wisconsin Population Health Institute.
+
+
+
 
 3. NY.gov: COVID-19 cases in New York from 2020-2022
 
+The official website for the State of New York contains a COVID-19 information page which also includes publically available data on COVID-19 testing, cases, vaccinations, etc. We choose datasets that includes information on COVID-19 test, cases, and vaccinations that included the `county` variable to be able to explore the distributions of these variables across counties. 
+
+link data???
 
 
 ## Data cleaning:
