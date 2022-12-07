@@ -667,6 +667,11 @@ comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;%
 </div>
 <div id="statistical-analysis" class="section level2">
 <h2>Statistical Analysis</h2>
+<p>Note: Though we initially planned to adjust for racial diversity in
+our model, the variable was removed because racial diversity index did
+not vary much among counties. For each model, only data from 2021 was
+used because there is no information on 2020 vaccination as the vaccine
+was developed in 2021 and 2022 data is incomplete.</p>
 <p>Question 1: Which health factors are associated with COVID-19
 incidence?</p>
 <p>Health factors – health behaviors, clinical care, physical
@@ -674,12 +679,96 @@ environment, and socioeconomic factors – are community conditions that
 can be modified and improved through public health interventions or
 health policies. Therefore, we were interested in seeing which factor(s)
 is significantly associated with the number of COVID-19 cases. To do so,
-we ran a linear regression test:</p>
+we ran a linear regression test.</p>
 <p><strong>Model 1</strong>
-<img src="images/model1.png" style="width:120%"></p>
-<ol start="2" style="list-style-type: decimal">
-<li><strong>COVID-19 and SES/Race and Ethnicity</strong></li>
-</ol>
+<img src="images/model1.png" style="width:100%"></p>
+<pre class="r"><code>m1 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .)
+
+m1 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">281132.339</td>
+<td align="right">0.003</td>
+</tr>
+<tr class="even">
+<td align="left">health_beh_r</td>
+<td align="right">-3135.730</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clinical_care_r</td>
+<td align="right">1016.997</td>
+<td align="right">0.042</td>
+</tr>
+<tr class="even">
+<td align="left">env_r</td>
+<td align="right">318.977</td>
+<td align="right">0.443</td>
+</tr>
+<tr class="odd">
+<td align="left">ses_r</td>
+<td align="right">1519.072</td>
+<td align="right">0.015</td>
+</tr>
+<tr class="even">
+<td align="left">longevity_r</td>
+<td align="right">-1073.673</td>
+<td align="right">0.077</td>
+</tr>
+<tr class="odd">
+<td align="left">qol_r</td>
+<td align="right">721.774</td>
+<td align="right">0.179</td>
+</tr>
+<tr class="even">
+<td align="left">medage</td>
+<td align="right">-5461.353</td>
+<td align="right">0.014</td>
+</tr>
+</tbody>
+</table>
+<p>After adjusting for median age and health outcome variables, health
+behaviors, clinical care, and SES factors were shown to be significantly
+associated with COVID-19 incidence (p &lt; .05). Health behaviors score
+is based on the community residents’ tobacco use, diet &amp; exercise,
+alcohol &amp; drug use, and sexual activity (i.e., number of STI/STD).
+Lelve of clinical care is determined by access to care and quality of
+care. Lastly, SES factors are comprised of education, employment,
+income, family &amp; social support, and community safety. Since factors
+such as unequal access to healthcare, high-quality education, increased
+use of drug and alcohol, etc. are well-known, potential drivers of
+health inequity. The results warrant further exploration of interaction
+between these factors and race/ethnicity.</p>
+<p>To test the validity of our results, we checked regression
+assumptions.</p>
+<pre class="r"><code>plot(m1)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/m1_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m1_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m1_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m1_check-4.png" width="90%" /></p>
+<p>The residual vs. fitted plot does not show strong pattern; however,
+the points are not perfectly, randomly scattered around residual = 0.
+The residual vs. leverage plot confirms that our model does not have any
+influential points because no point falls outside Cook’s distance.
+Meanwhile, scale-location plot indicates a potential violation of
+heteroscedasticity. Lastly, for the normal Q-Q plot, there appears to be
+no extreme skewness with majority of the points falling along the line.
+Some deviations at the lowest and highest quartile suggest that random
+fluctuation may be seen at extreme ends. Therefore, these plots indicate
+that our model, though sufficient, can be improved (i.e., add
+interaction terms, adjust for more variables) and there is more to be
+explored.</p>
 </div>
 
 
