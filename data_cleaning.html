@@ -1,436 +1,660 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
-
-
-
-
-<title>r_final_proj</title>
-
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
-<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
-<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<style>h1 {font-size: 34px;}
-       h1.title {font-size: 38px;}
-       h2 {font-size: 30px;}
-       h3 {font-size: 24px;}
-       h4 {font-size: 18px;}
-       h5 {font-size: 16px;}
-       h6 {font-size: 12px;}
-       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
-       pre:not([class]) { background-color: white }</style>
-<script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
-
-<style type="text/css">code{white-space: pre;}</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+@font-face {
+font-family: octicons-link;
+src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');
 }
-</script>
-
-
-
-
-
-
-
-
-
-<style type = "text/css">
-.main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
+body {
+-webkit-text-size-adjust: 100%;
+text-size-adjust: 100%;
+color: #333;
+font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+font-size: 16px;
+line-height: 1.6;
+word-wrap: break-word;
+}
+a {
+background-color: transparent;
+}
+a:active,
+a:hover {
+outline: 0;
+}
+strong {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+margin: 0.67em 0;
 }
 img {
-  max-width:100%;
+border: 0;
 }
-.tabbed-pane {
-  padding-top: 12px;
+hr {
+box-sizing: content-box;
+height: 0;
 }
-.html-widget {
-  margin-bottom: 20px;
+pre {
+overflow: auto;
 }
-button.code-folding-btn:focus {
-  outline: none;
+code,
+kbd,
+pre {
+font-family: monospace, monospace;
+font-size: 1em;
 }
-summary {
-  display: list-item;
+input {
+color: inherit;
+font: inherit;
+margin: 0;
 }
-details > summary > p:only-child {
-  display: inline;
+html input[disabled] {
+cursor: default;
+}
+input {
+line-height: normal;
+}
+input[type="checkbox"] {
+box-sizing: border-box;
+padding: 0;
+}
+table {
+border-collapse: collapse;
+border-spacing: 0;
+}
+td,
+th {
+padding: 0;
+}
+* {
+box-sizing: border-box;
+}
+input {
+font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+a {
+color: #4078c0;
+text-decoration: none;
+}
+a:hover,
+a:active {
+text-decoration: underline;
+}
+hr {
+height: 0;
+margin: 15px 0;
+overflow: hidden;
+background: transparent;
+border: 0;
+border-bottom: 1px solid #ddd;
+}
+hr:before {
+display: table;
+content: "";
+}
+hr:after {
+display: table;
+clear: both;
+content: "";
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 15px;
+margin-bottom: 15px;
+line-height: 1.1;
+}
+h1 {
+font-size: 30px;
+}
+h2 {
+font-size: 21px;
+}
+h3 {
+font-size: 16px;
+}
+h4 {
+font-size: 14px;
+}
+h5 {
+font-size: 12px;
+}
+h6 {
+font-size: 11px;
+}
+blockquote {
+margin: 0;
+}
+ul,
+ol {
+padding: 0;
+margin-top: 0;
+margin-bottom: 0;
+}
+ol ol,
+ul ol {
+list-style-type: lower-roman;
+}
+ul ul ol,
+ul ol ol,
+ol ul ol,
+ol ol ol {
+list-style-type: lower-alpha;
+}
+dd {
+margin-left: 0;
+}
+code {
+font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+font-size: 12px;
+}
+pre {
+margin-top: 0;
+margin-bottom: 0;
+font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+.select::-ms-expand {
+opacity: 0;
+}
+.octicon {
+font: normal normal normal 16px/1 octicons-link;
+display: inline-block;
+text-decoration: none;
+text-rendering: auto;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+.octicon-link:before {
+content: '\f05c';
+}
+.markdown-body:before {
+display: table;
+content: "";
+}
+.markdown-body:after {
+display: table;
+clear: both;
+content: "";
+}
+.markdown-body>*:first-child {
+margin-top: 0 !important;
+}
+.markdown-body>*:last-child {
+margin-bottom: 0 !important;
+}
+a:not([href]) {
+color: inherit;
+text-decoration: none;
+}
+.anchor {
+display: inline-block;
+padding-right: 2px;
+margin-left: -18px;
+}
+.anchor:focus {
+outline: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 1em;
+margin-bottom: 16px;
+font-weight: bold;
+line-height: 1.4;
+}
+h1 .octicon-link,
+h2 .octicon-link,
+h3 .octicon-link,
+h4 .octicon-link,
+h5 .octicon-link,
+h6 .octicon-link {
+color: #000;
+vertical-align: middle;
+visibility: hidden;
+}
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+text-decoration: none;
+}
+h1:hover .anchor .octicon-link,
+h2:hover .anchor .octicon-link,
+h3:hover .anchor .octicon-link,
+h4:hover .anchor .octicon-link,
+h5:hover .anchor .octicon-link,
+h6:hover .anchor .octicon-link {
+visibility: visible;
+}
+h1 {
+padding-bottom: 0.3em;
+font-size: 2.25em;
+line-height: 1.2;
+border-bottom: 1px solid #eee;
+}
+h1 .anchor {
+line-height: 1;
+}
+h2 {
+padding-bottom: 0.3em;
+font-size: 1.75em;
+line-height: 1.225;
+border-bottom: 1px solid #eee;
+}
+h2 .anchor {
+line-height: 1;
+}
+h3 {
+font-size: 1.5em;
+line-height: 1.43;
+}
+h3 .anchor {
+line-height: 1.2;
+}
+h4 {
+font-size: 1.25em;
+}
+h4 .anchor {
+line-height: 1.2;
+}
+h5 {
+font-size: 1em;
+}
+h5 .anchor {
+line-height: 1.1;
+}
+h6 {
+font-size: 1em;
+color: #777;
+}
+h6 .anchor {
+line-height: 1.1;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table,
+pre {
+margin-top: 0;
+margin-bottom: 16px;
+}
+hr {
+height: 4px;
+padding: 0;
+margin: 16px 0;
+background-color: #e7e7e7;
+border: 0 none;
+}
+ul,
+ol {
+padding-left: 2em;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+margin-top: 0;
+margin-bottom: 0;
+}
+li>p {
+margin-top: 16px;
+}
+dl {
+padding: 0;
+}
+dl dt {
+padding: 0;
+margin-top: 16px;
+font-size: 1em;
+font-style: italic;
+font-weight: bold;
+}
+dl dd {
+padding: 0 16px;
+margin-bottom: 16px;
+}
+blockquote {
+padding: 0 15px;
+color: #777;
+border-left: 4px solid #ddd;
+}
+blockquote>:first-child {
+margin-top: 0;
+}
+blockquote>:last-child {
+margin-bottom: 0;
+}
+table {
+display: block;
+width: 100%;
+overflow: auto;
+word-break: normal;
+word-break: keep-all;
+}
+table th {
+font-weight: bold;
+}
+table th,
+table td {
+padding: 6px 13px;
+border: 1px solid #ddd;
+}
+table tr {
+background-color: #fff;
+border-top: 1px solid #ccc;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+img {
+max-width: 100%;
+box-sizing: content-box;
+background-color: #fff;
+}
+code {
+padding: 0;
+padding-top: 0.2em;
+padding-bottom: 0.2em;
+margin: 0;
+font-size: 85%;
+background-color: rgba(0,0,0,0.04);
+border-radius: 3px;
+}
+code:before,
+code:after {
+letter-spacing: -0.2em;
+content: "\00a0";
+}
+pre>code {
+padding: 0;
+margin: 0;
+font-size: 100%;
+word-break: normal;
+white-space: pre;
+background: transparent;
+border: 0;
+}
+.highlight {
+margin-bottom: 16px;
+}
+.highlight pre,
+pre {
+padding: 16px;
+overflow: auto;
+font-size: 85%;
+line-height: 1.45;
+background-color: #f7f7f7;
+border-radius: 3px;
+}
+.highlight pre {
+margin-bottom: 0;
+word-break: normal;
+}
+pre {
+word-wrap: normal;
 }
 pre code {
-  padding: 0;
+display: inline;
+max-width: initial;
+padding: 0;
+margin: 0;
+overflow: initial;
+line-height: inherit;
+word-wrap: normal;
+background-color: transparent;
+border: 0;
+}
+pre code:before,
+pre code:after {
+content: normal;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font-size: 11px;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.pl-c {
+color: #969896;
+}
+.pl-c1,
+.pl-s .pl-v {
+color: #0086b3;
+}
+.pl-e,
+.pl-en {
+color: #795da3;
+}
+.pl-s .pl-s1,
+.pl-smi {
+color: #333;
+}
+.pl-ent {
+color: #63a35c;
+}
+.pl-k {
+color: #a71d5d;
+}
+.pl-pds,
+.pl-s,
+.pl-s .pl-pse .pl-s1,
+.pl-sr,
+.pl-sr .pl-cce,
+.pl-sr .pl-sra,
+.pl-sr .pl-sre {
+color: #183691;
+}
+.pl-v {
+color: #ed6a43;
+}
+.pl-id {
+color: #b52a1d;
+}
+.pl-ii {
+background-color: #b52a1d;
+color: #f8f8f8;
+}
+.pl-sr .pl-cce {
+color: #63a35c;
+font-weight: bold;
+}
+.pl-ml {
+color: #693a17;
+}
+.pl-mh,
+.pl-mh .pl-en,
+.pl-ms {
+color: #1d3e81;
+font-weight: bold;
+}
+.pl-mq {
+color: #008080;
+}
+.pl-mi {
+color: #333;
+font-style: italic;
+}
+.pl-mb {
+color: #333;
+font-weight: bold;
+}
+.pl-md {
+background-color: #ffecec;
+color: #bd2c00;
+}
+.pl-mi1 {
+background-color: #eaffea;
+color: #55a532;
+}
+.pl-mdr {
+color: #795da3;
+font-weight: bold;
+}
+.pl-mo {
+color: #1d3e81;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.task-list-item {
+list-style-type: none;
+}
+.task-list-item+.task-list-item {
+margin-top: 3px;
+}
+.task-list-item input {
+margin: 0 0.35em 0.25em -1.6em;
+vertical-align: middle;
+}
+:checked+.radio-label {
+z-index: 1;
+position: relative;
+border-color: #4078c0;
+}
+.sourceLine {
+display: inline-block;
+}
+code .kw { color: #000000; }
+code .dt { color: #ed6a43; }
+code .dv { color: #009999; }
+code .bn { color: #009999; }
+code .fl { color: #009999; }
+code .ch { color: #009999; }
+code .st { color: #183691; }
+code .co { color: #969896; }
+code .ot { color: #0086b3; }
+code .al { color: #a61717; }
+code .fu { color: #63a35c; }
+code .er { color: #a61717; background-color: #e3d2d2; }
+code .wa { color: #000000; }
+code .cn { color: #008080; }
+code .sc { color: #008080; }
+code .vs { color: #183691; }
+code .ss { color: #183691; }
+code .im { color: #000000; }
+code .va {color: #008080; }
+code .cf { color: #000000; }
+code .op { color: #000000; }
+code .bu { color: #000000; }
+code .ex { color: #000000; }
+code .pp { color: #999999; }
+code .at { color: #008080; }
+code .do { color: #969896; }
+code .an { color: #008080; }
+code .cv { color: #008080; }
+code .in { color: #008080; }
+</style>
+<style>
+body {
+box-sizing: border-box;
+min-width: 200px;
+max-width: 980px;
+margin: 0 auto;
+padding: 45px;
+padding-top: 0px;
 }
 </style>
-
-
-<style type="text/css">
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #adb5bd;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
-}
-</style>
-
-<script type="text/javascript">
-// manage active state of menu based on current page
-$(document).ready(function () {
-  // active menu anchor
-  href = window.location.pathname
-  href = href.substr(href.lastIndexOf('/') + 1)
-  if (href === "")
-    href = "index.html";
-  var menuAnchor = $('a[href="' + href + '"]');
-
-  // mark the anchor link active (and if it's in a dropdown, also mark that active)
-  var dropdown = menuAnchor.closest('li.dropdown');
-  if (window.bootstrap) { // Bootstrap 4+
-    menuAnchor.addClass('active');
-    dropdown.find('> .dropdown-toggle').addClass('active');
-  } else { // Bootstrap 3
-    menuAnchor.parent().addClass('active');
-    dropdown.addClass('active');
-  }
-
-  // Navbar adjustments
-  var navHeight = $(".navbar").first().height() + 15;
-  var style = document.createElement('style');
-  var pt = "padding-top: " + navHeight + "px; ";
-  var mt = "margin-top: -" + navHeight + "px; ";
-  var css = "";
-  // offset scroll position for anchor links (for fixed navbar)
-  for (var i = 1; i <= 6; i++) {
-    css += ".section h" + i + "{ " + pt + mt + "}\n";
-  }
-  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
-  document.head.appendChild(style);
-});
-</script>
-
-<!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "\e259";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "\e258";
-  font-family: 'Glyphicons Halflings';
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-  background-color: transparent;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
-
-<!-- code folding -->
-
-
 
 
 </head>
 
 <body>
 
-
-<div class="container-fluid main-container">
-
-
-
-
-<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="index.html">Project Overview</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li>
-  <a href="video.html">Screencast</a>
-</li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="data.html">Data</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Analysis
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Trends over time</li>
-    <li class="dropdown-header">Health Factors</li>
-    <li class="dropdown-header">To be donw</li>
-    <li>
-      <a href="spatial_maps.html">Spatial trends/visualization</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="mailto:&lt;js5958@cumc.columbia.edu&gt;">
-    <span class="fa fa-envelope fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="https://github.com/jsingh-604/p8105_final_project/">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div><!--/.container -->
-</div><!--/.navbar -->
-
-<div id="header">
-
-
-
-<h1 class="title toc-ignore">r_final_proj</h1>
-
-</div>
-
-
-<div id="part-i-observingcleaning-data" class="section level1">
-<h1>Part I: Observing/Cleaning Data</h1>
-<div id="census-data-load-clean-2021-data-na-as-it-is-relased-on-128"
-class="section level2">
-<h2>2020 Census Data: Load &amp; Clean (2021 data N/A as it is relased
-on 12/8)</h2>
+<h1 id="r_final_proj">r_final_proj</h1>
+<h1 id="part-i-observingcleaning-data">Part I: Observing/Cleaning
+Data</h1>
+<h2 id="id_2020-census-data-load--clean-2021-data-na-as-it-is-relased-on-128">2020
+Census Data: Load &amp; Clean (2021 data N/A as it is relased on
+12/8)</h2>
 <ol style="list-style-type: decimal">
 <li>Load Data</li>
 <li>Choose variables</li>
 <li>Create a data frame named ny_df</li>
 </ol>
-<pre class="r"><code>census_api_key(&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;)
-
-census_data &lt;- load_variables(2020, &quot;acs5&quot;, cache=T)
-fwrite(census_data, &quot;census_variables.csv&quot;)
-
-vars &lt;- c(tpop = &#39;P001001&#39;,
-          medage = &#39;P013001&#39;,
-          wpop = &#39;P003002&#39;,
-          bpop = &#39;P003003&#39;,
-          apop = &#39;P003005&#39;,
-          hpop = &#39;P004003&#39;)
-
-ny_df &lt;- get_decennial(state = &quot;ny&quot;, 
-                       geography = &quot;county&quot;,
-                       variables = vars,
-                       geometry = T,
-                       output = &quot;wide&quot;)</code></pre>
-<pre><code>## 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |                                                                      |   1%
-  |                                                                            
-  |=                                                                     |   1%
-  |                                                                            
-  |=                                                                     |   2%
-  |                                                                            
-  |==                                                                    |   2%
-  |                                                                            
-  |==                                                                    |   3%
-  |                                                                            
-  |===                                                                   |   4%
-  |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
-  |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   6%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |=====                                                                 |   8%
-  |                                                                            
-  |======                                                                |   8%
-  |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=======                                                               |  10%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |==========                                                            |  15%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |===========                                                           |  16%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |=============                                                         |  18%
-  |                                                                            
-  |==============                                                        |  19%
-  |                                                                            
-  |==============                                                        |  20%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================                                                   |  27%
-  |                                                                            
-  |===================                                                   |  28%
-  |                                                                            
-  |====================                                                  |  28%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=====================                                                 |  30%
-  |                                                                            
-  |========================                                              |  34%
-  |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |=============================                                         |  41%
-  |                                                                            
-  |==============================                                        |  43%
-  |                                                                            
-  |=================================                                     |  47%
-  |                                                                            
-  |============================================                          |  63%
-  |                                                                            
-  |========================================================              |  80%
-  |                                                                            
-  |====================================================================  |  96%
-  |                                                                            
-  |======================================================================|  99%
-  |                                                                            
-  |======================================================================| 100%</code></pre>
-<pre class="r"><code>ny_df = ny_df %&gt;%
-  mutate(
-    county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
-
-ny_df$race_div &lt;- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
-                          (ny_df$bpop*(ny_df$bpop-1))+
-                          (ny_df$hpop*(ny_df$hpop-1))+
-                          (ny_df$apop*(ny_df$apop-1)))/
-                         (ny_df$tpop*(ny_df$tpop-1)))
-
-ny_df = ny_df %&gt;% 
-  select(tpop, medage, county, race_div)</code></pre>
-</div>
-<div id="health-ranking-hr-data-load-clean" class="section level2">
-<h2>2019-2022 Health Ranking (HR) Data: Load &amp; Clean</h2>
-<div id="hr-data" class="section level3">
-<h3>2019 HR Data</h3>
-<pre class="r"><code>hr2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">census_api_key</span>(<span class="st">&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>census_data <span class="ot">&lt;-</span> <span class="fu">load_variables</span>(<span class="dv">2020</span>, <span class="st">&quot;acs5&quot;</span>, <span class="at">cache=</span>T)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(census_data, <span class="st">&quot;census_variables.csv&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">tpop =</span> <span class="st">&#39;P001001&#39;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">medage =</span> <span class="st">&#39;P013001&#39;</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">wpop =</span> <span class="st">&#39;P003002&#39;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">bpop =</span> <span class="st">&#39;P003003&#39;</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">apop =</span> <span class="st">&#39;P003005&#39;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">hpop =</span> <span class="st">&#39;P004003&#39;</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>ny_df <span class="ot">&lt;-</span> <span class="fu">get_decennial</span>(<span class="at">state =</span> <span class="st">&quot;ny&quot;</span>, </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                       <span class="at">geography =</span> <span class="st">&quot;county&quot;</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variables =</span> vars,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">geometry =</span> T,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                       <span class="at">output =</span> <span class="st">&quot;wide&quot;</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>ny_df <span class="ot">=</span> ny_df <span class="sc">%&gt;%</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">county =</span> <span class="fu">gsub</span>(<span class="st">&quot; County, New York&quot;</span>,<span class="st">&quot;&quot;</span>,NAME))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>ny_df<span class="sc">$</span>race_div <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (((ny_df<span class="sc">$</span>wpop<span class="sc">*</span>(ny_df<span class="sc">$</span>wpop<span class="dv">-1</span>))<span class="sc">+</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                          (ny_df<span class="sc">$</span>bpop<span class="sc">*</span>(ny_df<span class="sc">$</span>bpop<span class="dv">-1</span>))<span class="sc">+</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                          (ny_df<span class="sc">$</span>hpop<span class="sc">*</span>(ny_df<span class="sc">$</span>hpop<span class="dv">-1</span>))<span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                          (ny_df<span class="sc">$</span>apop<span class="sc">*</span>(ny_df<span class="sc">$</span>apop<span class="dv">-1</span>)))<span class="sc">/</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                         (ny_df<span class="sc">$</span>tpop<span class="sc">*</span>(ny_df<span class="sc">$</span>tpop<span class="dv">-1</span>)))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>ny_df <span class="ot">=</span> ny_df <span class="sc">%&gt;%</span> </span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(tpop, medage, county, race_div)</span></code></pre></div>
+<h2 id="id_2019-2022-health-ranking-hr-data-load--clean">2019-2022
+Health Ranking (HR) Data: Load &amp; Clean</h2>
+<h3 id="id_2019-hr-data">2019 HR Data</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>hr2019 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr19.xls&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Outcomes &amp; Factors SubRankings&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">starts_with</span>(<span class="st">&quot;z&quot;</span>), <span class="sc">-</span>fips, <span class="sc">-</span>state) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">longevity_r =</span> rank_5,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">qol_r =</span> rank_7,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">health_beh_r =</span> rank_9,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">clinical_care_r =</span> rank_11,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">ses_r =</span> rank_13,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">env_r =</span> rank_15)</span></code></pre></div>
 <pre><code>## New names:
 ## • `Z-Score` -&gt; `Z-Score...4`
 ## • `Rank` -&gt; `Rank...5`
@@ -444,21 +668,21 @@ ny_df = ny_df %&gt;%
 ## • `Rank` -&gt; `Rank...13`
 ## • `Z-Score` -&gt; `Z-Score...14`
 ## • `Rank` -&gt; `Rank...15`</code></pre>
-<pre class="r"><code>demo2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(&#39;county&#39;, 
-         &#39;segregation_index_2&#39;,
-         &#39;household_income&#39;,
-         &#39;percent_hispanic&#39;,
-         &#39;percent_african_american&#39;) %&gt;% 
-  rename(median_income = household_income,
-         segregation_score = segregation_index_2,
-         p_hispanic = percent_hispanic,
-         p_black = percent_african_american) %&gt;%
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_black + p_hispanic)</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>demo2019 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr19.xls&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Additional Measure Data&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">&#39;county&#39;</span>, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;segregation_index_2&#39;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;household_income&#39;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_hispanic&#39;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_african_american&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">median_income =</span> household_income,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">segregation_score =</span> segregation_index_2,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_hispanic =</span> percent_hispanic,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_black =</span> percent_african_american) <span class="sc">%&gt;%</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">segregation =</span> <span class="fu">case_when</span>(segregation_score <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                                 segregation_score <span class="sc">&gt;=</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">1</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">p_minority =</span> p_black <span class="sc">+</span> p_hispanic)</span></code></pre></div>
 <pre><code>## New names:
 ## • `95% CI - Low` -&gt; `95% CI - Low...5`
 ## • `95% CI - High` -&gt; `95% CI - High...6`
@@ -501,53 +725,49 @@ ny_df = ny_df %&gt;%
 ## • `95% CI - High` -&gt; `95% CI - High...89`
 ## • `95% CI - Low` -&gt; `95% CI - Low...107`
 ## • `95% CI - High` -&gt; `95% CI - High...108`</code></pre>
-<pre class="r"><code>total2019 = merge(x = hr2019, y = demo2019, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
-  mutate(year = 2019)</code></pre>
-</div>
-<div id="hr-data-1" class="section level3">
-<h3>2020 HR Data</h3>
-<pre class="r"><code>hr2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)
-
-demo2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(&#39;county&#39;, 
-         &#39;median_household_income&#39;, 
-         &#39;segregation_index_2&#39;,
-         &#39;percent_black&#39;,
-         &#39;percent_hispanic&#39;) %&gt;% 
-  rename(median_income = median_household_income, 
-         segregation_score = segregation_index_2,
-         p_black = percent_black,
-         p_hispanic = percent_hispanic) %&gt;% 
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_black + p_hispanic)
-
-total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
-  mutate(year = 2020)</code></pre>
-</div>
-<div id="hr-data-2" class="section level3">
-<h3>2021 HR Data</h3>
-<pre class="r"><code>hr2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>total2019 <span class="ot">=</span> <span class="fu">merge</span>(<span class="at">x =</span> hr2019, <span class="at">y =</span> demo2019, <span class="at">by =</span> <span class="st">&quot;county&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="dv">2019</span>)</span></code></pre></div>
+<h3 id="id_2020-hr-data">2020 HR Data</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hr2020 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr20.xlsx&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Outcomes &amp; Factors SubRankings&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">starts_with</span>(<span class="st">&quot;z&quot;</span>), <span class="sc">-</span>fips, <span class="sc">-</span>state) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">longevity_r =</span> rank_5,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">qol_r =</span> rank_7,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">health_beh_r =</span> rank_9,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">clinical_care_r =</span> rank_11,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">ses_r =</span> rank_13,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">env_r =</span> rank_15)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>demo2020 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr20.xlsx&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Additional Measure Data&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">&#39;county&#39;</span>, </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;median_household_income&#39;</span>, </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;segregation_index_2&#39;</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_black&#39;</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_hispanic&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">median_income =</span> median_household_income, </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">segregation_score =</span> segregation_index_2,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_black =</span> percent_black,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_hispanic =</span> percent_hispanic) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">segregation =</span> <span class="fu">case_when</span>(segregation_score <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>                                 segregation_score <span class="sc">&gt;=</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">1</span>),</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>           <span class="at">p_minority =</span> p_black <span class="sc">+</span> p_hispanic)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>total2020 <span class="ot">=</span> <span class="fu">merge</span>(<span class="at">x =</span> hr2020, <span class="at">y =</span> demo2020, <span class="at">by =</span> <span class="st">&quot;county&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="dv">2020</span>)</span></code></pre></div>
+<h3 id="id_2021-hr-data">2021 HR Data</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hr2021 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr21.xlsx&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Outcomes &amp; Factors SubRankings&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">starts_with</span>(<span class="st">&quot;z&quot;</span>), <span class="sc">-</span>fips, <span class="sc">-</span>state) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">longevity_r =</span> rank_5,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">qol_r =</span> rank_7,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">health_beh_r =</span> rank_9,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">clinical_care_r =</span> rank_11,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">ses_r =</span> rank_13,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">env_r =</span> rank_15)</span></code></pre></div>
 <pre><code>## New names:
 ## • `Z-Score` -&gt; `Z-Score...4`
 ## • `Rank` -&gt; `Rank...5`
@@ -561,21 +781,21 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 ## • `Rank` -&gt; `Rank...13`
 ## • `Z-Score` -&gt; `Z-Score...14`
 ## • `Rank` -&gt; `Rank...15`</code></pre>
-<pre class="r"><code>demo2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(&#39;county&#39;, 
-         &#39;median_household_income&#39;, 
-         &#39;segregation_index_2&#39;,
-         &#39;percent_black&#39;,
-         &#39;percent_hispanic&#39;) %&gt;% 
-  rename(median_income = median_household_income, 
-         segregation_score = segregation_index_2,
-         p_black = percent_black,
-         p_hispanic = percent_hispanic) %&gt;% 
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_black + p_hispanic)</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>demo2021 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr21.xlsx&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Additional Measure Data&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">&#39;county&#39;</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;median_household_income&#39;</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;segregation_index_2&#39;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_black&#39;</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_hispanic&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">median_income =</span> median_household_income, </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">segregation_score =</span> segregation_index_2,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_black =</span> percent_black,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_hispanic =</span> percent_hispanic) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">segregation =</span> <span class="fu">case_when</span>(segregation_score <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                                 segregation_score <span class="sc">&gt;=</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">1</span>),</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">p_minority =</span> p_black <span class="sc">+</span> p_hispanic)</span></code></pre></div>
 <pre><code>## New names:
 ## • `95% CI - Low` -&gt; `95% CI - Low...5`
 ## • `95% CI - High` -&gt; `95% CI - High...6`
@@ -645,141 +865,89 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 ## • `95% CI - High` -&gt; `95% CI - High...254`
 ## • `95% CI - Low` -&gt; `95% CI - Low...272`
 ## • `95% CI - High` -&gt; `95% CI - High...273`</code></pre>
-<pre class="r"><code>total2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
-  mutate(year = 2021)</code></pre>
-</div>
-<div id="hr-data-3" class="section level3">
-<h3>2022 HR Data:</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>total2021 <span class="ot">=</span> <span class="fu">merge</span>(<span class="at">x =</span> hr2021, <span class="at">y =</span> demo2021, <span class="at">by =</span> <span class="st">&quot;county&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="dv">2021</span>)</span></code></pre></div>
+<h3 id="id_2022-hr-data">2022 HR Data:</h3>
 <p>Health Ranking Data</p>
-<pre class="r"><code>hr2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)
-
-demo2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-    select(&#39;county&#39;, 
-         &#39;median_household_income&#39;, 
-         &#39;segregation_index&#39;,
-         &#39;percent_black&#39;,
-         &#39;percent_hispanic&#39;) %&gt;% 
-  rename(median_income = median_household_income, 
-         segregation_score = segregation_index,
-         p_black = percent_black,
-         p_hispanic = percent_hispanic) %&gt;% 
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_hispanic + p_black)
-
-total2022 = merge(x = hr2022, y = demo2022, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
-  mutate(year = 2022)</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hr2022 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr22.xlsx&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Outcomes &amp; Factors SubRankings&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">starts_with</span>(<span class="st">&quot;z&quot;</span>), <span class="sc">-</span>fips, <span class="sc">-</span>state) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">longevity_r =</span> rank_5,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">qol_r =</span> rank_7,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">health_beh_r =</span> rank_9,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">clinical_care_r =</span> rank_11,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">ses_r =</span> rank_13,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">env_r =</span> rank_15)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>demo2022 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&#39;data/ny_hr22.xlsx&#39;</span>, <span class="at">sheet =</span> <span class="st">&#39;Additional Measure Data&#39;</span>, <span class="at">skip =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="st">&#39;county&#39;</span>, </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;median_household_income&#39;</span>, </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;segregation_index&#39;</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_black&#39;</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>         <span class="st">&#39;percent_hispanic&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">median_income =</span> median_household_income, </span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">segregation_score =</span> segregation_index,</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_black =</span> percent_black,</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_hispanic =</span> percent_hispanic) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">segregation =</span> <span class="fu">case_when</span>(segregation_score <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>                                 segregation_score <span class="sc">&gt;=</span> <span class="dv">30</span> <span class="sc">~</span> <span class="dv">1</span>),</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>           <span class="at">p_minority =</span> p_hispanic <span class="sc">+</span> p_black)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>total2022 <span class="ot">=</span> <span class="fu">merge</span>(<span class="at">x =</span> hr2022, <span class="at">y =</span> demo2022, <span class="at">by =</span> <span class="st">&quot;county&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="dv">2022</span>)</span></code></pre></div>
 <p>Combine 2019-2022</p>
-<pre class="r"><code>hr_all = rbind(total2019, total2020, total2021, total2022)</code></pre>
-</div>
-</div>
-<div id="load-2020-to-november-2022-ny-covid-19-data"
-class="section level2">
-<h2>Load 2020 to November 2022 NY COVID-19 Data</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>hr_all <span class="ot">=</span> <span class="fu">rbind</span>(total2019, total2020, total2021, total2022)</span></code></pre></div>
+<h2 id="load-2020-to-november-2022-ny-covid-19-data">Load 2020 to
+November 2022 NY COVID-19 Data</h2>
 <p>Decided to look at variables related to covid testing (i.e., #
 positive cases, # tests performed), covid vaccination rate, and
-covid-related fatalities<br />
-1. Import 3 separate csv files (ny_covidtest, ny_coviddeaths,
+covid-related fatalities</p>
+<ol style="list-style-type: decimal">
+<li>Import 3 separate csv files (ny_covidtest, ny_coviddeaths,
 ny_covidvax) 3. Select variables of interest 4. Merge 3 data frames into
 one by <code>date</code> and <code>county</code> 5. Convert
-<code>date</code> data type from char to date 6. Separate date into day,
-month, &amp; year for analysis</p>
-<pre class="r"><code>ny_test = read_csv(&#39;grace/ny_covidtest.csv&#39;) %&gt;% 
-janitor::clean_names() %&gt;% 
-filter(geography == &#39;COUNTY&#39;) %&gt;% 
-select(-geography) %&gt;% 
-rename(date = test_date) %&gt;% 
-mutate(date = lubridate::mdy(date))  
-
-ny_death = read_csv(&quot;grace/ny_coviddeaths.csv&quot;) %&gt;% 
-janitor::clean_names() %&gt;% 
-rename(date = report_date, n_fatality = place_of_fatality) %&gt;%
-select(-deaths_by_county_of_residence) %&gt;% 
-mutate(date = lubridate::mdy(date))
-
-ny_vax = read_csv(&quot;grace/ny_covidvax.csv&quot;) %&gt;% 
-janitor::clean_names() %&gt;% 
-rename(date = report_as_of) %&gt;% 
-select(-region, -series_complete) %&gt;% 
-mutate(date = lubridate::mdy(date))
-
-ny_covid_v1 = left_join(ny_test, ny_death, by = c(&quot;date&quot;, &quot;county&quot;))
-
-covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;)) %&gt;% 
-  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
-  mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
-
-covid_df = covid_df_v1 %&gt;% 
-  group_by(county, year) %&gt;% 
-  summarise(n_cases = sum(new_positives),
-            vax_dose1 = max(first_dose),
-            n_deaths = max(n_fatality, na.rm = TRUE))</code></pre>
-</div>
-<div id="merge-data-for-analysis" class="section level2">
-<h2>Merge Data for Analysis</h2>
-<pre class="r"><code>covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;))
-comb = left_join(covid_hr, ny_df, by = &#39;county&#39;) %&gt;% 
-  mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 &gt;= .73*(tpop) ~ 1,
-                             vax_dose1 &lt; .73*(tpop) ~ 0))</code></pre>
-</div>
-</div>
-
-
-
-
-</div>
-
-<script>
-
-// add bootstrap table styles to pandoc tables
-function bootstrapStylePandocTables() {
-  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
-}
-$(document).ready(function () {
-  bootstrapStylePandocTables();
-});
-
-
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open');
-  });
-});
-</script>
-
-<!-- code folding -->
-
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
+<code>date</code> data type from char to date</li>
+<li>Separate date into day, month, &amp; year for analysis</li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ny_test <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">&#39;data/ny_covidtest.csv&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(geography <span class="sc">==</span> <span class="st">&#39;COUNTY&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(<span class="sc">-</span>geography) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rename</span>(<span class="at">date =</span> test_date) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">date =</span> lubridate<span class="sc">::</span><span class="fu">mdy</span>(date))  </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>ny_death <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/ny_coviddeaths.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rename</span>(<span class="at">date =</span> report_date, <span class="at">n_fatality =</span> place_of_fatality) <span class="sc">%&gt;%</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(<span class="sc">-</span>deaths_by_county_of_residence) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">date =</span> lubridate<span class="sc">::</span><span class="fu">mdy</span>(date))</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>ny_vax <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/ny_covidvax.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rename</span>(<span class="at">date =</span> report_as_of) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(<span class="sc">-</span>region, <span class="sc">-</span>series_complete) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">date =</span> lubridate<span class="sc">::</span><span class="fu">mdy</span>(date))</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>ny_covid_v1 <span class="ot">=</span> <span class="fu">left_join</span>(ny_test, ny_death, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;date&quot;</span>, <span class="st">&quot;county&quot;</span>))</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>covid_df_v1 <span class="ot">=</span> <span class="fu">left_join</span>(ny_covid_v1, ny_vax, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;date&quot;</span>, <span class="st">&quot;county&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(date, <span class="fu">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;month&quot;</span>, <span class="st">&quot;day&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;-&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(year), <span class="at">month =</span> <span class="fu">as.numeric</span>(month), <span class="at">day =</span> <span class="fu">as.numeric</span>(day))</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>covid_df <span class="ot">=</span> covid_df_v1 <span class="sc">%&gt;%</span> </span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county, year) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_cases =</span> <span class="fu">sum</span>(new_positives),</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>            <span class="at">vax_dose1 =</span> <span class="fu">max</span>(first_dose),</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>            <span class="at">n_deaths =</span> <span class="fu">max</span>(n_fatality, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div>
+<h2 id="merge-data-for-analysis">Merge Data for Analysis</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>covid_hr <span class="ot">=</span> <span class="fu">left_join</span>(covid_df, hr_all, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;county&quot;</span>, <span class="st">&quot;year&quot;</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>comb <span class="ot">=</span> <span class="fu">left_join</span>(covid_hr, ny_df, <span class="at">by =</span> <span class="st">&#39;county&#39;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tpop_50 =</span> tpop<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">vax_maj =</span> <span class="fu">case_when</span>(vax_dose1 <span class="sc">&gt;=</span> .<span class="dv">73</span><span class="sc">*</span>(tpop) <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                             vax_dose1 <span class="sc">&lt;</span> .<span class="dv">73</span><span class="sc">*</span>(tpop) <span class="sc">~</span> <span class="dv">0</span>))</span></code></pre></div>
 
 </body>
 </html>

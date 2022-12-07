@@ -2,7 +2,8 @@ name: "Project Overview"
 output_dir: "."
 navbar:
   title: "Project Overview"
-  left:
+  href: index.html
+  left: 
     - text: "Screencast"
       href: video.html
   right:
