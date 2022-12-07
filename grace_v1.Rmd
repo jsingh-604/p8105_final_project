@@ -264,8 +264,8 @@ covid_df = covid_df_v1 %>%
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
 comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 >= .73*(tpop) ~ 1,
-                             vax_dose1 < .73*(tpop) ~ 0))
+         vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
+                             vax_dose1 < .83*(tpop) ~ 0))
 ```
 
 # Regression Test:

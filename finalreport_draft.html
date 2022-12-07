@@ -653,16 +653,16 @@ For regression tests, demographics dataset, HR dataset, and COVID
 dataset were all merged into one dataset called “comb.” At the end, we
 added a new binary variable called vax_maj to see whether majority of
 the residents in the county had received the first dose of vaccine. The
-cutoff value used was 74% as it was reported that nearly ~73% of the US
-population had completed at least the first dose of vaccine by the end
-of 2021. <a
-href="https://usafacts.org/visualizations/covid-vaccine-tracker-states#:~:text=Percent%20of%20people%20receiving%20vaccines%20in%20the%20US&amp;text=*%20In%20Dec.,vaccination%20coverage%20estimates%20between%20jurisdictions.">(source)</a></li>
+cutoff value used was 83% as it was reported that nearly ~83% of the
+state of New York residents had completed at least one dose of vaccine
+by the end of 2021. <a
+href="https://data.democratandchronicle.com/covid-19-vaccine-tracker/new-york/36/.">(source)</a></li>
 </ol>
 <pre class="r"><code>covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;))
 comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 &gt;= .74*(tpop) ~ 1,
-                             vax_dose1 &lt; .74*(tpop) ~ 0))</code></pre>
+         vax_maj = case_when(vax_dose1 &gt;= .83*(tpop) ~ 1,
+                             vax_dose1 &lt; .83*(tpop) ~ 0))</code></pre>
 </div>
 </div>
 <div id="statistical-analysis" class="section level2">
@@ -693,57 +693,6 @@ m1 %&gt;%
   broom::tidy() %&gt;% 
   select(term, estimate, p.value) %&gt;% 
   knitr::kable(digits = 3) </code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">281132.339</td>
-<td align="right">0.003</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-3135.730</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">1016.997</td>
-<td align="right">0.042</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">318.977</td>
-<td align="right">0.443</td>
-</tr>
-<tr class="odd">
-<td align="left">ses_r</td>
-<td align="right">1519.072</td>
-<td align="right">0.015</td>
-</tr>
-<tr class="even">
-<td align="left">longevity_r</td>
-<td align="right">-1073.673</td>
-<td align="right">0.077</td>
-</tr>
-<tr class="odd">
-<td align="left">qol_r</td>
-<td align="right">721.774</td>
-<td align="right">0.179</td>
-</tr>
-<tr class="even">
-<td align="left">medage</td>
-<td align="right">-5461.353</td>
-<td align="right">0.014</td>
-</tr>
-</tbody>
-</table>
 <p>After adjusting for median age and health outcome variables, health
 behaviors, clinical care, and SES factors were shown to be significantly
 associated with COVID-19 incidence (p &lt; .05). Health behaviors score
@@ -767,7 +716,7 @@ influential points because no point falls outside Cook’s distance.
 Meanwhile, scale-location plot indicates a potential violation of
 heteroscedasticity. Lastly, for the normal Q-Q plot, there appears to be
 no extreme skewness with majority of the points falling along the line.
-Some deviations at the lowest and highest quartile suggest that random
+Some deviations at the lowest and highest quantiles suggest that random
 fluctuation may be seen at extreme ends. Therefore, these plots indicate
 that our model, though sufficient, can be improved (i.e., add
 interaction terms, adjust for more variables) and there is more to be
@@ -782,52 +731,6 @@ m2 %&gt;%
   broom::tidy() %&gt;% 
   select(term, estimate, p.value) %&gt;% 
   knitr::kable(digits = 3) </code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">6350.926</td>
-<td align="right">0.002</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-56.095</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">23.376</td>
-<td align="right">0.027</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">3.849</td>
-<td align="right">0.666</td>
-</tr>
-<tr class="odd">
-<td align="left">longevity_r</td>
-<td align="right">-15.743</td>
-<td align="right">0.224</td>
-</tr>
-<tr class="even">
-<td align="left">qol_r</td>
-<td align="right">27.562</td>
-<td align="right">0.012</td>
-</tr>
-<tr class="odd">
-<td align="left">medage</td>
-<td align="right">-124.994</td>
-<td align="right">0.010</td>
-</tr>
-</tbody>
-</table>
 <p>As seen with model 1, model 2 indicates that all health factors
 except physical environment are significantly associated with number of
 deaths related to COVID-19 in each county (p &lt; .05). Since physical
@@ -851,57 +754,6 @@ m3 %&gt;%
   broom::tidy() %&gt;% 
   select(term, estimate, p.value) %&gt;% 
   knitr::kable(digits = 3) </code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1680734.061</td>
-<td align="right">0.003</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-18570.509</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">5547.020</td>
-<td align="right">0.061</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">1458.937</td>
-<td align="right">0.553</td>
-</tr>
-<tr class="odd">
-<td align="left">ses_r</td>
-<td align="right">8341.958</td>
-<td align="right">0.023</td>
-</tr>
-<tr class="even">
-<td align="left">longevity_r</td>
-<td align="right">-6378.192</td>
-<td align="right">0.076</td>
-</tr>
-<tr class="odd">
-<td align="left">qol_r</td>
-<td align="right">4723.999</td>
-<td align="right">0.138</td>
-</tr>
-<tr class="even">
-<td align="left">medage</td>
-<td align="right">-31869.647</td>
-<td align="right">0.016</td>
-</tr>
-</tbody>
-</table>
 <p>Unlike models 1 and 2, model 3 indicates that neither clinical care
 nor physical environment scores are significantly associated with the
 rate of COVID vaccination (p &gt; .05). This can potentailly be because
@@ -912,7 +764,7 @@ significant associations with health behaviors and SES factors (p &lt;
 .05) reinforce the need to address root causes of health inequity such
 as residential segregation.</p>
 <pre class="r"><code>plot(m3)</code></pre>
-<p><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-4.png" width="90%" /></p>
+<p><img src="finalreport_draft_files/figure-html/m3_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m3_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m3_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m3_check-4.png" width="90%" /></p>
 <p>Regression assumption tests, once again, show room for improvement in
 our model and the need for further analysis</p>
 <p style="color: red">
@@ -925,173 +777,64 @@ COVID-19 vaccination or fatalities?</em></strong>
   filter(year == &#39;2021&#39;) %&gt;% 
   glm(vax_maj ~ segregation + p_minority + median_income + medage, data = .)
 
-summary(m4)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = vax_maj ~ segregation + p_minority + median_income + 
-##     medage, data = .)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -0.89470  -0.15531  -0.06349   0.07914   0.87227  
-## 
-## Coefficients:
-##                 Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   -1.328e-01  7.655e-01  -0.173 0.862928    
-## segregation    6.873e-02  1.168e-01   0.588 0.558589    
-## p_minority     1.018e-02  3.951e-03   2.577 0.012620 *  
-## median_income  1.128e-05  3.032e-06   3.721 0.000462 ***
-## medage        -1.279e-02  1.809e-02  -0.707 0.482644    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for gaussian family taken to be 0.1231687)
-## 
-##     Null deviance: 12.2623  on 60  degrees of freedom
-## Residual deviance:  6.8974  on 56  degrees of freedom
-##   (1 observation deleted due to missingness)
-## AIC: 52.147
-## 
-## Number of Fisher Scoring iterations: 2</code></pre>
-<pre class="r"><code>m4 %&gt;% 
+summary(m4)
+
+m4 %&gt;% 
   broom::tidy() %&gt;% 
   mutate(OR = exp(estimate),
          OR_CI_lower = exp(estimate - 1.96*(std.error)),
          OR_CI_upper = exp(estimate + 1.96*(std.error))) %&gt;% 
   select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %&gt;% 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">log_OR</th>
-<th align="right">OR</th>
-<th align="right">OR_CI_lower</th>
-<th align="right">OR_CI_upper</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-0.133</td>
-<td align="right">0.876</td>
-<td align="right">0.195</td>
-<td align="right">3.926</td>
-<td align="right">0.863</td>
-</tr>
-<tr class="even">
-<td align="left">segregation</td>
-<td align="right">0.069</td>
-<td align="right">1.071</td>
-<td align="right">0.852</td>
-<td align="right">1.347</td>
-<td align="right">0.559</td>
-</tr>
-<tr class="odd">
-<td align="left">p_minority</td>
-<td align="right">0.010</td>
-<td align="right">1.010</td>
-<td align="right">1.002</td>
-<td align="right">1.018</td>
-<td align="right">0.013</td>
-</tr>
-<tr class="even">
-<td align="left">median_income</td>
-<td align="right">0.000</td>
-<td align="right">1.000</td>
-<td align="right">1.000</td>
-<td align="right">1.000</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">medage</td>
-<td align="right">-0.013</td>
-<td align="right">0.987</td>
-<td align="right">0.953</td>
-<td align="right">1.023</td>
-<td align="right">0.483</td>
-</tr>
-</tbody>
-</table>
+  knitr::kable(digits = 5)</code></pre>
 <p>Based on the the results, the odds of getting the first dose of the
 COVID vaccine do not differ significantly between counties with low
-level of segregation and moderate/high level of segregation. However,
-since the OR for</p>
+level of segregation and moderate/high level of segregation. Ironically,
+for every 1% increase in % minority, the odds of the county’s resident
+receiving the first dose of the vaccine increases by 1.006 times (p =
+.045). This could’ve occurred because the model lacks an adequate
+adjustment for race/ethnicity. Meanwhile, the model also shows that for
+every $1 increase in median household income, the odds of the county’s
+resident receiving dose 1 of the vaccine increases by 1.006 times (p =
+.003).</p>
+<p>Upon checking our model,</p>
 <pre class="r"><code>plot(m4)</code></pre>
-<p><img src="finalreport_draft_files/figure-html/unnamed-chunk-9-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-9-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-9-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-9-4.png" width="90%" /></p>
+<p><img src="finalreport_draft_files/figure-html/m4_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m4_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m4_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m4_check-4.png" width="90%" />
+we did see the need to adjust our model; however, with the lack of 2021
+data and demographics information, further analysis and modifications
+could not be completed. The residual vs. fitted plot did not give us
+much information as the outcome variable of our model is binary. The
+normal Q-Q plot showed that our data is not skewed, though there are
+some deviations at extreme quantiles. Furthermore, there appears to be
+potentially heteroscedasticity per scale-location plot and one outlier
+(point #3 falls outside Cook’s distance).</p>
 <p><strong>Model 5</strong>
 <img src="images/model5.png" style="width:100%"></p>
 <pre class="r"><code>m5 = comb %&gt;% 
   filter(year == &#39;2021&#39;) %&gt;% 
   lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
 
-summary(m5)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = n_deaths ~ segregation_score + p_minority + median_income + 
-##     medage, data = .)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1806.4  -461.1    -5.6   305.5  3378.0 
-## 
-## Coefficients:
-##                     Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)       -1.195e+03  2.064e+03  -0.579   0.5650    
-## segregation_score  1.561e+01  1.067e+01   1.463   0.1490    
-## p_minority         7.352e+01  1.068e+01   6.882 5.42e-09 ***
-## median_income      1.452e-02  8.070e-03   1.799   0.0775 .  
-## medage            -1.490e+01  4.789e+01  -0.311   0.7568    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 934.4 on 56 degrees of freedom
-##   (1 observation deleted due to missingness)
-## Multiple R-squared:  0.6687, Adjusted R-squared:  0.645 
-## F-statistic: 28.26 on 4 and 56 DF,  p-value: 7.271e-13</code></pre>
-<pre class="r"><code>m5 %&gt;% 
+summary(m5)
+
+m5 %&gt;% 
   broom::tidy() %&gt;% 
   select(term, estimate, p.value) %&gt;% 
   knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-1194.714</td>
-<td align="right">0.565</td>
-</tr>
-<tr class="even">
-<td align="left">segregation_score</td>
-<td align="right">15.607</td>
-<td align="right">0.149</td>
-</tr>
-<tr class="odd">
-<td align="left">p_minority</td>
-<td align="right">73.524</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">median_income</td>
-<td align="right">0.015</td>
-<td align="right">0.077</td>
-</tr>
-<tr class="odd">
-<td align="left">medage</td>
-<td align="right">-14.903</td>
-<td align="right">0.757</td>
-</tr>
-</tbody>
-</table>
+<p>This model shows the number of COVID-19 fatalities in each county is
+significantly associated with it’s % minority (p &lt; .05), confirming
+that racial/ethnic minorities, specifically Hispanic and Black, had a
+higher risk of dying from COVID compared to White/Asian. AIAN &amp;
+NHOPI were not included because they constitute only ~1% of population
+for each county.</p>
 <pre class="r"><code>plot(m5)</code></pre>
-<p><img src="finalreport_draft_files/figure-html/unnamed-chunk-11-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-11-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-11-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-11-4.png" width="90%" /></p>
+<p><img src="finalreport_draft_files/figure-html/m5_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m5_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m5_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m5_check-4.png" width="90%" /></p>
+<p>For regression test plots, the conclusions are very similar to that
+of model 4’s. The residual vs. Fitted model shows no clean patterns;
+however, the points are also not equally, randomly distributed along
+residual = 0 line. The Q-Q plot confirms our data is normally
+distributed with no extreme skewness. Scale-location shows possibility
+of homoscedasticity violation and residual vs. leverage, shows that
+point #3 is an influential point; combined with model 4’s leverage plot,
+this indicates the need to remove point #3 from our models.</p>
 </div>
 
 
