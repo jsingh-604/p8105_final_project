@@ -18,15 +18,35 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Data Sources
 Our data were downloaded from three different sources:
 
-1. **New York State Demographics**: US Census Bureau's 2020 demographics data were imported using `tidycensus`. As 2021 data is not available until December 8, 2022 and demographics does not change significantly each year, 2020 information was used for analysis.
+1. **New York State Demographics**: US Census Bureau's demographics data were imported using `tidycensus`.
 
-2. **New York State Health Ranking Data** [(dataset)](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources):
+2. **New York State Health Ranking** [(dataset)](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources):
 Four data sets (2019, 2020, 2021 and 2022 New York State Health Ranking Data) were downloaded as .xls/xlsx. These data sets are provided by the University of Wisconsin Population Health Institute, which performs extensive analyses to calculate each New York county's score for health factors (health behaviors, clinical care, SES factors, and physical environment) and health outcome (quality of life, and length of life). 
 
-3. **New York State COVID-19 Data** [(dataset)](https://data.ny.gov/browse?tags=covid-19):
+3. **New York State COVID-19** [(dataset)](https://data.ny.gov/browse?tags=covid-19):
 Three data sets (COVID testing, COVID vaccination, COVID fatalities from 2020 to 11/2022) were downloaded as .csv.
 
 ### Data Cleaning
- 
+1. **New York State Demographics**  
+We imported US Census Bureau's 2020 data because 2021 data is not available until 12/8/2022. As demographics data do not change significantly each year, 2020 data were used for analysis. Then we decided to include the following variables, as we would like to adjust them in our models:
+* total population in each county (tpop)
+* median age in each county (medage)
+* racial diversity index (race_div): calculated Simpson's Diversity Index in lines 65 to 69 (higher index indicates more racial diversity)
+
+2. **New York State Health Ranking**  
+Same steps were taken for each year:
+As the original excel files contain multiple sheets. We only imported the sheets that contain variables of interest.  
+ <br>Each county's health ranking was imported from the sheet named "Outcomes & Factors SubRankings." From the sheet, only the following variables were selected for future analysis: each county's rank for health outcomes (quality of life, renamed to qol_r; length of life, renamed to longevity_r), health factors (health behaviors, renamed to health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic factors, renamed to ses_r; physical environment, renamed to env_r).
+ <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % hispanic, p_hispanic; % black, renamed p_black). As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (hispanic + black), named p_minority; binary variable for low vs. high level of segregation.Lastly, 2019-2022 HR datasets were merged.
+
+3. **New York State COVID-19**  
+From the three data sets we extracted the following variables of interest: number of new COVID cases per day, cumulative number of deaths reported per day, cumulative # of individuals who received the first dose of the vaccine. Next, the three data sets were merged by "date" and "county." The merged data set was then grouped according to "county" and "year" and the following variables were created: total number of new positive cases per year, called n_cases; total number of deaths per year, called n_deaths; and total number of indivduals who received the first dose of the vaccine per year, called vax_dose1 (this data is not available for year 2020).
+
+4. **Dataset for Analysis**  
+For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 73% as it was reported that nearly ~73% of the US population had completed at least the first dose of vaccine by the end of 2021. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states#:~:text=Percent%20of%20people%20receiving%20vaccines%20in%20the%20US&text=*%20In%20Dec.,vaccination%20coverage%20estimates%20between%20jurisdictions.)
+
 
 ## Statistical Analysis
+1. **COVID-19 and Health Factors & Outcomes**
+
+2. **COVID-19 and SES/Race and Ethnicity**

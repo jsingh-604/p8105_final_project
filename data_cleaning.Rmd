@@ -77,7 +77,7 @@ ny_df = ny_df %>%
 ### 2019 HR Data
 
 ```{r} 
-hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2019 = read_excel('data/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -88,7 +88,7 @@ hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2019 = read_excel('data/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -111,7 +111,7 @@ total2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>%
 ### 2020 HR Data
 
 ```{r, message = FALSE}
-hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2020 = read_excel('data/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -122,7 +122,7 @@ hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2020 = read_excel('data/ny_hr20.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -145,7 +145,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>%
 ### 2021 HR Data
 
 ```{r}
-hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2021 = read_excel('data/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -156,7 +156,7 @@ hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2021 = read_excel('data/ny_hr21.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -172,7 +172,7 @@ demo2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Additional Measure Data', s
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>% 
+total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
   mutate(year = 2021)
 ```
 
@@ -180,7 +180,7 @@ total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
 
 Health Ranking Data
 ```{r, message = FALSE}
-hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -191,7 +191,7 @@ hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
     select('county', 
@@ -226,20 +226,20 @@ Decided to look at variables related to covid testing (i.e., # positive cases, #
 6. Separate date into day, month, & year for analysis
 
 ```{r, message = FALSE}
-ny_test = read_csv('grace/ny_covidtest.csv') %>% 
+ny_test = read_csv('data/ny_covidtest.csv') %>% 
 janitor::clean_names() %>% 
 filter(geography == 'COUNTY') %>% 
 select(-geography) %>% 
 rename(date = test_date) %>% 
 mutate(date = lubridate::mdy(date))  
 
-ny_death = read_csv("grace/ny_coviddeaths.csv") %>% 
+ny_death = read_csv("data/ny_coviddeaths.csv") %>% 
 janitor::clean_names() %>% 
 rename(date = report_date, n_fatality = place_of_fatality) %>%
 select(-deaths_by_county_of_residence) %>% 
 mutate(date = lubridate::mdy(date))
 
-ny_vax = read_csv("grace/ny_covidvax.csv") %>% 
+ny_vax = read_csv("data/ny_covidvax.csv") %>% 
 janitor::clean_names() %>% 
 rename(date = report_as_of) %>% 
 select(-region, -series_complete) %>% 
@@ -266,3 +266,4 @@ comb = left_join(covid_hr, ny_df, by = 'county') %>%
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 >= .73*(tpop) ~ 1,
                              vax_dose1 < .73*(tpop) ~ 0))
+```
