@@ -1,0 +1,32 @@
+---
+title: "Final Report_draft"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Processing and Cleaning
+
+### Data Sources
+Our data were downloaded from three different sources:
+
+1. **New York State Demographics**: US Census Bureau's 2020 demographics data were imported using `tidycensus`. As 2021 data is not available until December 8, 2022 and demographics does not change significantly each year, 2020 information was used for analysis.
+
+2. **New York State Health Ranking Data** [(dataset)](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources):
+Four data sets (2019, 2020, 2021 and 2022 New York State Health Ranking Data) were downloaded as .xls/xlsx. These data sets are provided by the University of Wisconsin Population Health Institute, which performs extensive analyses to calculate each New York county's score for health factors (health behaviors, clinical care, SES factors, and physical environment) and health outcome (quality of life, and length of life). 
+
+3. **New York State COVID-19 Data** [(dataset)](https://data.ny.gov/browse?tags=covid-19):
+Three data sets (COVID testing, COVID vaccination, COVID fatalities from 2020 to 11/2022) were downloaded as .csv.
+
+### Data Cleaning
+ 
+
+## Statistical Analysis

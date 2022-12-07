@@ -9,12 +9,10 @@ editor_options:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(ggridges)
-library(patchwork)
 library(viridis)
-library(readxl)
 library(lubridate)
 library(Hmisc)
+library(plotly)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -34,31 +32,43 @@ scale_fill_discrete = scale_fill_viridis_d
 ```
 
 
-```{r}
+
+```{r NY vax plot}
 
 ny_vax =
   read_csv("./grace/ny_covidvax.csv") %>% 
   janitor::clean_names() %>% 
-  select(-region) %>% 
+  select(-region, -series_complete) %>% 
   rename(date = report_as_of) %>% 
   mutate(date = lubridate::mdy(date))
 
 
-vax_plot_first =
+vax_plotly =
   ny_vax %>%
   filter(date == "2022-11-14") %>%
-  mutate(county = fct_reorder(county, first_dose, .desc = TRUE)) %>% 
-  ggplot(aes(x = county, y = first_dose)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 80, hjust = 1))
+  mutate(county = fct_reorder(county, first_dose, .desc = TRUE)) %>%
+  mutate(text_label = str_c("County: ", county, "\nVaccinations: ", first_dose)) %>% 
+  plot_ly(x = ~county, 
+          y = ~first_dose, 
+          type = "bar", 
+          text = ~text_label) |>
+          layout(xaxis = list(title = "County in New York State"), 
+                 yaxis = list(title = "Cumulative Number of People with at least one dose"),          
+                 title = "Cumulative people with at least one dose of any COVID-19 vaccine by county by 11/14/2022")
 
-vax_plot_first
+
+vax_plotly
 
 ```
 
 
 
-```{r}
+From the plot created of the cumulative distribution of people who have at-least the first dose of any COVID-19 vaccine by 11/14/2022, the highest ranking counties are all located in three major regions of New York State: New York City, Long Island, and Hudson Valley. Erie and Monroe counties also have high counts and they are from Western NY and Finger Lakes. This is expected as these are some of the most populous counties in New York State.
+
+
+
+
+```{r NY death plot}
 
 ny_death =
   read_csv("./grace/ny_coviddeaths.csv") %>% 
@@ -69,16 +79,27 @@ ny_death =
   filter(county != "Statewide Total")
 
 
-deaths_plot =
+deaths_plotly =
   ny_death %>%
   filter(date == "2022-11-14") %>%
   mutate(county = fct_reorder(county, n_fatality, .desc = TRUE)) %>% 
-  ggplot(aes(x = county, y = n_fatality)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 80, hjust = 1))
+  mutate(text_label = str_c("County: ", county, "\nDeaths: ", n_fatality)) %>% 
+  plot_ly(x = ~county, 
+          y = ~n_fatality, 
+          type = "bar", 
+          text = ~text_label) |>
+          layout(xaxis = list(title = "County in New York State"), 
+                 yaxis = list(title = "Cumulative Number of Fatalities"),          
+                 title = "Cumulative COVID-19 deaths by county by 11/14/2022")
 
-deaths_plot
+deaths_plotly
 
 ```
+
+
+
+
+From the plot created of the cumulative distribution of people who have died from COVID-19 by 11/14/2022, the highest ranking counties are also all located in three major regions of New York State: New York City, Long Island, and Hudson Valley, along with Erie and Monroe counties from Western NY and Finger Lakes. Again, this is expected as these are some of the most populous counties in New York State. 
+
 
 

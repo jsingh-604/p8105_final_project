@@ -351,15 +351,15 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |======                                                                |   8%
   |                                                                            
-  |========                                                              |  12%
+  |======                                                                |   9%
   |                                                                            
-  |=========                                                             |  12%
+  |=======                                                               |  10%
   |                                                                            
   |=========                                                             |  13%
   |                                                                            
-  |=========                                                             |  14%
-  |                                                                            
   |==========                                                            |  14%
+  |                                                                            
+  |==========                                                            |  15%
   |                                                                            
   |===========                                                           |  15%
   |                                                                            
@@ -367,81 +367,41 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |============                                                          |  17%
   |                                                                            
-  |============                                                          |  18%
+  |=============                                                         |  18%
+  |                                                                            
+  |==============                                                        |  19%
   |                                                                            
   |==============                                                        |  20%
   |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
-  |================                                                      |  22%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |=================                                                     |  24%
-  |                                                                            
-  |=================                                                     |  25%
-  |                                                                            
   |==================                                                    |  25%
   |                                                                            
-  |==================                                                    |  26%
-  |                                                                            
   |===================                                                   |  27%
+  |                                                                            
+  |===================                                                   |  28%
   |                                                                            
   |====================                                                  |  28%
   |                                                                            
   |====================                                                  |  29%
   |                                                                            
-  |=====================                                                 |  29%
-  |                                                                            
   |=====================                                                 |  30%
-  |                                                                            
-  |=====================                                                 |  31%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |=======================                                               |  32%
   |                                                                            
   |========================                                              |  34%
   |                                                                            
-  |===========================                                           |  38%
+  |=========================                                             |  36%
   |                                                                            
   |=============================                                         |  41%
   |                                                                            
-  |=============================                                         |  42%
-  |                                                                            
-  |===============================                                       |  44%
+  |==============================                                        |  43%
   |                                                                            
   |=================================                                     |  47%
   |                                                                            
-  |=================================                                     |  48%
-  |                                                                            
-  |==================================                                    |  48%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |=========================================                             |  59%
-  |                                                                            
   |============================================                          |  63%
   |                                                                            
-  |================================================                      |  68%
+  |========================================================              |  80%
   |                                                                            
-  |==================================================                    |  71%
+  |====================================================================  |  96%
   |                                                                            
-  |==================================================                    |  72%
-  |                                                                            
-  |===================================================                   |  72%
-  |                                                                            
-  |======================================================                |  77%
-  |                                                                            
-  |=========================================================             |  81%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |===============================================================       |  91%
-  |                                                                            
-  |===================================================================   |  95%
+  |======================================================================|  99%
   |                                                                            
   |======================================================================| 100%</code></pre>
 <pre class="r"><code>ny_df = ny_df %&gt;%
@@ -773,377 +733,6 @@ comb = left_join(covid_hr, ny_df, by = &#39;county&#39;) %&gt;%
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 &gt;= .73*(tpop) ~ 1,
                              vax_dose1 &lt; .73*(tpop) ~ 0))</code></pre>
-</div>
-</div>
-<div id="regression-test" class="section level1">
-<h1>Regression Test:</h1>
-<pre class="r"><code># residual vs. leverage -- test for influential points. No points falls outside Cook&#39;s distance, indicating there are no major outliers
-
-# residual vs. fitted -- no strong trend, so okay but demonstrates that there is more to be explored.
-
-# normal q-q -- since most points fall along the line, no extreme skewness and the data is fairly normally distributed. Several deviations at the lowest/highest quartile indicate that random fluctuations may be seen at extreme ends.
-
-# scale-location -- homoscedascity off</code></pre>
-<div id="models-1-to-3-health-factoroutcome-ranking-covid"
-class="section level3">
-<h3>Models 1 to 3 – Health Factor/Outcome Ranking &amp; COVID</h3>
-<p>Model 1 * x = health factor variables, median age, * y = number of
-covid cases in 2021</p>
-<pre class="r"><code>m1 = comb %&gt;% 
-  filter(year == &#39;2021&#39;) %&gt;% 
-  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .)
-
-plot(m1)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-9-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-9-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-9-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-9-4.png" width="90%" /></p>
-<pre class="r"><code>plot1 = comb %&gt;% 
-  filter(year == &#39;2021&#39;) %&gt;% 
-  modelr::add_residuals(m1) %&gt;% 
-  modelr::add_predictions(m1) %&gt;% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = &quot;Model 1: Residual vs. Fitted Values&quot;,
-    x = &quot;Fitted Values&quot;,
-    y = &quot;Residuals&quot;)
-
-plot1</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-9-5.png" width="90%" /></p>
-<pre class="r"><code>m1 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 3) </code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">281132.339</td>
-<td align="right">0.003</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-3135.730</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">1016.997</td>
-<td align="right">0.042</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">318.977</td>
-<td align="right">0.443</td>
-</tr>
-<tr class="odd">
-<td align="left">ses_r</td>
-<td align="right">1519.072</td>
-<td align="right">0.015</td>
-</tr>
-<tr class="even">
-<td align="left">longevity_r</td>
-<td align="right">-1073.673</td>
-<td align="right">0.077</td>
-</tr>
-<tr class="odd">
-<td align="left">qol_r</td>
-<td align="right">721.774</td>
-<td align="right">0.179</td>
-</tr>
-<tr class="even">
-<td align="left">medage</td>
-<td align="right">-5461.353</td>
-<td align="right">0.014</td>
-</tr>
-</tbody>
-</table>
-<p>Model 2</p>
-<pre class="r"><code>m2 = comb %&gt;% 
-  filter(year == &#39;2021&#39;, county != &quot;New York&quot;) %&gt;% 
-  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
-
-plot(m2)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-10-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-10-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-10-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-10-4.png" width="90%" /></p>
-<pre class="r"><code>plot2 = comb %&gt;% 
-  filter(year == &#39;2021&#39;, county != &quot;New York&quot;) %&gt;% 
-  modelr::add_residuals(m2) %&gt;% 
-  modelr::add_predictions(m2) %&gt;% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = &quot;Model 2: Residual vs. Fitted Values&quot;,
-    x = &quot;Fitted Values&quot;,
-    y = &quot;Residuals&quot;)
-
-plot2</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-10-5.png" width="90%" /></p>
-<pre class="r"><code>m2 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 3) </code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">5668.289</td>
-<td align="right">0.003</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-54.417</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">27.176</td>
-<td align="right">0.008</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">4.369</td>
-<td align="right">0.605</td>
-</tr>
-<tr class="odd">
-<td align="left">longevity_r</td>
-<td align="right">-12.075</td>
-<td align="right">0.326</td>
-</tr>
-<tr class="even">
-<td align="left">qol_r</td>
-<td align="right">23.719</td>
-<td align="right">0.023</td>
-</tr>
-<tr class="odd">
-<td align="left">medage</td>
-<td align="right">-113.830</td>
-<td align="right">0.013</td>
-</tr>
-</tbody>
-</table>
-<p>Model 3</p>
-<pre class="r"><code>m3 = comb %&gt;% 
-  filter(year == &#39;2021&#39;) %&gt;% 
-  lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .,)
-
-plot(m3)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-11-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-11-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-11-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-11-4.png" width="90%" /></p>
-<pre class="r"><code>m3 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 3) </code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1837574.000</td>
-<td align="right">0.001</td>
-</tr>
-<tr class="even">
-<td align="left">health_beh_r</td>
-<td align="right">-16284.077</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">clinical_care_r</td>
-<td align="right">7167.250</td>
-<td align="right">0.017</td>
-</tr>
-<tr class="even">
-<td align="left">env_r</td>
-<td align="right">678.187</td>
-<td align="right">0.789</td>
-</tr>
-<tr class="odd">
-<td align="left">longevity_r</td>
-<td align="right">-5339.787</td>
-<td align="right">0.147</td>
-</tr>
-<tr class="even">
-<td align="left">qol_r</td>
-<td align="right">7560.507</td>
-<td align="right">0.015</td>
-</tr>
-<tr class="odd">
-<td align="left">medage</td>
-<td align="right">-34716.367</td>
-<td align="right">0.011</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="models-4-to-6-ses-raceethnicity-covid" class="section level3">
-<h3>Models 4 to 6 – SES, Race/Ethnicity &amp; COVID</h3>
-<p>Model 4</p>
-<pre class="r"><code>m4 = comb %&gt;% 
-  filter(year == &#39;2021&#39;) %&gt;% 
-  glm(vax_maj ~ segregation + p_minority + median_income + medage, data = .)
-
-plot(m4)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-12-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-12-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-12-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-12-4.png" width="90%" /></p>
-<pre class="r"><code>summary(m4)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = vax_maj ~ segregation + p_minority + median_income + 
-##     medage, data = .)
-## 
-## Deviance Residuals: 
-##      Min        1Q    Median        3Q       Max  
-## -0.91753  -0.17131  -0.06943   0.06952   0.83681  
-## 
-## Coefficients:
-##                 Estimate Std. Error t value Pr(&gt;|t|)   
-## (Intercept)   -1.743e-01  7.945e-01  -0.219  0.82710   
-## segregation    1.043e-01  1.212e-01   0.860  0.39343   
-## p_minority     1.155e-02  4.101e-03   2.816  0.00671 **
-## median_income  1.041e-05  3.147e-06   3.307  0.00165 **
-## medage        -1.072e-02  1.877e-02  -0.571  0.57045   
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for gaussian family taken to be 0.1326646)
-## 
-##     Null deviance: 13.0820  on 60  degrees of freedom
-## Residual deviance:  7.4292  on 56  degrees of freedom
-##   (1 observation deleted due to missingness)
-## AIC: 56.678
-## 
-## Number of Fisher Scoring iterations: 2</code></pre>
-<pre class="r"><code>m4 %&gt;% 
-  broom::tidy() %&gt;% 
-  mutate(OR = exp(estimate),
-         OR_CI_lower = exp(estimate - 1.96*(std.error)),
-         OR_CI_upper = exp(estimate + 1.96*(std.error))) %&gt;% 
-  select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %&gt;% 
-  knitr::kable()</code></pre>
-<table>
-<colgroup>
-<col width="20%" />
-<col width="15%" />
-<col width="14%" />
-<col width="17%" />
-<col width="17%" />
-<col width="14%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">log_OR</th>
-<th align="right">OR</th>
-<th align="right">OR_CI_lower</th>
-<th align="right">OR_CI_upper</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-0.1743423</td>
-<td align="right">0.8400093</td>
-<td align="right">0.1770128</td>
-<td align="right">3.986240</td>
-<td align="right">0.8271047</td>
-</tr>
-<tr class="even">
-<td align="left">segregation</td>
-<td align="right">0.1042552</td>
-<td align="right">1.1098836</td>
-<td align="right">0.8751687</td>
-<td align="right">1.407548</td>
-<td align="right">0.3934340</td>
-</tr>
-<tr class="odd">
-<td align="left">p_minority</td>
-<td align="right">0.0115473</td>
-<td align="right">1.0116142</td>
-<td align="right">1.0035157</td>
-<td align="right">1.019778</td>
-<td align="right">0.0067055</td>
-</tr>
-<tr class="even">
-<td align="left">median_income</td>
-<td align="right">0.0000104</td>
-<td align="right">1.0000104</td>
-<td align="right">1.0000042</td>
-<td align="right">1.000017</td>
-<td align="right">0.0016506</td>
-</tr>
-<tr class="odd">
-<td align="left">medage</td>
-<td align="right">-0.0107154</td>
-<td align="right">0.9893418</td>
-<td align="right">0.9535982</td>
-<td align="right">1.026425</td>
-<td align="right">0.5704544</td>
-</tr>
-</tbody>
-</table>
-<p>Model 5</p>
-<pre class="r"><code>m5 = comb %&gt;% 
-  filter(year == &#39;2021&#39;, county != &quot;New York&quot;) %&gt;% 
-  lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
-
-plot(m5)</code></pre>
-<p><img src="grace_v1_files/figure-html/unnamed-chunk-13-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-13-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-13-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-13-4.png" width="90%" /></p>
-<pre class="r"><code>m5 %&gt;% 
-  broom::tidy() %&gt;% 
-  select(term, estimate, p.value) %&gt;% 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-1330.269</td>
-<td align="right">0.504</td>
-</tr>
-<tr class="even">
-<td align="left">segregation_score</td>
-<td align="right">14.452</td>
-<td align="right">0.164</td>
-</tr>
-<tr class="odd">
-<td align="left">p_minority</td>
-<td align="right">72.037</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">median_income</td>
-<td align="right">0.011</td>
-<td align="right">0.164</td>
-</tr>
-<tr class="odd">
-<td align="left">medage</td>
-<td align="right">-5.333</td>
-<td align="right">0.908</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 
