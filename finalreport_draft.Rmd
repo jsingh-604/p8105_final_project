@@ -279,9 +279,8 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
 
 Note: Though we initially planned to adjust for racial diversity in our model, the variable was removed because racial diversity index did not vary much among counties. For each model, only data from 2021 was used because there is no information on 2020 vaccination as the vaccine was developed in 2021 and 2022 data is incomplete.
 
-Question 1: Which health factors are associated with COVID-19 incidence?
-
-Health factors -- health behaviors, clinical care, physical environment, and socioeconomic factors -- are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases. To do so, we ran a linear regression test.
+<p style="color: red">***Question 1: Which health factors are associated with COVID-19 incidence?***</p>
+Health factors -- health behaviors, clinical care, physical environment, and socioeconomic factors -- are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases, COVID-19 deaths, and COVID-19 vaccination. To do so, we ran multiple linear regression test.
 
 **Model 1**
 <img src="images/model1.png" style="width:100%">
@@ -306,3 +305,53 @@ plot(m1)
 ```
 
 The residual vs. fitted plot does not show strong pattern; however, the points are not perfectly, randomly scattered around residual = 0. The residual vs. leverage plot confirms that our model does not have any influential points because no point falls outside Cook's distance. Meanwhile, scale-location plot indicates a potential violation of heteroscedasticity. Lastly, for the normal Q-Q plot, there appears to be no extreme skewness with majority of the points falling along the line. Some deviations at the lowest and highest quartile suggest that random fluctuation may be seen at extreme ends. Therefore, these plots indicate that our model, though sufficient, can be improved (i.e., add interaction terms, adjust for more variables) and there is more to be explored.
+
+**Model 2**
+<img src="images/model2.png" style="width:100%">
+```{r}
+m2 = comb %>% 
+  filter(year == '2021') %>% 
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
+
+m2 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
+```
+
+As seen with model 1, model 2 indicates that all health factors except physical environment are significantly associated with number of deaths related to COVID-19 in each county (p < .05). Since physical environment score is based on air/water quality and housing/transit conditions within the county, this suggests that public health professionals can aim to mitigate disparities in COVID-19 by first starting short-term community-based public health interventions aimed at encouraging residents to building healthier lifestyles.
+
+```{r m2_check}
+plot(m2)
+```
+
+Results of regression assumption tests were also similar to that of model 1's, indicating that there is more to be explored in the association between health factor and COVID-19 fatalities.
+
+**Model 3**
+<img src="images/model3.png" style="width:100%">
+```{r}
+m3 = comb %>% 
+  filter(year == '2021') %>% 
+  lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .,)
+
+m3 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
+```
+
+Unlike models 1 and 2, model 3 indicates that neither clinical care nor physical environment scores are significantly associated with the rate of COVID vaccination (p > .05). This can potentailly be because the COVID vaccine was available not only at hospitals but also at locations such pharmacies (CVS, Walgreen, etc.) and community health centers, removing the barrier to healthcare access. Meanwhile, significant associations with health behaviors and SES factors (p < .05) reinforce the need to address root causes of health inequity such as residential segregation.
+
+```{r}
+plot(m3)
+```
+
+Regression assumption tests, once again, show room for improvement in our model and the need for further analysis
+
+<p style="color: red">***Question 2: Which health factors are associated with COVID-19 incidence?***</p>
+
+**Model 4**
+<img src="images/model4.png" style="width:100%">
+
+**Model 5**
+<img src="images/model5.png" style="width:100%">

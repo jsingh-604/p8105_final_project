@@ -672,14 +672,17 @@ our model, the variable was removed because racial diversity index did
 not vary much among counties. For each model, only data from 2021 was
 used because there is no information on 2020 vaccination as the vaccine
 was developed in 2021 and 2022 data is incomplete.</p>
-<p>Question 1: Which health factors are associated with COVID-19
-incidence?</p>
+<p style="color: red">
+<strong><em>Question 1: Which health factors are associated with
+COVID-19 incidence?</em></strong>
+</p>
 <p>Health factors – health behaviors, clinical care, physical
 environment, and socioeconomic factors – are community conditions that
 can be modified and improved through public health interventions or
 health policies. Therefore, we were interested in seeing which factor(s)
-is significantly associated with the number of COVID-19 cases. To do so,
-we ran a linear regression test.</p>
+is significantly associated with the number of COVID-19 cases, COVID-19
+deaths, and COVID-19 vaccination. To do so, we ran multiple linear
+regression test.</p>
 <p><strong>Model 1</strong>
 <img src="images/model1.png" style="width:100%"></p>
 <pre class="r"><code>m1 = comb %&gt;% 
@@ -769,6 +772,157 @@ fluctuation may be seen at extreme ends. Therefore, these plots indicate
 that our model, though sufficient, can be improved (i.e., add
 interaction terms, adjust for more variables) and there is more to be
 explored.</p>
+<p><strong>Model 2</strong>
+<img src="images/model2.png" style="width:100%"></p>
+<pre class="r"><code>m2 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
+
+m2 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">6350.926</td>
+<td align="right">0.002</td>
+</tr>
+<tr class="even">
+<td align="left">health_beh_r</td>
+<td align="right">-56.095</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clinical_care_r</td>
+<td align="right">23.376</td>
+<td align="right">0.027</td>
+</tr>
+<tr class="even">
+<td align="left">env_r</td>
+<td align="right">3.849</td>
+<td align="right">0.666</td>
+</tr>
+<tr class="odd">
+<td align="left">longevity_r</td>
+<td align="right">-15.743</td>
+<td align="right">0.224</td>
+</tr>
+<tr class="even">
+<td align="left">qol_r</td>
+<td align="right">27.562</td>
+<td align="right">0.012</td>
+</tr>
+<tr class="odd">
+<td align="left">medage</td>
+<td align="right">-124.994</td>
+<td align="right">0.010</td>
+</tr>
+</tbody>
+</table>
+<p>As seen with model 1, model 2 indicates that all health factors
+except physical environment are significantly associated with number of
+deaths related to COVID-19 in each county (p &lt; .05). Since physical
+environment score is based on air/water quality and housing/transit
+conditions within the county, this suggests that public health
+professionals can aim to mitigate disparities in COVID-19 by first
+starting short-term community-based public health interventions aimed at
+encouraging residents to building healthier lifestyles.</p>
+<pre class="r"><code>plot(m2)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/m2_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m2_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m2_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m2_check-4.png" width="90%" /></p>
+<p>Results of regression assumption tests were also similar to that of
+model 1’s, indicating that there is more to be explored in the
+association between health factor and COVID-19 fatalities.</p>
+<p><strong>Model 3</strong>
+<img src="images/model3.png" style="width:100%"></p>
+<pre class="r"><code>m3 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .,)
+
+m3 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">1680734.061</td>
+<td align="right">0.003</td>
+</tr>
+<tr class="even">
+<td align="left">health_beh_r</td>
+<td align="right">-18570.509</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clinical_care_r</td>
+<td align="right">5547.020</td>
+<td align="right">0.061</td>
+</tr>
+<tr class="even">
+<td align="left">env_r</td>
+<td align="right">1458.937</td>
+<td align="right">0.553</td>
+</tr>
+<tr class="odd">
+<td align="left">ses_r</td>
+<td align="right">8341.958</td>
+<td align="right">0.023</td>
+</tr>
+<tr class="even">
+<td align="left">longevity_r</td>
+<td align="right">-6378.192</td>
+<td align="right">0.076</td>
+</tr>
+<tr class="odd">
+<td align="left">qol_r</td>
+<td align="right">4723.999</td>
+<td align="right">0.138</td>
+</tr>
+<tr class="even">
+<td align="left">medage</td>
+<td align="right">-31869.647</td>
+<td align="right">0.016</td>
+</tr>
+</tbody>
+</table>
+<p>Unlike models 1 and 2, model 3 indicates that neither clinical care
+nor physical environment scores are significantly associated with the
+rate of COVID vaccination (p &gt; .05). This can potentailly be because
+the COVID vaccine was available not only at hospitals but also at
+locations such pharmacies (CVS, Walgreen, etc.) and community health
+centers, removing the barrier to healthcare access. Meanwhile,
+significant associations with health behaviors and SES factors (p &lt;
+.05) reinforce the need to address root causes of health inequity such
+as residential segregation.</p>
+<pre class="r"><code>plot(m3)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/unnamed-chunk-7-4.png" width="90%" /></p>
+<p>Regression assumption tests, once again, show room for improvement in
+our model and the need for further analysis</p>
+<p style="color: red">
+<strong><em>Question 2: Which health factors are associated with
+COVID-19 incidence?</em></strong>
+</p>
+<p><strong>Model 4</strong>
+<img src="images/model4.png" style="width:100%"></p>
+<p><strong>Model 5</strong>
+<img src="images/model5.png" style="width:100%"></p>
 </div>
 
 
