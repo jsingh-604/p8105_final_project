@@ -265,21 +265,21 @@ covid_df = covid_df_v1 %>%
 ```
 
 4. **Dataset for Analysis**  
-For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 73% as it was reported that nearly ~73% of the US population had completed at least the first dose of vaccine by the end of 2021. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states#:~:text=Percent%20of%20people%20receiving%20vaccines%20in%20the%20US&text=*%20In%20Dec.,vaccination%20coverage%20estimates%20between%20jurisdictions.)  
+For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 74% as it was reported that nearly ~73% of the US population had completed at least the first dose of vaccine by the end of 2021. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states#:~:text=Percent%20of%20people%20receiving%20vaccines%20in%20the%20US&text=*%20In%20Dec.,vaccination%20coverage%20estimates%20between%20jurisdictions.)  
 
 ```{r, results = FALSE, message = FALSE}
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
 comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 >= .73*(tpop) ~ 1,
-                             vax_dose1 < .73*(tpop) ~ 0))
+         vax_maj = case_when(vax_dose1 >= .74*(tpop) ~ 1,
+                             vax_dose1 < .74*(tpop) ~ 0))
 ```
 
 ## Statistical Analysis
 
 Note: Though we initially planned to adjust for racial diversity in our model, the variable was removed because racial diversity index did not vary much among counties. For each model, only data from 2021 was used because there is no information on 2020 vaccination as the vaccine was developed in 2021 and 2022 data is incomplete.
 
-<p style="color: red">***Question 1: Which health factors are associated with COVID-19 incidence?***</p>
+<p style="color: red">***Question 1: Which health factors are associated with COVID-19?***</p>
 Health factors -- health behaviors, clinical care, physical environment, and socioeconomic factors -- are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases, COVID-19 deaths, and COVID-19 vaccination. To do so, we ran multiple linear regression test.
 
 **Model 1**
@@ -348,10 +348,48 @@ plot(m3)
 
 Regression assumption tests, once again, show room for improvement in our model and the need for further analysis
 
-<p style="color: red">***Question 2: Which health factors are associated with COVID-19 incidence?***</p>
+<p style="color: red">***Question 2: Can SES factors and race/ethnicity alone predict COVID-19 vaccination or fatalities?***</p>
 
 **Model 4**
 <img src="images/model4.png" style="width:100%">
+```{r}
+m4 = comb %>% 
+  filter(year == '2021') %>% 
+  glm(vax_maj ~ segregation + p_minority + median_income + medage, data = .)
+
+summary(m4)
+
+m4 %>% 
+  broom::tidy() %>% 
+  mutate(OR = exp(estimate),
+         OR_CI_lower = exp(estimate - 1.96*(std.error)),
+         OR_CI_upper = exp(estimate + 1.96*(std.error))) %>% 
+  select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %>% 
+  knitr::kable(digits = 3)
+```
+Based on the the results, the odds of getting the first dose of the COVID vaccine do not differ significantly between counties with low level of segregation and moderate/high level of segregation. However, since the OR for 
+
+```{r}
+plot(m4)
+```
+
 
 **Model 5**
 <img src="images/model5.png" style="width:100%">
+```{r}
+m5 = comb %>% 
+  filter(year == '2021') %>% 
+  lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
+
+summary(m5)
+
+m5 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3)
+```
+
+```{r}
+plot(m5)
+```
+
