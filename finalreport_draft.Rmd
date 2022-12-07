@@ -268,7 +268,7 @@ covid_df = covid_df_v1 %>%
 For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 83% as it was reported that nearly ~83% of the state of New York residents had completed at least one dose of vaccine by the end of 2021. [(source)](https://data.democratandchronicle.com/covid-19-vaccine-tracker/new-york/36/.)  
 
 ```{r, results = FALSE, message = FALSE}
-covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
+covid_hr = left_join(covid_df, hr_all, by = c("county", "year")) 
 comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
@@ -285,7 +285,7 @@ Health factors -- health behaviors, clinical care, physical environment, and soc
 **Model 1**
 <img src="images/model1.png" style="width:100%">
 
-```{r, results = FALSE}
+```{r, message = FALSE}
 m1 = comb %>% 
   filter(year == '2021') %>% 
   lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .)
@@ -308,7 +308,7 @@ The residual vs. fitted plot does not show strong pattern; however, the points a
 
 **Model 2**
 <img src="images/model2.png" style="width:100%">
-```{r, results = FALSE}
+```{r, rmessage = FALSE}
 m2 = comb %>% 
   filter(year == '2021') %>% 
   lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
@@ -329,7 +329,7 @@ Results of regression assumption tests were also similar to that of model 1's, i
 
 **Model 3**
 <img src="images/model3.png" style="width:100%">
-```{r, results = FALSE}
+```{r, message = FALSE}
 m3 = comb %>% 
   filter(year == '2021') %>% 
   lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .,)
@@ -352,7 +352,10 @@ Regression assumption tests, once again, show room for improvement in our model 
 
 **Model 4**
 <img src="images/model4.png" style="width:100%">
-```{r, results = FALSE}
+```{r, message = FALSE}
+m4 = comb %>% 
+  filter(year == '2021')
+
 m4 = comb %>% 
   filter(year == '2021') %>% 
   glm(vax_maj ~ segregation + p_minority + median_income + medage, data = .)
@@ -377,7 +380,7 @@ we did see the need to adjust our model; however, with the lack of 2021 data and
 
 **Model 5**
 <img src="images/model5.png" style="width:100%">
-```{r, results = FALSE}
+```{r, echo = FALSE}
 m5 = comb %>% 
   filter(year == '2021') %>% 
   lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
