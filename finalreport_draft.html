@@ -472,7 +472,7 @@ hispanic, p_hispanic; % black, renamed p_black). As we are interested in
 observing racial and socioeconomic disparities in COVID, we then created
 the following variables: % minority (hispanic + black), named
 p_minority; binary variable for low vs. moderate/high level of
-segregation. The cutoff value for level of segregation was set as 30 <a
+segregation. The cutoff value for level of segregation was set as 30. <a
 href="https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm">(source)</a></li>
 </ol>
 <pre class="r"><code># 2019 HR Data
@@ -668,24 +668,15 @@ comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;%
 <div id="statistical-analysis" class="section level2">
 <h2>Statistical Analysis</h2>
 <p>Question 1: Which health factors are associated with COVID-19
-incidences?</p>
+incidence?</p>
 <p>Health factors – health behaviors, clinical care, physical
 environment, and socioeconomic factors – are community conditions that
 can be modified and improved through public health interventions or
 health policies. Therefore, we were interested in seeing which factor(s)
 is significantly associated with the number of COVID-19 cases. To do so,
-we ran a linear regression test</p>
-<p><img src="images/model1.png" style="width:75%"></p>
-<p>Health factors are com</p>
-<p>Health factors are conditions within each county that can be
-improved</p>
-<p>Health factors represent community conditions that we can change to
-improve health and opportunity, such as access to quality education,
-living wage jobs, quality clinical care, nutritious foods, green spaces,
-and secure and affordable housing. We measure four health factor
-areas.</p>
-<p>First, we were interested in testing whether health factor scores in
-each county are associated with COVID-19 incidences.</p>
+we ran a linear regression test:</p>
+<p><strong>Model 1</strong>
+<img src="images/model1.png" style="width:120%"></p>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>COVID-19 and SES/Race and Ethnicity</strong></li>
 </ol>

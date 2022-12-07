@@ -96,7 +96,7 @@ nys_df = nys_df %>%
 Same steps were taken for each year:
 As the original excel files contain multiple sheets. We only imported the sheets that contain variables of interest.  
  <br>Each county's health ranking was imported from the sheet named "Outcomes & Factors SubRankings." From the sheet, only the following variables were selected for future analysis: each county's rank for health outcomes (quality of life, renamed to qol_r; length of life, renamed to longevity_r), health factors (health behaviors, renamed to health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic factors, renamed to ses_r; physical environment, renamed to env_r).
- <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % hispanic, p_hispanic; % black, renamed p_black). As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (hispanic + black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30 [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)
+ <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % hispanic, p_hispanic; % black, renamed p_black). As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (hispanic + black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30. [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)
 
 ```{r, results = FALSE, message = FALSE} 
 # 2019 HR Data
@@ -277,25 +277,12 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
 
 ## Statistical Analysis
 
-Question 1: Which health factors are associated with COVID-19 incidences?
+Question 1: Which health factors are associated with COVID-19 incidence?
 
-Health factors -- health behaviors, clinical care, physical environment, and socioeconomic factors -- are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases. To do so, we ran a linear regression test
+Health factors -- health behaviors, clinical care, physical environment, and socioeconomic factors -- are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases. To do so, we ran a linear regression test:
 
-<img src="images/model1.png" style="width:75%">
-
-
-
-Health factors are com
-
-Health factors are conditions within each county that can be improved 
-
-Health factors represent community conditions that we can change to improve health and opportunity, such as access to
-quality education, living wage jobs, quality clinical care, nutritious foods, green spaces, and secure and affordable housing.
-We measure four health factor areas.
-
-
-
-First, we were interested in testing whether health factor scores in each county are associated with COVID-19 incidences.
+**Model 1**
+<img src="images/model1.png" style="width:120%">
 
 
 
