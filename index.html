@@ -9,12 +9,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Jagjit Singh, Grace Yang, Ashwini Varghese" />
+<meta name="author" content="Jagjit Singh, Grace Jang, Ashwini Varghese" />
 
 
 <title>Spatio-temporal Association of Health and SES Measures with COVID-19 Risk in NY</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -181,8 +181,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -190,16 +190,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -298,7 +291,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Spatio-temporal Association of Health and
 SES Measures with COVID-19 Risk in NY</h1>
-<h4 class="author">Jagjit Singh, Grace Yang, Ashwini Varghese</h4>
+<h4 class="author">Jagjit Singh, Grace Jang, Ashwini Varghese</h4>
 
 </div>
 
@@ -345,32 +338,27 @@ project.</p>
 <p>To conduct our analysis, we considered three publically available
 data sources:</p>
 <ol style="list-style-type: decimal">
-<li>US Census Bureau: Demographics</li>
-</ol>
-<p>The <a href="https://www.census.gov/data.html">US Census Bureau</a>
-contains information gather population and housing information from all
-residents in the country every 10 years. We used demographic data from
-NY in our analysis.</p>
-<ol start="2" style="list-style-type: decimal">
-<li>University of Wisconsin, Population Health Institute: New York State
-Health Ranking</li>
-</ol>
-<p>We obtained data from the <a
+<li><p>US Census Bureau: Demographics<br> The <a
+href="https://www.census.gov/data.html">US Census Bureau</a> contains
+information gather population and housing information from all residents
+in the country every 10 years. We used demographic data from NY in our
+analysis.</p></li>
+<li><p>University of Wisconsin, Population Health Institute: New York
+State Health Ranking <br> We obtained data from the <a
 href="https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources">County
 Health Rankings &amp; Roadmaps</a> (CHR&amp;R) program of the University
 of Wisconsin Population Health Institute. This data allows us to explore
 the county rankings in the State based on sub-factors of health as well
-as health measures as variables of interest for analysis.</p>
-<ol start="3" style="list-style-type: decimal">
-<li>NY.gov: COVID-19 cases in New York from 2020-2022</li>
-</ol>
-<p>The official website for the State of New York contains a COVID-19
+as health measures as variables of interest for analysis.</p></li>
+<li><p>NY.gov: COVID-19 cases in New York from 2020-2022 <br> The
+official website for the State of New York contains a COVID-19
 information page which also includes publically available <a
 href="https://coronavirus.health.ny.gov/covid-19-data-new-york">data on
 COVID-19 testing, cases, vaccinations, etc.</a> We chose datasets that
 includes information on COVID-19 test, cases, and vaccinations that by
 county to be able to explore the distributions of these variables across
-NY counties.</p>
+NY counties.</p></li>
+</ol>
 </div>
 <div id="research-questions" class="section level3">
 <h3>Research questions</h3>
