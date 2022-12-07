@@ -237,7 +237,7 @@ ny_death = read_csv("data/ny_coviddeaths.csv") %>%
 janitor::clean_names() %>% 
 rename(date = report_date, n_fatality = place_of_fatality) %>%
 select(-deaths_by_county_of_residence) %>% 
-mutate(date = lubridate::mdy(date))
+mutate(date = lubridate::mdy(date), county = replace(county, county == 'Manhattan', 'New York'))
 
 ny_vax = read_csv("data/ny_covidvax.csv") %>% 
 janitor::clean_names() %>% 
@@ -252,7 +252,7 @@ covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>%
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
 covid_df = covid_df_v1 %>% 
-  group_by(county, year) %>% 
+  group_by(year, county) %>% 
   summarise(n_cases = sum(new_positives),
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))
@@ -315,13 +315,13 @@ m1 %>%
 Model 2
 ```{r}
 m2 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
+  filter(year == '2021') %>% 
   lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
 
 plot(m2)
 
 plot2 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
+  filter(year == '2021') %>% 
   modelr::add_residuals(m2) %>% 
   modelr::add_predictions(m2) %>% 
   ggplot(aes(x = pred, y = resid)) +
@@ -377,7 +377,7 @@ m4 %>%
 Model 5
 ```{r}
 m5 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
+  filter(year == '2021') %>% 
   lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
 
 plot(m5)
