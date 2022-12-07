@@ -302,7 +302,7 @@ on 12/8)</h2>
 <ol style="list-style-type: decimal">
 <li>Load Data</li>
 <li>Choose variables</li>
-<li>Create a data frame named ny_df</li>
+<li>Create a data frame named nys_df</li>
 </ol>
 <pre class="r"><code>census_api_key(&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;)
 
@@ -316,7 +316,7 @@ vars &lt;- c(tpop = &#39;P001001&#39;,
           apop = &#39;P003005&#39;,
           hpop = &#39;P004003&#39;)
 
-ny_df &lt;- get_decennial(state = &quot;ny&quot;, 
+nys_df &lt;- get_decennial(state = &quot;ny&quot;, 
                        geography = &quot;county&quot;,
                        variables = vars,
                        geometry = T,
@@ -353,9 +353,21 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |======                                                                |   9%
   |                                                                            
+  |=======                                                               |   9%
+  |                                                                            
   |=======                                                               |  10%
   |                                                                            
+  |=======                                                               |  11%
+  |                                                                            
+  |========                                                              |  11%
+  |                                                                            
+  |========                                                              |  12%
+  |                                                                            
+  |=========                                                             |  12%
+  |                                                                            
   |=========                                                             |  13%
+  |                                                                            
+  |=========                                                             |  14%
   |                                                                            
   |==========                                                            |  14%
   |                                                                            
@@ -367,13 +379,37 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |============                                                          |  17%
   |                                                                            
+  |============                                                          |  18%
+  |                                                                            
   |=============                                                         |  18%
+  |                                                                            
+  |=============                                                         |  19%
   |                                                                            
   |==============                                                        |  19%
   |                                                                            
   |==============                                                        |  20%
   |                                                                            
+  |==============                                                        |  21%
+  |                                                                            
+  |===============                                                       |  21%
+  |                                                                            
+  |===============                                                       |  22%
+  |                                                                            
+  |================                                                      |  22%
+  |                                                                            
+  |================                                                      |  23%
+  |                                                                            
+  |================                                                      |  24%
+  |                                                                            
+  |=================                                                     |  24%
+  |                                                                            
+  |=================                                                     |  25%
+  |                                                                            
   |==================                                                    |  25%
+  |                                                                            
+  |==================                                                    |  26%
+  |                                                                            
+  |===================                                                   |  26%
   |                                                                            
   |===================                                                   |  27%
   |                                                                            
@@ -385,43 +421,215 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=====================                                                 |  30%
   |                                                                            
+  |=====================                                                 |  31%
+  |                                                                            
+  |======================                                                |  31%
+  |                                                                            
+  |======================                                                |  32%
+  |                                                                            
+  |=======================                                               |  32%
+  |                                                                            
+  |=======================                                               |  33%
+  |                                                                            
   |========================                                              |  34%
+  |                                                                            
+  |========================                                              |  35%
+  |                                                                            
+  |=========================                                             |  35%
   |                                                                            
   |=========================                                             |  36%
   |                                                                            
+  |==========================                                            |  37%
+  |                                                                            
+  |==========================                                            |  38%
+  |                                                                            
+  |===========================                                           |  38%
+  |                                                                            
+  |===========================                                           |  39%
+  |                                                                            
+  |============================                                          |  39%
+  |                                                                            
+  |============================                                          |  40%
+  |                                                                            
+  |============================                                          |  41%
+  |                                                                            
   |=============================                                         |  41%
+  |                                                                            
+  |=============================                                         |  42%
+  |                                                                            
+  |==============================                                        |  42%
   |                                                                            
   |==============================                                        |  43%
   |                                                                            
+  |==============================                                        |  44%
+  |                                                                            
+  |===============================                                       |  44%
+  |                                                                            
+  |===============================                                       |  45%
+  |                                                                            
+  |================================                                      |  45%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
   |=================================                                     |  47%
+  |                                                                            
+  |=================================                                     |  48%
+  |                                                                            
+  |==================================                                    |  48%
+  |                                                                            
+  |==================================                                    |  49%
+  |                                                                            
+  |===================================                                   |  49%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |===================================                                   |  51%
+  |                                                                            
+  |====================================                                  |  51%
+  |                                                                            
+  |====================================                                  |  52%
+  |                                                                            
+  |=====================================                                 |  52%
+  |                                                                            
+  |=====================================                                 |  53%
+  |                                                                            
+  |=====================================                                 |  54%
+  |                                                                            
+  |======================================                                |  54%
+  |                                                                            
+  |======================================                                |  55%
+  |                                                                            
+  |=======================================                               |  55%
+  |                                                                            
+  |=======================================                               |  56%
+  |                                                                            
+  |========================================                              |  56%
+  |                                                                            
+  |========================================                              |  57%
+  |                                                                            
+  |========================================                              |  58%
+  |                                                                            
+  |=========================================                             |  58%
+  |                                                                            
+  |=========================================                             |  59%
+  |                                                                            
+  |==========================================                            |  60%
+  |                                                                            
+  |==========================================                            |  61%
+  |                                                                            
+  |===========================================                           |  61%
+  |                                                                            
+  |===========================================                           |  62%
+  |                                                                            
+  |============================================                          |  62%
   |                                                                            
   |============================================                          |  63%
   |                                                                            
+  |=============================================                         |  64%
+  |                                                                            
+  |==============================================                        |  65%
+  |                                                                            
+  |==============================================                        |  66%
+  |                                                                            
+  |===============================================                       |  67%
+  |                                                                            
+  |===============================================                       |  68%
+  |                                                                            
+  |================================================                      |  68%
+  |                                                                            
+  |================================================                      |  69%
+  |                                                                            
+  |=================================================                     |  70%
+  |                                                                            
+  |=================================================                     |  71%
+  |                                                                            
+  |==================================================                    |  71%
+  |                                                                            
+  |==================================================                    |  72%
+  |                                                                            
+  |===================================================                   |  72%
+  |                                                                            
+  |===================================================                   |  73%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |====================================================                  |  75%
+  |                                                                            
+  |=====================================================                 |  75%
+  |                                                                            
+  |=====================================================                 |  76%
+  |                                                                            
+  |======================================================                |  76%
+  |                                                                            
+  |======================================================                |  77%
+  |                                                                            
+  |======================================================                |  78%
+  |                                                                            
+  |=======================================================               |  78%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |========================================================              |  79%
+  |                                                                            
   |========================================================              |  80%
   |                                                                            
-  |====================================================================  |  96%
+  |=========================================================             |  81%
   |                                                                            
-  |======================================================================|  99%
+  |=========================================================             |  82%
+  |                                                                            
+  |==========================================================            |  82%
+  |                                                                            
+  |==========================================================            |  83%
+  |                                                                            
+  |===========================================================           |  84%
+  |                                                                            
+  |===========================================================           |  85%
+  |                                                                            
+  |============================================================          |  85%
+  |                                                                            
+  |============================================================          |  86%
+  |                                                                            
+  |=============================================================         |  86%
+  |                                                                            
+  |=============================================================         |  87%
+  |                                                                            
+  |=============================================================         |  88%
+  |                                                                            
+  |==============================================================        |  88%
+  |                                                                            
+  |==============================================================        |  89%
+  |                                                                            
+  |===============================================================       |  90%
+  |                                                                            
+  |===============================================================       |  91%
+  |                                                                            
+  |================================================================      |  91%
+  |                                                                            
+  |================================================================      |  92%
+  |                                                                            
+  |=================================================================     |  92%
+  |                                                                            
+  |=================================================================     |  93%
   |                                                                            
   |======================================================================| 100%</code></pre>
-<pre class="r"><code>ny_df = ny_df %&gt;%
+<pre class="r"><code>nys_df = nys_df %&gt;%
   mutate(
     county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
 
-ny_df$race_div &lt;- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
-                          (ny_df$bpop*(ny_df$bpop-1))+
-                          (ny_df$hpop*(ny_df$hpop-1))+
-                          (ny_df$apop*(ny_df$apop-1)))/
-                         (ny_df$tpop*(ny_df$tpop-1)))
+nys_df$race_div &lt;- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
+                          (nys_df$bpop*(nys_df$bpop-1))+
+                          (nys_df$hpop*(nys_df$hpop-1))+
+                          (nys_df$apop*(nys_df$apop-1)))/
+                         (nys_df$tpop*(nys_df$tpop-1)))
 
-ny_df = ny_df %&gt;% 
+nys_df = nys_df %&gt;% 
   select(tpop, medage, county, race_div)</code></pre>
 </div>
 <div id="health-ranking-hr-data-load-clean" class="section level2">
 <h2>2019-2022 Health Ranking (HR) Data: Load &amp; Clean</h2>
 <div id="hr-data" class="section level3">
 <h3>2019 HR Data</h3>
-<pre class="r"><code>hr2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -444,7 +652,7 @@ ny_df = ny_df %&gt;%
 ## • `Rank` -&gt; `Rank...13`
 ## • `Z-Score` -&gt; `Z-Score...14`
 ## • `Rank` -&gt; `Rank...15`</code></pre>
-<pre class="r"><code>demo2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>demo2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
@@ -506,7 +714,7 @@ ny_df = ny_df %&gt;%
 </div>
 <div id="hr-data-1" class="section level3">
 <h3>2020 HR Data</h3>
-<pre class="r"><code>hr2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -517,7 +725,7 @@ ny_df = ny_df %&gt;%
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+demo2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
@@ -538,7 +746,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 </div>
 <div id="hr-data-2" class="section level3">
 <h3>2021 HR Data</h3>
-<pre class="r"><code>hr2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -561,7 +769,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 ## • `Rank` -&gt; `Rank...13`
 ## • `Z-Score` -&gt; `Z-Score...14`
 ## • `Rank` -&gt; `Rank...15`</code></pre>
-<pre class="r"><code>demo2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>demo2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
@@ -645,13 +853,13 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 ## • `95% CI - High` -&gt; `95% CI - High...254`
 ## • `95% CI - Low` -&gt; `95% CI - Low...272`
 ## • `95% CI - High` -&gt; `95% CI - High...273`</code></pre>
-<pre class="r"><code>total2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+<pre class="r"><code>total2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;%
   mutate(year = 2021)</code></pre>
 </div>
 <div id="hr-data-3" class="section level3">
 <h3>2022 HR Data:</h3>
 <p>Health Ranking Data</p>
-<pre class="r"><code>hr2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -662,7 +870,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+demo2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
     select(&#39;county&#39;, 
@@ -695,20 +903,20 @@ ny_covidvax) 3. Select variables of interest 4. Merge 3 data frames into
 one by <code>date</code> and <code>county</code> 5. Convert
 <code>date</code> data type from char to date 6. Separate date into day,
 month, &amp; year for analysis</p>
-<pre class="r"><code>ny_test = read_csv(&#39;grace/ny_covidtest.csv&#39;) %&gt;% 
+<pre class="r"><code>ny_test = read_csv(&#39;data/ny_covidtest.csv&#39;) %&gt;% 
 janitor::clean_names() %&gt;% 
 filter(geography == &#39;COUNTY&#39;) %&gt;% 
 select(-geography) %&gt;% 
 rename(date = test_date) %&gt;% 
 mutate(date = lubridate::mdy(date))  
 
-ny_death = read_csv(&quot;grace/ny_coviddeaths.csv&quot;) %&gt;% 
+ny_death = read_csv(&quot;data/ny_coviddeaths.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
 rename(date = report_date, n_fatality = place_of_fatality) %&gt;%
 select(-deaths_by_county_of_residence) %&gt;% 
 mutate(date = lubridate::mdy(date))
 
-ny_vax = read_csv(&quot;grace/ny_covidvax.csv&quot;) %&gt;% 
+ny_vax = read_csv(&quot;data/ny_covidvax.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
 rename(date = report_as_of) %&gt;% 
 select(-region, -series_complete) %&gt;% 
@@ -729,7 +937,7 @@ covid_df = covid_df_v1 %&gt;%
 <div id="merge-data-for-analysis" class="section level2">
 <h2>Merge Data for Analysis</h2>
 <pre class="r"><code>covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;))
-comb = left_join(covid_hr, ny_df, by = &#39;county&#39;) %&gt;% 
+comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;% 
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 &gt;= .73*(tpop) ~ 1,
                              vax_dose1 &lt; .73*(tpop) ~ 0))</code></pre>
