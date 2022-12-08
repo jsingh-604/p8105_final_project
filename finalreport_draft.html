@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>FinalReport_draft</title>
+
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Project Overview</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="video.html">Screencast</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="data.html">Data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Trends over time</li>
+    <li class="dropdown-header">Health Factors</li>
+    <li class="dropdown-header">To be donw</li>
+    <li>
+      <a href="spatial_maps.html">Spatial trends/visualization</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="mailto:&lt;js5958@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/jsingh-604/p8105_final_project/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">FinalReport_draft</h1>
+
+</div>
+
+
+<div id="data-processing-and-cleaning" class="section level2">
+<h2>Data Processing and Cleaning</h2>
+<div id="data-sources" class="section level3">
+<h3>Data Sources</h3>
+<p>Our data were downloaded from three different sources:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>New York State Demographics</strong>: US Census Bureau’s
+demographics data were imported using <code>tidycensus</code>.</p></li>
+<li><p><strong>New York State Health Ranking</strong> <a
+href="https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources">(dataset)</a>:
+Four data sets (2019, 2020, 2021 and 2022 New York State Health Ranking
+Data) were downloaded as .xls/xlsx. These data sets are provided by the
+University of Wisconsin Population Health Institute, which performs
+extensive analyses to calculate each New York county’s score for health
+factors (health behaviors, clinical care, SES factors, and physical
+environment) and health outcome (quality of life, and length of
+life).</p></li>
+<li><p><strong>New York State COVID-19</strong> <a
+href="https://data.ny.gov/browse?tags=covid-19">(dataset)</a>: Three
+data sets (COVID testing, COVID vaccination, COVID fatalities from 2020
+to 11/2022) were downloaded as .csv.</p></li>
+</ol>
+</div>
+<div id="data-cleaning" class="section level3">
+<h3>Data Cleaning</h3>
+<ol style="list-style-type: decimal">
+<li><strong>New York State Demographics</strong><br />
+We imported US Census Bureau’s 2020 data because 2021 data is not
+available until 12/8/2022. As demographics data do not change
+significantly each year, 2020 data were used for analysis. Then we
+decided to include the following variables, as we would like to adjust
+them in our models:</li>
+</ol>
+<ul>
+<li>total population in each county (tpop)</li>
+<li>median age in each county (medage)</li>
+<li>racial diversity index (race_div): calculated Simpson’s Diversity
+Index in lines 65 to 69 (higher index indicates more racial
+diversity)</li>
+</ul>
+<pre class="r"><code>census_api_key(&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;)
+
+census_data &lt;- load_variables(2020, &quot;acs5&quot;, cache=T)
+fwrite(census_data, &quot;census_variables.csv&quot;)
+
+vars &lt;- c(tpop = &#39;P001001&#39;,
+          medage = &#39;P013001&#39;,
+          wpop = &#39;P003002&#39;,
+          bpop = &#39;P003003&#39;,
+          apop = &#39;P003005&#39;,
+          hpop = &#39;P004003&#39;)
+
+nys_df &lt;- get_decennial(state = &quot;ny&quot;, 
+                       geography = &quot;county&quot;,
+                       variables = vars,
+                       geometry = T,
+                       output = &quot;wide&quot;)
+
+nys_df = nys_df %&gt;%
+  mutate(
+    county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
+
+nys_df$race_div &lt;- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
+                          (nys_df$bpop*(nys_df$bpop-1))+
+                          (nys_df$hpop*(nys_df$hpop-1))+
+                          (nys_df$apop*(nys_df$apop-1)))/
+                         (nys_df$tpop*(nys_df$tpop-1)))
+
+nys_df = nys_df %&gt;% 
+  select(tpop, medage, county, race_div)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>New York State Health Ranking</strong><br />
+Same steps were taken for each year: As the original excel files contain
+multiple sheets. We only imported the sheets that contain variables of
+interest.<br />
+<br>Each county’s health ranking was imported from the sheet named
+“Outcomes &amp; Factors SubRankings.” From the sheet, only the following
+variables were selected for future analysis: each county’s rank for
+health outcomes (quality of life, renamed to qol_r; length of life,
+renamed to longevity_r), health factors (health behaviors, renamed to
+health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic
+factors, renamed to ses_r; physical environment, renamed to env_r).
+<br>Additionally, further information on each county’s socioeconomic
+factors and race/ethnicity were imported from the sheet named
+“Additional Measure Data.” The following variables were selected: each
+county’s segregation index (white vs. nonwhite), renamed to
+segregation_score; median household income, renamed household_income; %
+hispanic, p_hispanic; % black, renamed p_black). As we are interested in
+observing racial and socioeconomic disparities in COVID, we then created
+the following variables: % minority (hispanic + black), named
+p_minority; binary variable for low vs. moderate/high level of
+segregation. The cutoff value for level of segregation was set as 30. <a
+href="https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm">(source)</a></li>
+</ol>
+<pre class="r"><code># 2019 HR Data
+
+hr2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;household_income&#39;,
+         &#39;percent_hispanic&#39;,
+         &#39;percent_african_american&#39;) %&gt;% 
+  rename(median_income = household_income,
+         segregation_score = segregation_index_2,
+         p_hispanic = percent_hispanic,
+         p_black = percent_african_american) %&gt;%
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+total2019 = merge(x = hr2019, y = demo2019, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+  mutate(year = 2019)
+
+# 2020 HR Data
+hr2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+  mutate(year = 2020)
+
+# 2021 HR Data
+hr2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+total2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;%
+  mutate(year = 2021)
+
+# 2022 HR Data
+hr2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+    select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_hispanic + p_black)
+
+total2022 = merge(x = hr2022, y = demo2022, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+  mutate(year = 2022)
+
+# Merge
+hr_all = rbind(total2019, total2020, total2021, total2022)</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>New York State COVID-19</strong><br />
+From the three data sets we extracted the following variables of
+interest: number of new COVID cases per day, cumulative number of deaths
+reported per day, cumulative # of individuals who received the first
+dose of the vaccine. For the data set with cumulative number of deaths,
+the county “Manhattan” was replaced with “New York” for consistency.
+Next, the three data sets were merged by “date” and “county.” The merged
+data set was then grouped according to “county” and “year” and the
+following variables were created: total number of new positive cases per
+year, called n_cases; total number of deaths per year, called n_deaths;
+and total number of individuals who received the first dose of the
+vaccine per year, called vax_dose1 (this data is not available for year
+2020).</li>
+</ol>
+<pre class="r"><code>ny_test = read_csv(&#39;data/ny_covidtest.csv&#39;) %&gt;% 
+janitor::clean_names() %&gt;% 
+filter(geography == &#39;COUNTY&#39;) %&gt;% 
+select(-geography) %&gt;% 
+rename(date = test_date) %&gt;% 
+mutate(date = lubridate::mdy(date))  
+
+ny_death = read_csv(&quot;data/ny_coviddeaths.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_date, n_fatality = place_of_fatality) %&gt;%
+select(-deaths_by_county_of_residence) %&gt;% 
+mutate(date = lubridate::mdy(date), county = replace(county, county == &#39;Manhattan&#39;, &#39;New York&#39;))
+
+ny_vax = read_csv(&quot;data/ny_covidvax.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_as_of) %&gt;% 
+select(-region, -series_complete) %&gt;% 
+mutate(date = lubridate::mdy(date))
+
+ny_covid_v1 = left_join(ny_test, ny_death, by = c(&quot;date&quot;, &quot;county&quot;))
+
+covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;)) %&gt;% 
+  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
+  mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
+
+covid_df = covid_df_v1 %&gt;% 
+  group_by(year, county) %&gt;% 
+  summarise(n_cases = sum(new_positives),
+            vax_dose1 = max(first_dose),
+            n_deaths = max(n_fatality, na.rm = TRUE))</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Dataset for Analysis</strong><br />
+For regression tests, demographics dataset, HR dataset, and COVID
+dataset were all merged into one dataset called “comb.” At the end, we
+added a new binary variable called vax_maj to see whether majority of
+the residents in the county had received the first dose of vaccine. The
+cutoff value used was 83% as it was reported that nearly ~83% of the
+state of New York residents had completed at least one dose of vaccine
+by the end of 2021. <a
+href="https://data.democratandchronicle.com/covid-19-vaccine-tracker/new-york/36/.">(source)</a></li>
+</ol>
+<pre class="r"><code>covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;)) 
+comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;% 
+  mutate(tpop_50 = tpop/2,
+         vax_maj = case_when(vax_dose1 &gt;= .83*(tpop) ~ 1,
+                             vax_dose1 &lt; .83*(tpop) ~ 0))</code></pre>
+</div>
+</div>
+<div id="statistical-analysis" class="section level2">
+<h2>Statistical Analysis</h2>
+<p>Note: Though we initially planned to adjust for racial diversity in
+our model, the variable was removed because racial diversity index did
+not vary much among counties. For each model, only data from 2021 was
+used because there is no information on 2020 vaccination as the vaccine
+was developed in 2021 and 2022 data is incomplete.</p>
+<p style="color: red">
+<strong><em>Question 1: Which health factors are associated with
+COVID-19?</em></strong>
+</p>
+<p>Health factors – health behaviors, clinical care, physical
+environment, and socioeconomic factors – are community conditions that
+can be modified and improved through public health interventions or
+health policies. Therefore, we were interested in seeing which factor(s)
+is significantly associated with the number of COVID-19 cases, COVID-19
+deaths, and COVID-19 vaccination. To do so, we ran multiple linear
+regression test.</p>
+<p><strong>Model 1</strong>
+<img src="images/model1.png" style="width:100%"></p>
+<pre class="r"><code>m1 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .)
+
+m1 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">281132.339</td>
+<td align="right">0.003</td>
+</tr>
+<tr class="even">
+<td align="left">health_beh_r</td>
+<td align="right">-3135.730</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clinical_care_r</td>
+<td align="right">1016.997</td>
+<td align="right">0.042</td>
+</tr>
+<tr class="even">
+<td align="left">env_r</td>
+<td align="right">318.977</td>
+<td align="right">0.443</td>
+</tr>
+<tr class="odd">
+<td align="left">ses_r</td>
+<td align="right">1519.072</td>
+<td align="right">0.015</td>
+</tr>
+<tr class="even">
+<td align="left">longevity_r</td>
+<td align="right">-1073.673</td>
+<td align="right">0.077</td>
+</tr>
+<tr class="odd">
+<td align="left">qol_r</td>
+<td align="right">721.774</td>
+<td align="right">0.179</td>
+</tr>
+<tr class="even">
+<td align="left">medage</td>
+<td align="right">-5461.353</td>
+<td align="right">0.014</td>
+</tr>
+</tbody>
+</table>
+<p>After adjusting for median age and health outcome variables, health
+behaviors, clinical care, and SES factors were shown to be significantly
+associated with COVID-19 incidence (p &lt; .05). Health behaviors score
+is based on the community residents’ tobacco use, diet &amp; exercise,
+alcohol &amp; drug use, and sexual activity (i.e., number of STI/STD).
+Lelve of clinical care is determined by access to care and quality of
+care. Lastly, SES factors are comprised of education, employment,
+income, family &amp; social support, and community safety. Since factors
+such as unequal access to healthcare, high-quality education, increased
+use of drug and alcohol, etc. are well-known, potential drivers of
+health inequity. The results warrant further exploration of interaction
+between these factors and race/ethnicity.</p>
+<p>To test the validity of our results, we checked regression
+assumptions.</p>
+<pre class="r"><code>plot(m1)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/m1_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m1_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m1_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m1_check-4.png" width="90%" /></p>
+<p>The residual vs. fitted plot does not show strong pattern; however,
+the points are not perfectly, randomly scattered around residual = 0.
+The residual vs. leverage plot confirms that our model does not have any
+influential points because no point falls outside Cook’s distance.
+Meanwhile, scale-location plot indicates a potential violation of
+heteroscedasticity. Lastly, for the normal Q-Q plot, there appears to be
+no extreme skewness with majority of the points falling along the line.
+Some deviations at the lowest and highest quantiles suggest that random
+fluctuation may be seen at extreme ends. Therefore, these plots indicate
+that our model, though sufficient, can be improved (i.e., add
+interaction terms, adjust for more variables) and there is more to be
+explored.</p>
+<p><strong>Model 2</strong>
+<img src="images/model2.png" style="width:100%"></p>
+<pre class="r"><code>m2 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
+
+m2 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">6350.926</td>
+<td align="right">0.002</td>
+</tr>
+<tr class="even">
+<td align="left">health_beh_r</td>
+<td align="right">-56.095</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clinical_care_r</td>
+<td align="right">23.376</td>
+<td align="right">0.027</td>
+</tr>
+<tr class="even">
+<td align="left">env_r</td>
+<td align="right">3.849</td>
+<td align="right">0.666</td>
+</tr>
+<tr class="odd">
+<td align="left">longevity_r</td>
+<td align="right">-15.743</td>
+<td align="right">0.224</td>
+</tr>
+<tr class="even">
+<td align="left">qol_r</td>
+<td align="right">27.562</td>
+<td align="right">0.012</td>
+</tr>
+<tr class="odd">
+<td align="left">medage</td>
+<td align="right">-124.994</td>
+<td align="right">0.010</td>
+</tr>
+</tbody>
+</table>
+<p>As seen with model 1, model 2 indicates that all health factors
+except physical environment are significantly associated with number of
+deaths related to COVID-19 in each county (p &lt; .05). Since physical
+environment score is based on air/water quality and housing/transit
+conditions within the county, this suggests that public health
+professionals can aim to mitigate disparities in COVID-19 by first
+starting short-term community-based public health interventions aimed at
+encouraging residents to building healthier lifestyles.</p>
+<pre class="r"><code>plot(m2)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/m2_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m2_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m2_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m2_check-4.png" width="90%" /></p>
+<p>Results of regression assumption tests were also similar to that of
+model 1’s, indicating that there is more to be explored in the
+association between health factor and COVID-19 fatalities.</p>
+<p><strong>Model 3</strong>
+<img src="images/model3.png" style="width:100%"></p>
+<pre class="r"><code>m3 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .,)
+
+m3 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">1680734.061</td>
+<td align="right">0.003</td>
+</tr>
+<tr class="even">
+<td align="left">health_beh_r</td>
+<td align="right">-18570.509</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clinical_care_r</td>
+<td align="right">5547.020</td>
+<td align="right">0.061</td>
+</tr>
+<tr class="even">
+<td align="left">env_r</td>
+<td align="right">1458.937</td>
+<td align="right">0.553</td>
+</tr>
+<tr class="odd">
+<td align="left">ses_r</td>
+<td align="right">8341.958</td>
+<td align="right">0.023</td>
+</tr>
+<tr class="even">
+<td align="left">longevity_r</td>
+<td align="right">-6378.192</td>
+<td align="right">0.076</td>
+</tr>
+<tr class="odd">
+<td align="left">qol_r</td>
+<td align="right">4723.999</td>
+<td align="right">0.138</td>
+</tr>
+<tr class="even">
+<td align="left">medage</td>
+<td align="right">-31869.647</td>
+<td align="right">0.016</td>
+</tr>
+</tbody>
+</table>
+<p>Unlike models 1 and 2, model 3 indicates that neither clinical care
+nor physical environment scores are significantly associated with the
+rate of COVID vaccination (p &gt; .05). This can potentailly be because
+the COVID vaccine was available not only at hospitals but also at
+locations such pharmacies (CVS, Walgreen, etc.) and community health
+centers, removing the barrier to healthcare access. Meanwhile,
+significant associations with health behaviors and SES factors (p &lt;
+.05) reinforce the need to address root causes of health inequity such
+as residential segregation.</p>
+<pre class="r"><code>plot(m3)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/m3_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m3_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m3_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m3_check-4.png" width="90%" /></p>
+<p>Regression assumption tests, once again, show room for improvement in
+our model and the need for further analysis</p>
+<p style="color: red">
+<strong><em>Question 2: Can SES factors and race/ethnicity alone predict
+COVID-19 vaccination or fatalities?</em></strong>
+</p>
+<p><strong>Model 4</strong>
+<img src="images/model4.png" style="width:100%"></p>
+<pre class="r"><code>m4 = comb %&gt;% 
+  filter(year == &#39;2021&#39;)
+
+m4 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  glm(vax_maj ~ segregation + p_minority + median_income + medage, data = .)
+
+summary(m4)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = vax_maj ~ segregation + p_minority + median_income + 
+##     medage, data = .)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -0.41979  -0.09293  -0.00468   0.03441   0.88464  
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)   -6.704e-01  5.234e-01  -1.281  0.20554   
+## segregation    2.841e-02  7.986e-02   0.356  0.72342   
+## p_minority     5.541e-03  2.702e-03   2.051  0.04497 * 
+## median_income  6.314e-06  2.073e-06   3.045  0.00354 **
+## medage         6.129e-03  1.237e-02   0.495  0.62219   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for gaussian family taken to be 0.05758436)
+## 
+##     Null deviance: 4.5902  on 60  degrees of freedom
+## Residual deviance: 3.2247  on 56  degrees of freedom
+##   (1 observation deleted due to missingness)
+## AIC: 5.7689
+## 
+## Number of Fisher Scoring iterations: 2</code></pre>
+<pre class="r"><code>m4 %&gt;% 
+  broom::tidy() %&gt;% 
+  mutate(OR = exp(estimate),
+         OR_CI_lower = exp(estimate - 1.96*(std.error)),
+         OR_CI_upper = exp(estimate + 1.96*(std.error))) %&gt;% 
+  select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %&gt;% 
+  knitr::kable(digits = 5)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">log_OR</th>
+<th align="right">OR</th>
+<th align="right">OR_CI_lower</th>
+<th align="right">OR_CI_upper</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-0.67042</td>
+<td align="right">0.51149</td>
+<td align="right">0.18335</td>
+<td align="right">1.42691</td>
+<td align="right">0.20554</td>
+</tr>
+<tr class="even">
+<td align="left">segregation</td>
+<td align="right">0.02841</td>
+<td align="right">1.02881</td>
+<td align="right">0.87974</td>
+<td align="right">1.20315</td>
+<td align="right">0.72342</td>
+</tr>
+<tr class="odd">
+<td align="left">p_minority</td>
+<td align="right">0.00554</td>
+<td align="right">1.00556</td>
+<td align="right">1.00025</td>
+<td align="right">1.01090</td>
+<td align="right">0.04497</td>
+</tr>
+<tr class="even">
+<td align="left">median_income</td>
+<td align="right">0.00001</td>
+<td align="right">1.00001</td>
+<td align="right">1.00000</td>
+<td align="right">1.00001</td>
+<td align="right">0.00354</td>
+</tr>
+<tr class="odd">
+<td align="left">medage</td>
+<td align="right">0.00613</td>
+<td align="right">1.00615</td>
+<td align="right">0.98205</td>
+<td align="right">1.03084</td>
+<td align="right">0.62219</td>
+</tr>
+</tbody>
+</table>
+<p>Based on the the results, the odds of getting the first dose of the
+COVID vaccine do not differ significantly between counties with low
+level of segregation and moderate/high level of segregation. Ironically,
+for every 1% increase in % minority, the odds of the county’s resident
+receiving the first dose of the vaccine increases by 1.006 times (p =
+.045). This could’ve occurred because the model lacks an adequate
+adjustment for race/ethnicity. Meanwhile, the model also shows that for
+every $1 increase in median household income, the odds of the county’s
+resident receiving dose 1 of the vaccine increases by 1.006 times (p =
+.003).</p>
+<p>Upon checking our model,</p>
+<pre class="r"><code>plot(m4)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/m4_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m4_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m4_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m4_check-4.png" width="90%" />
+we did see the need to adjust our model; however, with the lack of 2021
+data and demographics information, further analysis and modifications
+could not be completed. The residual vs. fitted plot did not give us
+much information as the outcome variable of our model is binary. The
+normal Q-Q plot showed that our data is not skewed, though there are
+some deviations at extreme quantiles. Furthermore, there appears to be
+potentially heteroscedasticity per scale-location plot and one outlier
+(point #3 falls outside Cook’s distance).</p>
+<p><strong>Model 5</strong>
+<img src="images/model5.png" style="width:100%"></p>
+<pre><code>## 
+## Call:
+## lm(formula = n_deaths ~ segregation_score + p_minority + median_income + 
+##     medage, data = .)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1806.4  -461.1    -5.6   305.5  3378.0 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -1.195e+03  2.064e+03  -0.579   0.5650    
+## segregation_score  1.561e+01  1.067e+01   1.463   0.1490    
+## p_minority         7.352e+01  1.068e+01   6.882 5.42e-09 ***
+## median_income      1.452e-02  8.070e-03   1.799   0.0775 .  
+## medage            -1.490e+01  4.789e+01  -0.311   0.7568    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 934.4 on 56 degrees of freedom
+##   (1 observation deleted due to missingness)
+## Multiple R-squared:  0.6687, Adjusted R-squared:  0.645 
+## F-statistic: 28.26 on 4 and 56 DF,  p-value: 7.271e-13</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-1194.714</td>
+<td align="right">0.565</td>
+</tr>
+<tr class="even">
+<td align="left">segregation_score</td>
+<td align="right">15.607</td>
+<td align="right">0.149</td>
+</tr>
+<tr class="odd">
+<td align="left">p_minority</td>
+<td align="right">73.524</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">median_income</td>
+<td align="right">0.015</td>
+<td align="right">0.077</td>
+</tr>
+<tr class="odd">
+<td align="left">medage</td>
+<td align="right">-14.903</td>
+<td align="right">0.757</td>
+</tr>
+</tbody>
+</table>
+<p>This model shows the number of COVID-19 fatalities in each county is
+significantly associated with it’s % minority (p &lt; .05), confirming
+that racial/ethnic minorities, specifically Hispanic and Black, had a
+higher risk of dying from COVID compared to White/Asian. AIAN &amp;
+NHOPI were not included because they constitute only ~1% of population
+for each county.</p>
+<pre class="r"><code>plot(m5)</code></pre>
+<p><img src="finalreport_draft_files/figure-html/m5_check-1.png" width="90%" /><img src="finalreport_draft_files/figure-html/m5_check-2.png" width="90%" /><img src="finalreport_draft_files/figure-html/m5_check-3.png" width="90%" /><img src="finalreport_draft_files/figure-html/m5_check-4.png" width="90%" /></p>
+<p>For regression test plots, the conclusions are very similar to that
+of model 4’s. The residual vs. Fitted model shows no clean patterns;
+however, the points are also not equally, randomly distributed along
+residual = 0 line. The Q-Q plot confirms our data is normally
+distributed with no extreme skewness. Scale-location shows possibility
+of homoscedasticity violation and residual vs. leverage, shows that
+point #3 is an influential point; combined with model 4’s leverage plot,
+this indicates the need to remove point #3 from our models.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -38,7 +38,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 1. Load Data
 2. Choose variables
-3. Create a data frame named ny_df
+3. Create a data frame named nys_df
 ```{r census_data, message = FALSE}
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
@@ -52,23 +52,23 @@ vars <- c(tpop = 'P001001',
           apop = 'P003005',
           hpop = 'P004003')
 
-ny_df <- get_decennial(state = "ny", 
+nys_df <- get_decennial(state = "ny", 
                        geography = "county",
                        variables = vars,
                        geometry = T,
                        output = "wide")
 
-ny_df = ny_df %>%
+nys_df = nys_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
 
-ny_df$race_div <- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
-                          (ny_df$bpop*(ny_df$bpop-1))+
-                          (ny_df$hpop*(ny_df$hpop-1))+
-                          (ny_df$apop*(ny_df$apop-1)))/
-                         (ny_df$tpop*(ny_df$tpop-1)))
+nys_df$race_div <- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
+                          (nys_df$bpop*(nys_df$bpop-1))+
+                          (nys_df$hpop*(nys_df$hpop-1))+
+                          (nys_df$apop*(nys_df$apop-1)))/
+                         (nys_df$tpop*(nys_df$tpop-1)))
 
-ny_df = ny_df %>% 
+nys_df = nys_df %>% 
   select(tpop, medage, county, race_div)
 ```
 
@@ -77,7 +77,7 @@ ny_df = ny_df %>%
 ### 2019 HR Data
 
 ```{r} 
-hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2019 = read_excel('data/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -88,7 +88,7 @@ hr2019 = read_excel('grace/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2019 = read_excel('grace/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2019 = read_excel('data/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -111,7 +111,7 @@ total2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>%
 ### 2020 HR Data
 
 ```{r, message = FALSE}
-hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2020 = read_excel('data/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -122,7 +122,7 @@ hr2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2020 = read_excel('grace/ny_hr20.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2020 = read_excel('data/ny_hr20.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -145,7 +145,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>%
 ### 2021 HR Data
 
 ```{r}
-hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2021 = read_excel('data/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -156,7 +156,7 @@ hr2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2021 = read_excel('data/ny_hr21.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -172,7 +172,7 @@ demo2021 = read_excel('grace/ny_hr21.xlsx', sheet = 'Additional Measure Data', s
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>% 
+total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
   mutate(year = 2021)
 ```
 
@@ -180,7 +180,7 @@ total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
 
 Health Ranking Data
 ```{r, message = FALSE}
-hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -191,7 +191,7 @@ hr2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2022 = read_excel('grace/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
     select('county', 
@@ -226,20 +226,20 @@ Decided to look at variables related to covid testing (i.e., # positive cases, #
 6. Separate date into day, month, & year for analysis
 
 ```{r, message = FALSE}
-ny_test = read_csv('grace/ny_covidtest.csv') %>% 
+ny_test = read_csv('data/ny_covidtest.csv') %>% 
 janitor::clean_names() %>% 
 filter(geography == 'COUNTY') %>% 
 select(-geography) %>% 
 rename(date = test_date) %>% 
 mutate(date = lubridate::mdy(date))  
 
-ny_death = read_csv("grace/ny_coviddeaths.csv") %>% 
+ny_death = read_csv("data/ny_coviddeaths.csv") %>% 
 janitor::clean_names() %>% 
 rename(date = report_date, n_fatality = place_of_fatality) %>%
 select(-deaths_by_county_of_residence) %>% 
-mutate(date = lubridate::mdy(date))
+mutate(date = lubridate::mdy(date), county = replace(county, county == 'Manhattan', 'New York'))
 
-ny_vax = read_csv("grace/ny_covidvax.csv") %>% 
+ny_vax = read_csv("data/ny_covidvax.csv") %>% 
 janitor::clean_names() %>% 
 rename(date = report_as_of) %>% 
 select(-region, -series_complete) %>% 
@@ -252,7 +252,7 @@ covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c("date", "county")) %>%
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
 covid_df = covid_df_v1 %>% 
-  group_by(county, year) %>% 
+  group_by(year, county) %>% 
   summarise(n_cases = sum(new_positives),
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))
@@ -262,10 +262,10 @@ covid_df = covid_df_v1 %>%
 
 ```{r}
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
-comb = left_join(covid_hr, ny_df, by = 'county') %>% 
+comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 >= .73*(tpop) ~ 1,
-                             vax_dose1 < .73*(tpop) ~ 0))
+         vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
+                             vax_dose1 < .83*(tpop) ~ 0))
 ```
 
 # Regression Test:
@@ -315,13 +315,13 @@ m1 %>%
 Model 2
 ```{r}
 m2 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
+  filter(year == '2021') %>% 
   lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
 
 plot(m2)
 
 plot2 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
+  filter(year == '2021') %>% 
   modelr::add_residuals(m2) %>% 
   modelr::add_predictions(m2) %>% 
   ggplot(aes(x = pred, y = resid)) +
@@ -351,7 +351,6 @@ m3 %>%
   broom::tidy() %>% 
   select(term, estimate, p.value) %>% 
   knitr::kable(digits = 3) 
-
 ```
 
 ### Models 4 to 6 -- SES, Race/Ethnicity & COVID
@@ -371,13 +370,13 @@ m4 %>%
          OR_CI_lower = exp(estimate - 1.96*(std.error)),
          OR_CI_upper = exp(estimate + 1.96*(std.error))) %>% 
   select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %>% 
-  knitr::kable()
+  knitr::kable(digits = 3)
 ```
 
 Model 5
 ```{r}
 m5 = comb %>% 
-  filter(year == '2021', county != "New York") %>% 
+  filter(year == '2021') %>% 
   lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
 
 plot(m5)

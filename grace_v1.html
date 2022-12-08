@@ -302,7 +302,7 @@ on 12/8)</h2>
 <ol style="list-style-type: decimal">
 <li>Load Data</li>
 <li>Choose variables</li>
-<li>Create a data frame named ny_df</li>
+<li>Create a data frame named nys_df</li>
 </ol>
 <pre class="r"><code>census_api_key(&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;)
 
@@ -316,7 +316,7 @@ vars &lt;- c(tpop = &#39;P001001&#39;,
           apop = &#39;P003005&#39;,
           hpop = &#39;P004003&#39;)
 
-ny_df &lt;- get_decennial(state = &quot;ny&quot;, 
+nys_df &lt;- get_decennial(state = &quot;ny&quot;, 
                        geography = &quot;county&quot;,
                        variables = vars,
                        geometry = T,
@@ -331,137 +331,53 @@ ny_df &lt;- get_decennial(state = &quot;ny&quot;,
   |                                                                            
   |=                                                                     |   2%
   |                                                                            
-  |==                                                                    |   2%
-  |                                                                            
   |==                                                                    |   3%
   |                                                                            
-  |===                                                                   |   4%
+  |=============                                                         |  19%
   |                                                                            
-  |===                                                                   |   5%
+  |=========================                                             |  35%
   |                                                                            
-  |====                                                                  |   5%
+  |====================================                                  |  52%
   |                                                                            
-  |====                                                                  |   6%
+  |=============================================                         |  65%
   |                                                                            
-  |=====                                                                 |   6%
+  |==============================================                        |  65%
   |                                                                            
-  |=====                                                                 |   7%
+  |==============================================                        |  66%
   |                                                                            
-  |=====                                                                 |   8%
+  |===============================================                       |  66%
   |                                                                            
-  |======                                                                |   8%
-  |                                                                            
-  |========                                                              |  12%
-  |                                                                            
-  |=========                                                             |  12%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |=========                                                             |  14%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |===========                                                           |  16%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |============                                                          |  18%
-  |                                                                            
-  |==============                                                        |  20%
-  |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
-  |================                                                      |  22%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |=================                                                     |  24%
-  |                                                                            
-  |=================                                                     |  25%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |==================                                                    |  26%
-  |                                                                            
-  |===================                                                   |  27%
-  |                                                                            
-  |====================                                                  |  28%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=====================                                                 |  29%
-  |                                                                            
-  |=====================                                                 |  30%
-  |                                                                            
-  |=====================                                                 |  31%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |=======================                                               |  32%
-  |                                                                            
-  |========================                                              |  34%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |=============================                                         |  41%
-  |                                                                            
-  |=============================                                         |  42%
-  |                                                                            
-  |===============================                                       |  44%
-  |                                                                            
-  |=================================                                     |  47%
-  |                                                                            
-  |=================================                                     |  48%
-  |                                                                            
-  |==================================                                    |  48%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |=========================================                             |  59%
-  |                                                                            
-  |============================================                          |  63%
+  |===============================================                       |  68%
   |                                                                            
   |================================================                      |  68%
   |                                                                            
   |==================================================                    |  71%
   |                                                                            
-  |==================================================                    |  72%
+  |=====================================================                 |  76%
   |                                                                            
-  |===================================================                   |  72%
+  |======================================================                |  76%
   |                                                                            
-  |======================================================                |  77%
-  |                                                                            
-  |=========================================================             |  81%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |===============================================================       |  91%
-  |                                                                            
-  |===================================================================   |  95%
+  |==================================================================    |  95%
   |                                                                            
   |======================================================================| 100%</code></pre>
-<pre class="r"><code>ny_df = ny_df %&gt;%
+<pre class="r"><code>nys_df = nys_df %&gt;%
   mutate(
     county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
 
-ny_df$race_div &lt;- 1 - (((ny_df$wpop*(ny_df$wpop-1))+
-                          (ny_df$bpop*(ny_df$bpop-1))+
-                          (ny_df$hpop*(ny_df$hpop-1))+
-                          (ny_df$apop*(ny_df$apop-1)))/
-                         (ny_df$tpop*(ny_df$tpop-1)))
+nys_df$race_div &lt;- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
+                          (nys_df$bpop*(nys_df$bpop-1))+
+                          (nys_df$hpop*(nys_df$hpop-1))+
+                          (nys_df$apop*(nys_df$apop-1)))/
+                         (nys_df$tpop*(nys_df$tpop-1)))
 
-ny_df = ny_df %&gt;% 
+nys_df = nys_df %&gt;% 
   select(tpop, medage, county, race_div)</code></pre>
 </div>
 <div id="health-ranking-hr-data-load-clean" class="section level2">
 <h2>2019-2022 Health Ranking (HR) Data: Load &amp; Clean</h2>
 <div id="hr-data" class="section level3">
 <h3>2019 HR Data</h3>
-<pre class="r"><code>hr2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -484,7 +400,7 @@ ny_df = ny_df %&gt;%
 ## • `Rank` -&gt; `Rank...13`
 ## • `Z-Score` -&gt; `Z-Score...14`
 ## • `Rank` -&gt; `Rank...15`</code></pre>
-<pre class="r"><code>demo2019 = read_excel(&#39;grace/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>demo2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
@@ -546,7 +462,7 @@ ny_df = ny_df %&gt;%
 </div>
 <div id="hr-data-1" class="section level3">
 <h3>2020 HR Data</h3>
-<pre class="r"><code>hr2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -557,7 +473,7 @@ ny_df = ny_df %&gt;%
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2020 = read_excel(&#39;grace/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+demo2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
@@ -578,7 +494,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 </div>
 <div id="hr-data-2" class="section level3">
 <h3>2021 HR Data</h3>
-<pre class="r"><code>hr2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -601,7 +517,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 ## • `Rank` -&gt; `Rank...13`
 ## • `Z-Score` -&gt; `Z-Score...14`
 ## • `Rank` -&gt; `Rank...15`</code></pre>
-<pre class="r"><code>demo2021 = read_excel(&#39;grace/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>demo2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(&#39;county&#39;, 
@@ -685,13 +601,13 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
 ## • `95% CI - High` -&gt; `95% CI - High...254`
 ## • `95% CI - Low` -&gt; `95% CI - Low...272`
 ## • `95% CI - High` -&gt; `95% CI - High...273`</code></pre>
-<pre class="r"><code>total2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+<pre class="r"><code>total2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;%
   mutate(year = 2021)</code></pre>
 </div>
 <div id="hr-data-3" class="section level3">
 <h3>2022 HR Data:</h3>
 <p>Health Ranking Data</p>
-<pre class="r"><code>hr2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+<pre class="r"><code>hr2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
   select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
@@ -702,7 +618,7 @@ total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRU
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2022 = read_excel(&#39;grace/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+demo2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;% 
     select(&#39;county&#39;, 
@@ -735,20 +651,20 @@ ny_covidvax) 3. Select variables of interest 4. Merge 3 data frames into
 one by <code>date</code> and <code>county</code> 5. Convert
 <code>date</code> data type from char to date 6. Separate date into day,
 month, &amp; year for analysis</p>
-<pre class="r"><code>ny_test = read_csv(&#39;grace/ny_covidtest.csv&#39;) %&gt;% 
+<pre class="r"><code>ny_test = read_csv(&#39;data/ny_covidtest.csv&#39;) %&gt;% 
 janitor::clean_names() %&gt;% 
 filter(geography == &#39;COUNTY&#39;) %&gt;% 
 select(-geography) %&gt;% 
 rename(date = test_date) %&gt;% 
 mutate(date = lubridate::mdy(date))  
 
-ny_death = read_csv(&quot;grace/ny_coviddeaths.csv&quot;) %&gt;% 
+ny_death = read_csv(&quot;data/ny_coviddeaths.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
 rename(date = report_date, n_fatality = place_of_fatality) %&gt;%
 select(-deaths_by_county_of_residence) %&gt;% 
-mutate(date = lubridate::mdy(date))
+mutate(date = lubridate::mdy(date), county = replace(county, county == &#39;Manhattan&#39;, &#39;New York&#39;))
 
-ny_vax = read_csv(&quot;grace/ny_covidvax.csv&quot;) %&gt;% 
+ny_vax = read_csv(&quot;data/ny_covidvax.csv&quot;) %&gt;% 
 janitor::clean_names() %&gt;% 
 rename(date = report_as_of) %&gt;% 
 select(-region, -series_complete) %&gt;% 
@@ -761,7 +677,7 @@ covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;coun
   mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
 
 covid_df = covid_df_v1 %&gt;% 
-  group_by(county, year) %&gt;% 
+  group_by(year, county) %&gt;% 
   summarise(n_cases = sum(new_positives),
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))</code></pre>
@@ -769,10 +685,10 @@ covid_df = covid_df_v1 %&gt;%
 <div id="merge-data-for-analysis" class="section level2">
 <h2>Merge Data for Analysis</h2>
 <pre class="r"><code>covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;))
-comb = left_join(covid_hr, ny_df, by = &#39;county&#39;) %&gt;% 
+comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 &gt;= .73*(tpop) ~ 1,
-                             vax_dose1 &lt; .73*(tpop) ~ 0))</code></pre>
+         vax_maj = case_when(vax_dose1 &gt;= .83*(tpop) ~ 1,
+                             vax_dose1 &lt; .83*(tpop) ~ 0))</code></pre>
 </div>
 </div>
 <div id="regression-test" class="section level1">
@@ -865,13 +781,13 @@ plot1</code></pre>
 </table>
 <p>Model 2</p>
 <pre class="r"><code>m2 = comb %&gt;% 
-  filter(year == &#39;2021&#39;, county != &quot;New York&quot;) %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
   lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
 
 plot(m2)</code></pre>
 <p><img src="grace_v1_files/figure-html/unnamed-chunk-10-1.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-10-2.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-10-3.png" width="90%" /><img src="grace_v1_files/figure-html/unnamed-chunk-10-4.png" width="90%" /></p>
 <pre class="r"><code>plot2 = comb %&gt;% 
-  filter(year == &#39;2021&#39;, county != &quot;New York&quot;) %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
   modelr::add_residuals(m2) %&gt;% 
   modelr::add_predictions(m2) %&gt;% 
   ggplot(aes(x = pred, y = resid)) +
@@ -898,38 +814,38 @@ plot2</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">5668.289</td>
-<td align="right">0.003</td>
+<td align="right">6350.926</td>
+<td align="right">0.002</td>
 </tr>
 <tr class="even">
 <td align="left">health_beh_r</td>
-<td align="right">-54.417</td>
+<td align="right">-56.095</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">clinical_care_r</td>
-<td align="right">27.176</td>
-<td align="right">0.008</td>
+<td align="right">23.376</td>
+<td align="right">0.027</td>
 </tr>
 <tr class="even">
 <td align="left">env_r</td>
-<td align="right">4.369</td>
-<td align="right">0.605</td>
+<td align="right">3.849</td>
+<td align="right">0.666</td>
 </tr>
 <tr class="odd">
 <td align="left">longevity_r</td>
-<td align="right">-12.075</td>
-<td align="right">0.326</td>
+<td align="right">-15.743</td>
+<td align="right">0.224</td>
 </tr>
 <tr class="even">
 <td align="left">qol_r</td>
-<td align="right">23.719</td>
-<td align="right">0.023</td>
+<td align="right">27.562</td>
+<td align="right">0.012</td>
 </tr>
 <tr class="odd">
 <td align="left">medage</td>
-<td align="right">-113.830</td>
-<td align="right">0.013</td>
+<td align="right">-124.994</td>
+<td align="right">0.010</td>
 </tr>
 </tbody>
 </table>
@@ -1008,24 +924,24 @@ plot(m4)</code></pre>
 ## 
 ## Deviance Residuals: 
 ##      Min        1Q    Median        3Q       Max  
-## -0.91753  -0.17131  -0.06943   0.06952   0.83681  
+## -0.41979  -0.09293  -0.00468   0.03441   0.88464  
 ## 
 ## Coefficients:
 ##                 Estimate Std. Error t value Pr(&gt;|t|)   
-## (Intercept)   -1.743e-01  7.945e-01  -0.219  0.82710   
-## segregation    1.043e-01  1.212e-01   0.860  0.39343   
-## p_minority     1.155e-02  4.101e-03   2.816  0.00671 **
-## median_income  1.041e-05  3.147e-06   3.307  0.00165 **
-## medage        -1.072e-02  1.877e-02  -0.571  0.57045   
+## (Intercept)   -6.704e-01  5.234e-01  -1.281  0.20554   
+## segregation    2.841e-02  7.986e-02   0.356  0.72342   
+## p_minority     5.541e-03  2.702e-03   2.051  0.04497 * 
+## median_income  6.314e-06  2.073e-06   3.045  0.00354 **
+## medage         6.129e-03  1.237e-02   0.495  0.62219   
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## (Dispersion parameter for gaussian family taken to be 0.1326646)
+## (Dispersion parameter for gaussian family taken to be 0.05758436)
 ## 
-##     Null deviance: 13.0820  on 60  degrees of freedom
-## Residual deviance:  7.4292  on 56  degrees of freedom
+##     Null deviance: 4.5902  on 60  degrees of freedom
+## Residual deviance: 3.2247  on 56  degrees of freedom
 ##   (1 observation deleted due to missingness)
-## AIC: 56.678
+## AIC: 5.7689
 ## 
 ## Number of Fisher Scoring iterations: 2</code></pre>
 <pre class="r"><code>m4 %&gt;% 
@@ -1034,16 +950,8 @@ plot(m4)</code></pre>
          OR_CI_lower = exp(estimate - 1.96*(std.error)),
          OR_CI_upper = exp(estimate + 1.96*(std.error))) %&gt;% 
   select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %&gt;% 
-  knitr::kable()</code></pre>
+  knitr::kable(digits = 3)</code></pre>
 <table>
-<colgroup>
-<col width="20%" />
-<col width="15%" />
-<col width="14%" />
-<col width="17%" />
-<col width="17%" />
-<col width="14%" />
-</colgroup>
 <thead>
 <tr class="header">
 <th align="left">term</th>
@@ -1057,49 +965,49 @@ plot(m4)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-0.1743423</td>
-<td align="right">0.8400093</td>
-<td align="right">0.1770128</td>
-<td align="right">3.986240</td>
-<td align="right">0.8271047</td>
+<td align="right">-0.670</td>
+<td align="right">0.511</td>
+<td align="right">0.183</td>
+<td align="right">1.427</td>
+<td align="right">0.206</td>
 </tr>
 <tr class="even">
 <td align="left">segregation</td>
-<td align="right">0.1042552</td>
-<td align="right">1.1098836</td>
-<td align="right">0.8751687</td>
-<td align="right">1.407548</td>
-<td align="right">0.3934340</td>
+<td align="right">0.028</td>
+<td align="right">1.029</td>
+<td align="right">0.880</td>
+<td align="right">1.203</td>
+<td align="right">0.723</td>
 </tr>
 <tr class="odd">
 <td align="left">p_minority</td>
-<td align="right">0.0115473</td>
-<td align="right">1.0116142</td>
-<td align="right">1.0035157</td>
-<td align="right">1.019778</td>
-<td align="right">0.0067055</td>
+<td align="right">0.006</td>
+<td align="right">1.006</td>
+<td align="right">1.000</td>
+<td align="right">1.011</td>
+<td align="right">0.045</td>
 </tr>
 <tr class="even">
 <td align="left">median_income</td>
-<td align="right">0.0000104</td>
-<td align="right">1.0000104</td>
-<td align="right">1.0000042</td>
-<td align="right">1.000017</td>
-<td align="right">0.0016506</td>
+<td align="right">0.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">0.004</td>
 </tr>
 <tr class="odd">
 <td align="left">medage</td>
-<td align="right">-0.0107154</td>
-<td align="right">0.9893418</td>
-<td align="right">0.9535982</td>
-<td align="right">1.026425</td>
-<td align="right">0.5704544</td>
+<td align="right">0.006</td>
+<td align="right">1.006</td>
+<td align="right">0.982</td>
+<td align="right">1.031</td>
+<td align="right">0.622</td>
 </tr>
 </tbody>
 </table>
 <p>Model 5</p>
 <pre class="r"><code>m5 = comb %&gt;% 
-  filter(year == &#39;2021&#39;, county != &quot;New York&quot;) %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
   lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
 
 plot(m5)</code></pre>
@@ -1119,28 +1027,28 @@ plot(m5)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-1330.269</td>
-<td align="right">0.504</td>
+<td align="right">-1194.714</td>
+<td align="right">0.565</td>
 </tr>
 <tr class="even">
 <td align="left">segregation_score</td>
-<td align="right">14.452</td>
-<td align="right">0.164</td>
+<td align="right">15.607</td>
+<td align="right">0.149</td>
 </tr>
 <tr class="odd">
 <td align="left">p_minority</td>
-<td align="right">72.037</td>
+<td align="right">73.524</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">median_income</td>
-<td align="right">0.011</td>
-<td align="right">0.164</td>
+<td align="right">0.015</td>
+<td align="right">0.077</td>
 </tr>
 <tr class="odd">
 <td align="left">medage</td>
-<td align="right">-5.333</td>
-<td align="right">0.908</td>
+<td align="right">-14.903</td>
+<td align="right">0.757</td>
 </tr>
 </tbody>
 </table>
