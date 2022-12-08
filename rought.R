@@ -53,3 +53,5 @@ p1 = NY_df  %>%
   geom_sf(color = NA) + 
   scale_fill_viridis_c(option = "magma") 
 p1
+
+rsconnect::setAccountInfo(name='jagjit-singh', token='A9B0E64A15CDF1328B2A2D89AA0C8AAE', secret='6pNP/jt0TLjHOn+fuj0eqrDyDKm/qj1xyKQDgsCX')

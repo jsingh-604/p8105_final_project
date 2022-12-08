@@ -4,25 +4,12 @@ output: html_document
 date: "2022-12-02"
 ---
 
-\begin{aligned}
-y_t &= (1 - 0.4347L - (-0.2671)L^2)^{-1} (1 + (-0.3374)L) \epsilon_t \\
-&= (1.2671L^2 - 0.4347L + 1) (1 - 0.3374L) \epsilon_t \\
-&= (1.2671L^2 - 0.4347L + 1 - 0.3374L + 0.3374L^2) \epsilon_t \\
-&= (1.6305L^2 - 0.7681L + 1) \epsilon_t \\
-&= \epsilon_t + 1.6305 \epsilon_{t-1} - 0.7681 \epsilon_{t-2}
-\end{aligned}
+The coefficients for an ARIMA (8,0,0) model represent the weights that are applied to the past 8 values of the time series (i.e. $y_{t-1}$, $y_{t-2}$, $y_{t-3}$, $y_{t-4}$, $y_{t-5}$, $y_{t-6}$, $y_{t-7}$, $y_{t-8}$) in order to predict the next value of the time series ($\hat{y}_t$). In this case, the coefficients are as follows:
 
-\begin{aligned}
-y_t &= (1 - 1.1041L - (-0.3583)L^2 - (0.2278)L^3)^{-1} \epsilon_t + 2923.30 \\
-&= (1.2278L^3 - 0.3583L^2 - 1.1041L + 1) \epsilon_t + 2923.30 \\
-&= (1.2278L^3 - 0.3583L^2 - 1.1041L + 1 + 1.1041L^3 - 0.3583L^2 + 1.1041L - 1) \epsilon_t + 2923.30 \\
-&= (1.5861L^3 - 1.4656L^2 + 0.0418L) \epsilon_t + 2923.30 \\
-&= 0.0418 \epsilon_t + 1.5861 \epsilon_{t-1} - 1.4656 \epsilon_{t-2} + 2923.30
-\end{aligned}
+These coefficients can be used to write the ARIMA (8,0,0) equation as follows:
 
-\begin{aligned}
-y_t &= \epsilon_t + 2923.30 \\
-&= \epsilon_t + 2923.30 + 1.2278L^3 - 0.3583L^2 - 1.1041L + 1 \\
-&= \epsilon_t + 2923.30 + 1.2278L^3 - 0.3583L^2 - 1.1041L + 1 + 1.1041L^3 - 0.3583L^2 + 1.1041L - 1 \\
-&= \epsilon_t + 2923.30 + 1.5861L^3 - 1.4656L^2 + 0.0418L
-\end{aligned}
+$\hat{y}t = \alpha_1 y{t-1} + \alpha_2 y_{t-2} + \alpha_3 y_{t-3} + \alpha_4 y_{t-4} + \alpha_5 y_{t-5} + \alpha_6 y_{t-6} + \alpha_7 y_{t-7} + \alpha_8 y_{t-8} + \beta_0$
+
+$\begin{aligned} \hat{y}t &= 1.0562 \cdot y_{t-1} - 0.2312 \cdot y_{t-2} + 0.0948 \cdot y_{t-3} + 0.0779 \cdot y_{t-4} - 0.1035 \cdot y_{t-5} + 0.1343 \cdot y_{t-6} + 0.3918 \cdot y_{t-7} - 0.4517 \cdot y_{t-8} + 2924.354 \end{aligned}$
+
+This equation can be used to predict the next value of the time series, $\hat{y}_t$, based on the past 8 values of the time series. The coefficients in the equation represent the relative importance of each of the past values in predicting the next value.
