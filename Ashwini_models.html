@@ -410,6 +410,15 @@ nys_df = nys_df %&gt;%
 <h3>NEW CODE!</h3>
 <p>I added a new “sub_var_YY” dataset for each HR year and then merged
 that new df with the demo and HR ones.</p>
+<p>Lastly, we imported data from the sheet labeled “Ranked Measure Data”
+to import the sub-variables that make up the Health Behaviors Ranking.
+We imported the variables county, percent of smokers, percent of adults
+with obesity, food environment index (0-10 with 10 as the best), percent
+of adults who are physically inactive, percent of adults with access to
+location with opportunities to exercise, percent of adults who report
+excessive drinking, percent of driving related deaths with alcohol
+involved, the number of chlamydia cases, and the teen birth rate per
+every 1000 females aged 15-19.</p>
 <pre class="r"><code># 2019 HR Data
 
 hr2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
@@ -444,7 +453,7 @@ sub_var19 =
   read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate)
+  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
   
 
 list_2019 =
@@ -489,7 +498,7 @@ sub_var20 =
   read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
          percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
@@ -536,7 +545,7 @@ sub_var21 =
   read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
          percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
@@ -583,7 +592,7 @@ sub_var22 =
   read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
   slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
          percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
@@ -634,6 +643,11 @@ covid_df = covid_df_v1 %&gt;%
 <h3>NEW CODE!</h3>
 <p>I made a different df for my models that i will run to have a more
 focused df.</p>
+<p>For the regression analysis that will use the sub-variables for the
+Health Behaviors ranking, a new dataset was created that was a
+combination of the Census demographics, NY COVID data, and the
+Sub-variables dataset from the “Ranked Measure Data” sheet for each of
+the four Health Ranking datasets.</p>
 <pre class="r"><code># My final dataset for analysis:
 
 sub_var_data =
@@ -643,6 +657,105 @@ sub_var_data =
 covid_hr = left_join(covid_df, sub_var_data, by = c(&quot;county&quot;, &quot;year&quot;)) 
 
 new_comb = left_join(covid_hr, nys_df, by = &#39;county&#39;)</code></pre>
+</div>
+<div id="models" class="section level2">
+<h2>Models:</h2>
+<p style="color: red">
+<strong><em>Question: Are county percentages of smokers, obesity,
+physical inactivity, and excessive alcohol drinking associated with
+receiving at least the first dose of any COVID-19 vaccine?</em></strong>
+</p>
+<p>The health behaviors ranking was a significant predictor of having
+increases in the amount of people who have had at least their first dose
+of the COVID-19 vaccine. The health behaviors ranking encompasses a
+broad array of sub-variables. Of particular interest to explore are well
+known factors such as smoking, obesity, exercise, and alcohol
+consumptions. All these factors are well established predictors of many
+existing health conditions such as CVD, diabetes, cancer, etc.
+Therefore, We are now interested in seeing if these factor’s affect the
+attainment of getting at least the first dose of the COVID vaccine.</p>
+<p><strong>Model 1</strong>
+<img src="Ashwini/Ash_mod1.jpg" style="width:100%"></p>
+<pre class="r"><code>subm1 =
+  new_comb %&gt;%
+  filter(year == &#39;2021&#39;) %&gt;%
+  lm(vax_dose1 ~ percent_smokers + percent_obese + percent_physically_inactive + percent_excessive_drinking, data = .)
+
+subm1 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">2292873.03</td>
+<td align="right">0.007</td>
+</tr>
+<tr class="even">
+<td align="left">percent_smokers</td>
+<td align="right">-76643.87</td>
+<td align="right">0.009</td>
+</tr>
+<tr class="odd">
+<td align="left">percent_obese</td>
+<td align="right">-36671.94</td>
+<td align="right">0.028</td>
+</tr>
+<tr class="even">
+<td align="left">percent_physically_inactive</td>
+<td align="right">49265.75</td>
+<td align="right">0.015</td>
+</tr>
+<tr class="odd">
+<td align="left">percent_excessive_drinking</td>
+<td align="right">-26836.39</td>
+<td align="right">0.410</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>subm2 =
+  new_comb %&gt;%
+  filter(year == &#39;2021&#39;) %&gt;%
+  lm(vax_dose1 ~ medage + percent_unemployed, data = .)
+
+subm2 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">3142966.29</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">medage</td>
+<td align="right">-50421.47</td>
+<td align="right">0.002</td>
+</tr>
+<tr class="odd">
+<td align="left">percent_unemployed</td>
+<td align="right">-200310.36</td>
+<td align="right">0.014</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 

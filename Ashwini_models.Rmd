@@ -79,6 +79,7 @@ nys_df = nys_df %>%
 
 I added a new "sub_var_YY" dataset for each HR year and then merged that new df with the demo and HR ones.
 
+Lastly, we imported data from the sheet labeled "Ranked Measure Data" to import the sub-variables that make up the Health Behaviors Ranking. We imported the variables county, percent of smokers, percent of adults with obesity, food environment index (0-10 with 10 as the best), percent of adults who are physically inactive, percent of adults with access to location with opportunities to exercise, percent of adults who report excessive drinking, percent of driving related deaths with alcohol involved, the number of chlamydia cases, and the teen birth rate per every 1000 females aged 15-19.
 
 
 ```{r, results = FALSE, message = FALSE} 
@@ -116,7 +117,7 @@ sub_var19 =
   read_excel('data/ny_hr19.xls', sheet = 'Ranked Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>%
-  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate)
+  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
   
 
 list_2019 =
@@ -161,7 +162,7 @@ sub_var20 =
   read_excel('data/ny_hr20.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
          percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
@@ -208,7 +209,7 @@ sub_var21 =
   read_excel('data/ny_hr21.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
          percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
@@ -255,7 +256,7 @@ sub_var22 =
   read_excel('data/ny_hr22.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
          percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
@@ -309,7 +310,9 @@ covid_df = covid_df_v1 %>%
 
 ### NEW CODE! 
 
-I made a different df for my models that i will run to have a more focused df. 
+I made a different df for my models that i will run to have a more focused df.
+
+For the regression analysis that will use the sub-variables for the Health Behaviors ranking, a new dataset was created that was a combination of the Census demographics, NY COVID data, and the Sub-variables dataset from the "Ranked Measure Data" sheet for each of the four Health Ranking datasets. 
 
 
 ```{r, results = FALSE, message = FALSE}
@@ -328,5 +331,52 @@ new_comb = left_join(covid_hr, nys_df, by = 'county')
 ```
 
 
+## Models:
+
+
+<p style="color: red">***Question: Are county percentages of smokers, obesity, physical inactivity, and excessive alcohol drinking associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
+
+
+The health behaviors ranking was a significant predictor of having increases in the amount of people who have had at least their first dose of the COVID-19 vaccine. The health behaviors ranking encompasses a broad array of sub-variables. Of particular interest to explore are well known factors such as smoking, obesity, exercise, and alcohol consumptions. All these factors are well established predictors of many existing health conditions such as CVD, diabetes, cancer, etc. Therefore, We are now interested in seeing if these factor's affect the attainment of getting at least the first dose of the COVID vaccine. 
+
+**Model 1**
+<img src="./Ashwini/Ash_mod1.jpg" style="width:100%">
+
+
+```{r}
+
+subm1 =
+  new_comb %>%
+  filter(year == '2021') %>%
+  lm(vax_dose1 ~ percent_smokers + percent_obese + percent_physically_inactive + percent_excessive_drinking, data = .)
+
+subm1 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
+
+
+```
+
+
+
+
+
+**Model 2**
+<img src="./Ashwini/Ash_mod2.jpg" style="width:100%">
+
+```{r}
+
+subm2 =
+  new_comb %>%
+  filter(year == '2021') %>%
+  lm(vax_dose1 ~ medage + percent_unemployed, data = .)
+
+subm2 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
+
+```
 
 
