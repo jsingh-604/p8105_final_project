@@ -384,7 +384,7 @@ On the left we can see a chloropleth mao of medage per county in new york on the
 
 ```{r NY vax plot}
 ny_vax =
-  read_csv("./grace/ny_covidvax.csv") %>% 
+  read_csv("./data/ny_covidvax.csv") %>% 
   janitor::clean_names() %>% 
   select(-region, -series_complete) %>% 
   rename(date = report_as_of) %>% 
@@ -407,7 +407,7 @@ From the plot created of the cumulative distribution of people who have at-least
 
 ```{r}
 ny_death =
-  read_csv("./grace/ny_coviddeaths.csv") %>% 
+  read_csv("./data/ny_coviddeaths.csv") %>% 
   janitor::clean_names() %>%
   rename(date = report_date, n_fatality = place_of_fatality) %>% 
   mutate(date = lubridate::mdy(date)) %>%
@@ -426,7 +426,6 @@ deaths_plotly =
                  yaxis = list(title = "Cumulative Number of Fatalities"),          
                  title = "Cumulative COVID-19 deaths by county by 11/14/2022")
 deaths_plotly
-
 ```
 From the plot created of the cumulative distribution of people who have died from COVID-19 by 11/14/2022, the highest ranking counties are also all located in three major regions of New York State: New York City, Long Island, and Hudson Valley, along with Erie and Monroe counties from Western NY and Finger Lakes. Again, this is expected as these are some of the most populous counties in New York State. 
 
@@ -462,7 +461,8 @@ After adjusting for median age and population density, only health behaviors ran
 
 To test the validity of our results, we checked regression assumptions.
 
-```{r m1_check, results = FALSE}
+```{r m1_check, echo = FALSE}
+par(mfrow = c(2,2))
 plot(m1)
 ```
 
@@ -487,7 +487,8 @@ broom::tidy() %>%
 
 As seen with model 1, model 2 shows that only health behaviors ranking is significantly associated with the number of COVID deaths in each county (p < .05). The estimate is -43.684, meaning that counties with better health behaviors ranking had less number of COVID deaths. The finding suggests that public health professionals should aim to mitigate disparities in COVID-19 by first starting short-term community-based interventions that encourage residents to build healthier lifestyles and make healthier life choices.
 
-```{r m2_check, results = FALSE}
+```{r m2_check, echo = FALSE}
+par(mfrow = c(2,2))
 plot(m2)
 ```
 
@@ -512,7 +513,8 @@ m3 %>%
 
 In this model, we did not adjust for median age since COVID-19 vaccination rate did not vary significantly for 18+ by 2022. As seen in models 1 and 2, model 3 once again showed that county's health behaviors rank is significantly associated with the number of individuals who received the first dose of the vaccine (p < .05). Once again, the estimate is negative (-11691). This implies that individuals who take care of their health holistically may be more likely to choose to receive the vaccine.
 
-```{r m3_check, results = FALSE}
+```{r m3_check, echo = FALSE}
+par(mfrow = c(2,2))
 plot(m3)
 ```
 
@@ -544,9 +546,12 @@ m4 %>%
 Based on the the results, median_income and p_minority are significantly associated with higher chance of majority of the county's resident being vaccinated (p < .05). However, despite being statistically significant, because the estimates aare ~0 and ORs are also ~1, the significance is not meaningful. Therefore, though SES factors may contribute, their effects, perhaps, are not as pronounced unless combined with geographical proximity to locations with COVID-19 outbreak. The findings in model 3 could also have happened because COVID vaccine was available at locations such pharmacies (CVS, Walgreen, etc.) and community health centers, removing the barrier to healthcare access and increasing equal access to the vaccine.
 
 Upon checking our model,
-```{r m4_check, results = FALSE}
+
+```{r m4_check, echo = FALSE}
+par(mfrow = c(2,2))
 plot(m4)
 ```
+
 we did see the need to adjust our model; however, with the lack of 2022 data and demographics information, further analysis and modifications could not be completed. The residual vs. fitted plot did not give us much information as the outcome variable of our model is binary. The normal Q-Q plot showed that our data is not skewed, though there are deviations at extreme quantiles. Furthermore, there appears to be potential heteroscedasticity per scale-location plot and one outlier (point #3 falls outside Cook's distance). 
 
 **Model 5**
@@ -569,6 +574,7 @@ m5 %>%
 This model shows the number of COVID-19 fatalities in each county is significantly associated with segregation score, % minority (black and Hispanic), and median income (p <= .05) after adjusting for population density. Segregation score had a positive estimate of 17.565, indicating that residential segregation of white vs. non-white could have played a role in exacerbating the COVID-19 disparity. Positive estimate for % minority (estimate = 44.441) reinforces this notion. As for median income, because the estimate is ~0, despite statistical significance, meaningful interepration is lacking. These findings demonstrate that unlike vaccination, racial/ethnic minorities, specifically Hispanic and Black, had a higher risk of dying from COVID compared to White/Asian.
 
 ```{r m5_check, results = FALSE}
+par(mfrow = c(2,2))
 plot(m5)
 ```
 
