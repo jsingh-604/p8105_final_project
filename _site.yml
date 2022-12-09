@@ -11,13 +11,15 @@ navbar:
       href: data.html
     - text: "Analysis"
       menu:
+        - text: "Shiny App"
+          href: https://jagjit-singh.shinyapps.io/spatial/
         - text: "Trends over time"
           href: 
-        - text: "Health Factors"
+        - text: "Health Factor & SES "
           href: 
-        - text: "To be donw"
+        - text: "Autoregressive Trends"
           href: 
-        - text: "Spatial trends/visualization"
+        - text: "Spatial Trends"
           href: spatial_maps.html
     - icon: fa-envelope fa-lg
       href: mailto:<js5958@cumc.columbia.edu>
