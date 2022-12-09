@@ -265,7 +265,7 @@ covid_df = covid_df_v1 %>%
 ```
 
 4. **Dataset for Analysis**  
-For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 83% as it was reported that nearly ~83% of the state of New York residents had completed at least one dose of vaccine by the end of 2021. [(source)](https://data.democratandchronicle.com/covid-19-vaccine-tracker/new-york/36/.)  
+For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 83% as it was reported that nearly ~83% of New York residents had completed at least one dose of vaccine by the end of 2021. [(source)](https://data.democratandchronicle.com/covid-19-vaccine-tracker/new-york/36/.)  
 
 ```{r, results = FALSE, message = FALSE}
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year")) 

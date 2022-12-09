@@ -33,6 +33,7 @@ library(modelr)
 library(mgcv)
 library(readxl)
 library(plotly)
+library(kableExtra)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -70,19 +71,23 @@ Overall, studying the change in COVID-19 trend in New York State for each county
 ## Data Processing and Cleaning
 
 ### Data Sources
-Our data were downloaded from three different sources:
+Our data were downloaded from four different sources:
 
 1. **New York State Demographics**: US Census Bureau's demographics data were imported using `tidycensus`.
 
-2. **New York State Health Ranking** [(dataset)](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources):
+2. **New York State, County Land Area** [(dataset)](https://www.health.ny.gov/statistics/vital_statistics/2010/table02.htm)
+A .csv file was created based on the information provided in the website.  
+Note: unable to be loaded using `read_html` as this is an xml document.
+
+3. **New York State Health Ranking** [(dataset)](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources):
 Four data sets (2019, 2020, 2021 and 2022 New York State Health Ranking Data) were downloaded as .xls/xlsx. These data sets are provided by the University of Wisconsin Population Health Institute, which performs extensive analyses to calculate each New York county's score for health factors (health behaviors, clinical care, SES factors, and physical environment) and health outcome (quality of life, and length of life). 
 
-3. **New York State COVID-19** [(dataset)](https://data.ny.gov/browse?tags=covid-19):
+4. **New York State COVID-19** [(dataset)](https://data.ny.gov/browse?tags=covid-19):
 Three data sets (COVID testing, COVID vaccination, COVID fatalities from 2020 to 11/2022) were downloaded as .csv.
 
 ### Data Cleaning
 1. **New York State Demographics**  
-We imported US Census Bureau's 2020 data because 2021 data is not available until 12/8/2022. As demographics data do not change significantly each year, 2020 data were used for analysis. Then we decided to include the following variables, as we would like to adjust them in our models:
+We imported US Census Bureau's 2020 data because 2021 data are not available until 12/8/2022. As demographics data do not change significantly each year, 2020 data were used for analysis. Then we decided to include the following variables, as we would like to adjust them in our models:
 * total population in each county (tpop)
 * median age in each county (medage)
 * racial diversity index (race_div): calculated Simpson's Diversity Index in lines 65 to 69 (higher index indicates more racial diversity)
@@ -130,11 +135,23 @@ nys_df = nys_df %>%
   select(tpop, medage, county, race_div)
 ```
 
-2. **New York State Health Ranking**  
+2.  **New York State, County Land Area**
+After loading the dataset, which only contains two variables--county and value (provides area of each county as square mile; this variable was renamed as "area")--the dataset was merged with nys_df to calculate population density for each county. The population density variable was created so we can adjust for it in our regression models, especially ones that involve number of COVID-19 cases and fatalities.
+
+```{r, results = FALSE}
+area = read_excel('data/pop_density.xlsx') %>% 
+  janitor::clean_names() %>% 
+  rename(area = value)
+
+nys_df = left_join(nys_df, area, by = 'county') %>% 
+  mutate(pop_d = tpop/area)
+```
+
+3. **New York State Health Ranking**  
 Same steps were taken for each year:
 As the original excel files contain multiple sheets. We only imported the sheets that contain variables of interest.  
  <br>Each county's health ranking was imported from the sheet named "Outcomes & Factors SubRankings." From the sheet, only the following variables were selected for future analysis: each county's rank for health outcomes (quality of life, renamed to qol_r; length of life, renamed to longevity_r), health factors (health behaviors, renamed to health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic factors, renamed to ses_r; physical environment, renamed to env_r).
- <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % hispanic, p_hispanic; % black, renamed p_black). As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (hispanic + black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30. [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)
+ <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % Hispanic, p_hispanic; % black, renamed p_black). As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (hispanic + black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30. [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)
 
 ```{r, results = FALSE, message = FALSE} 
 # 2019 HR Data
@@ -303,14 +320,14 @@ covid_df = covid_df_v1 %>%
 ```
 
 4. **Dataset for Analysis**  
-For regression tests, demographics dataset, HR dataset, and COVID dataset were all merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 83% as it was reported that nearly ~83% of the state of New York residents had completed at least one dose of vaccine by the end of 2021. [(source)](https://data.democratandchronicle.com/covid-19-vaccine-tracker/new-york/36/.)  
+For regression tests, demographics dataset, HR dataset, and COVID dataset were merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 79% as it was reported that nearly ~79% of the US population had completed at least one dose of vaccine by the end of 2022. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states)  
 
 ```{r, results = FALSE, message = FALSE}
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year")) 
 comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
-                             vax_dose1 < .83*(tpop) ~ 0))
+         vax_maj = case_when(vax_dose1 >= .79*(tpop) ~ 1,
+                             vax_dose1 < .79*(tpop) ~ 0))
 ```
 
 
@@ -417,10 +434,10 @@ From the plot created of the cumulative distribution of people who have died fro
 
 ## Statistical Analysis
 
-Note: Though we initially planned to adjust for racial diversity in our model, the variable was removed because racial diversity index did not vary much among counties. For each model, only data from 2021 was used because there is no information on 2020 vaccination as the vaccine was developed in 2021 and 2022 data is incomplete.
+Note: Though we initially planned to adjust for racial diversity in our model, the variable was removed because racial diversity index did not vary much among counties. For each model, only data from 2021 or 2022 were used because there is no information on 2020 vaccination as the vaccine was developed in 2021.
 
 <p style="color: red">***Question 1: Which health factors are associated with COVID-19?***</p>
-Health factors -- health behaviors, clinical care, physical environment, and socioeconomic factors -- are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases, COVID-19 deaths, and COVID-19 vaccination. To do so, we ran multiple linear regression test.
+Health factors--health behaviors, clinical care, physical environment, and socioeconomic factors--are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases, deaths, and vaccination. To do so, we ran multiple linear regression test.
 
 **Model 1**
 <img src="images/model1.png" style="width:100%">
@@ -428,12 +445,16 @@ Health factors -- health behaviors, clinical care, physical environment, and soc
 ```{r, message = FALSE}
 m1 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .)
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + pop_d, data = .)
 
 m1 %>% 
-  broom::tidy() %>% 
+  broom::tidy() %>%
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
+  kbl(
+    caption = "Health Factor Ranking & COVID Outbreak"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
 ```
 
 After adjusting for median age and health outcome variables, health behaviors, clinical care, and SES factors were shown to be significantly associated with COVID-19 incidence (p < .05). Health behaviors score is based on the community residents' tobacco use, diet & exercise, alcohol & drug use, and sexual activity (i.e., number of STI/STD). Lelve of clinical care is determined by access to care and quality of care. Lastly, SES factors are comprised of education, employment, income, family & social support, and community safety. Since factors such as unequal access to healthcare, high-quality education, increased use of drug and alcohol, etc. are well-known, potential drivers of health inequity. The results warrant further exploration of interaction between these factors and race/ethnicity. 
