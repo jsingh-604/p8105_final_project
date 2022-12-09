@@ -75,6 +75,19 @@ nys_df = nys_df %>%
 ```
 
 
+## NY County Land Area
+```{r}
+area = read_excel('grace/pop_density.xlsx') %>% 
+  janitor::clean_names() %>% 
+  rename(area = value)
+```
+
+```{r}
+nys_df = left_join(nys_df, area, by = 'county') %>% 
+  mutate(pop_d = tpop/area)
+```
+
+
 ### NEW CODE! 
 
 I added a new "sub_var_YY" dataset for each HR year and then merged that new df with the demo and HR ones.
@@ -308,6 +321,18 @@ covid_df = covid_df_v1 %>%
             n_deaths = max(n_fatality, na.rm = TRUE))
 ```
 
+
+## Merge Data for Analysis
+
+```{r}
+covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
+comb = left_join(covid_hr, nys_df, by = 'county') %>% 
+  mutate(tpop_50 = tpop/2,
+         vax_maj = case_when(vax_dose1 >= .79*(tpop) ~ 1,
+                             vax_dose1 < .79*(tpop) ~ 0))
+```
+
+
 ### NEW CODE! 
 
 I made a different df for my models that i will run to have a more focused df.
@@ -343,6 +368,25 @@ The health behaviors ranking was a significant predictor of having increases in 
 <img src="./Ashwini/Ash_mod1.jpg" style="width:100%">
 
 
+
+```{r}
+
+testmod_small = 
+  new_comb %>%
+  filter(year == '2021') %>%
+  mutate(county_size = if_else(tpop < 100000, "Small",
+                       if_else(100000 <= tpop & tpop < 1000000, "Medium",
+                       if_else(1000000 <= tpop, "Large", NA_character_)))) %>%
+  mutate(county_size = fct_relevel(county_size, "Small")) %>%
+  
+  lm(n_cases ~ )
+
+
+```
+
+
+
+
 ```{r}
 
 subm1 =
@@ -357,8 +401,6 @@ subm1 %>%
 
 
 ```
-
-
 
 
 
