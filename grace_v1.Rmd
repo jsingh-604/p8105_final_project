@@ -14,6 +14,9 @@ library(modelr)
 library(mgcv)
 library(readxl)
 library(plotly)
+library(kableExtra)
+library(rvest)
+library(xml2)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -50,6 +53,10 @@ vars <- c(tpop = 'P001001',
           wpop = 'P003002',
           bpop = 'P003003',
           apop = 'P003005',
+          aipop = 'P003004',
+          nhpop = 'P003006',
+          sopop = 'P003007',
+          mpop = 'P003008',
           hpop = 'P004003')
 
 nys_df <- get_decennial(state = "ny", 
@@ -62,15 +69,32 @@ nys_df = nys_df %>%
   mutate(
     county = gsub(" County, New York","",NAME))
 
-nys_df$race_div <- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
-                          (nys_df$bpop*(nys_df$bpop-1))+
-                          (nys_df$hpop*(nys_df$hpop-1))+
-                          (nys_df$apop*(nys_df$apop-1)))/
-                         (nys_df$tpop*(nys_df$tpop-1)))
+#di = diversity index (eq from census website)
+
+nys_df$di <- (1 - ((nys_df$hpop/nys_df$tpop)^2 
+                   + (nys_df$wpop/nys_df$tpop)^2 
+                   + (nys_df$aipop/nys_df$tpop)^2 
+                   + (nys_df$apop/nys_df$tpop)^2 
+                   + (nys_df$nhpop/nys_df$tpop)^2 
+                   + (nys_df$sopop/nys_df$tpop)^2 
+                   + (nys_df$mpop/nys_df$tpop)^2))*100
 
 nys_df = nys_df %>% 
-  select(tpop, medage, county, race_div)
+  select(tpop, medage, county, di)
 ```
+
+## NY County Land Area
+```{r}
+area = read_excel('grace/pop_density.xlsx') %>% 
+  janitor::clean_names() %>% 
+  rename(area = value)
+```
+
+```{r}
+nys_df = left_join(nys_df, area, by = 'county') %>% 
+  mutate(pop_d = tpop/area)
+```
+
 
 ## 2019-2022 Health Ranking (HR) Data: Load & Clean
 
@@ -264,13 +288,14 @@ covid_df = covid_df_v1 %>%
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
 comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
-                             vax_dose1 < .83*(tpop) ~ 0))
+         vax_maj = case_when(vax_dose1 >= .79*(tpop) ~ 1,
+                             vax_dose1 < .79*(tpop) ~ 0))
 ```
 
-# Regression Test:
 
 ```{r}
+# Regression Test:
+
 # residual vs. leverage -- test for influential points. No points falls outside Cook's distance, indicating there are no major outliers
 
 # residual vs. fitted -- no strong trend, so okay but demonstrates that there is more to be explored.
@@ -280,7 +305,7 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
 # scale-location -- homoscedascity off
 ```
 
-### Models 1 to 3 -- Health Factor/Outcome Ranking & COVID
+### Models 1 & 2 -- Health Factor/Outcome Ranking & COVID
 
 Model 1
 * x = health factor variables, median age, 
@@ -289,76 +314,63 @@ Model 1
 ```{r}
 m1 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + longevity_r + qol_r + medage, data = .)
-
-plot(m1)
-
-plot1 = comb %>% 
-  filter(year == '2021') %>% 
-  modelr::add_residuals(m1) %>% 
-  modelr::add_predictions(m1) %>% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = "Model 1: Residual vs. Fitted Values",
-    x = "Fitted Values",
-    y = "Residuals")
-
-plot1
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + pop_d, data = .)
 
 m1 %>% 
-  broom::tidy() %>% 
+  broom::tidy() %>%
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
+  kbl(
+    caption = "Health Factor Ranking & COVID Outbreak"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+
+plot(m1)
 ```
 
-Model 2
+
 ```{r}
 m2 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .)
-
-plot(m2)
-
-plot2 = comb %>% 
-  filter(year == '2021') %>% 
-  modelr::add_residuals(m2) %>% 
-  modelr::add_predictions(m2) %>% 
-  ggplot(aes(x = pred, y = resid)) +
-  geom_point() +
-  labs(
-    title = "Model 2: Residual vs. Fitted Values",
-    x = "Fitted Values",
-    y = "Residuals")
-
-plot2
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + pop_d + medage, data = .)
 
 m2 %>% 
-  broom::tidy() %>% 
+broom::tidy() %>%
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
+  kbl(
+    caption = "Health Factor Ranking & COVID Deaths"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+
+plot(m2)
 ```
+
 
 Model 3
 ```{r}
 m3 = comb %>% 
-  filter(year == '2021') %>% 
-  lm(vax_dose1 ~ health_beh_r + clinical_care_r + env_r + longevity_r + qol_r + medage, data = .,)
-
-plot(m3)
+  filter(year == '2022') %>% 
+  lm(vax_dose1 ~ health_beh_r + clinical_care_r + ses_r + env_r + pop_d, data = .,)
 
 m3 %>% 
-  broom::tidy() %>% 
+  broom::tidy() %>%
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
+  kbl(
+    caption = "Health Factor Ranking & COVID Vaccination (Dose # 1)"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+
+plot(m3)
 ```
 
 ### Models 4 to 6 -- SES, Race/Ethnicity & COVID
 Model 4
 ```{r}
 m4 = comb %>% 
-  filter(year == '2021') %>% 
-  glm(vax_maj ~ segregation + p_minority + median_income + medage, data = .)
+  filter(year == '2022') %>% 
+  glm(vax_maj ~ segregation_score + median_income + p_minority + pop_d, data = .)
 
 plot(m4)
 
@@ -370,19 +382,27 @@ m4 %>%
          OR_CI_lower = exp(estimate - 1.96*(std.error)),
          OR_CI_upper = exp(estimate + 1.96*(std.error))) %>% 
   select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %>% 
-  knitr::kable(digits = 3)
+  kbl(
+    caption = "SES Factors & COVID Vaccination"
+    , col.names = c("Predictor", "Estimate", "OR", "OR CI, low", "OR CI, high", "p-value")
+    , digits = 5) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
 ```
 
 Model 5
 ```{r}
 m5 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_deaths ~ segregation_score + p_minority + median_income + medage, data = .)
+  lm(n_deaths ~ segregation_score + p_minority + median_income + medage + pop_d, data = .)
 
 plot(m5)
 
 m5 %>% 
-  broom::tidy() %>% 
+  broom::tidy() %>%
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3)
+  kbl(
+    caption = "SES Factors & COVID Deaths"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
 ```
