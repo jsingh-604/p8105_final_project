@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Ashwini_models</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Project Overview</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="video.html">Screencast</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="data.html">Data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Trends over time</li>
+    <li class="dropdown-header">Health Factors</li>
+    <li class="dropdown-header">To be donw</li>
+    <li>
+      <a href="spatial_maps.html">Spatial trends/visualization</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="mailto:&lt;js5958@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/jsingh-604/p8105_final_project/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Ashwini_models</h1>
+
+</div>
+
+
+<pre class="r"><code>census_api_key(&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;)
+
+census_data &lt;- load_variables(2020, &quot;acs5&quot;, cache=T)
+fwrite(census_data, &quot;census_variables.csv&quot;)
+
+vars &lt;- c(tpop = &#39;P001001&#39;,
+          medage = &#39;P013001&#39;,
+          wpop = &#39;P003002&#39;,
+          bpop = &#39;P003003&#39;,
+          apop = &#39;P003005&#39;,
+          hpop = &#39;P004003&#39;)
+
+nys_df &lt;- get_decennial(state = &quot;ny&quot;, 
+                       geography = &quot;county&quot;,
+                       variables = vars,
+                       geometry = T,
+                       output = &quot;wide&quot;)
+
+nys_df = nys_df %&gt;%
+  mutate(
+    county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
+
+nys_df$race_div &lt;- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
+                          (nys_df$bpop*(nys_df$bpop-1))+
+                          (nys_df$hpop*(nys_df$hpop-1))+
+                          (nys_df$apop*(nys_df$apop-1)))/
+                         (nys_df$tpop*(nys_df$tpop-1)))
+
+nys_df = nys_df %&gt;% 
+  select(tpop, medage, county, race_div)</code></pre>
+<div id="new-code" class="section level3">
+<h3>NEW CODE!</h3>
+<p>I added a new “sub_var_YY” dataset for each HR year and then merged
+that new df with the demo and HR ones.</p>
+<p>Lastly, we imported data from the sheet labeled “Ranked Measure Data”
+to import the sub-variables that make up the Health Behaviors Ranking.
+We imported the variables county, percent of smokers, percent of adults
+with obesity, food environment index (0-10 with 10 as the best), percent
+of adults who are physically inactive, percent of adults with access to
+location with opportunities to exercise, percent of adults who report
+excessive drinking, percent of driving related deaths with alcohol
+involved, the number of chlamydia cases, and the teen birth rate per
+every 1000 females aged 15-19.</p>
+<pre class="r"><code># 2019 HR Data
+
+hr2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;household_income&#39;,
+         &#39;percent_hispanic&#39;,
+         &#39;percent_african_american&#39;) %&gt;% 
+  rename(median_income = household_income,
+         segregation_score = segregation_index_2,
+         p_hispanic = percent_hispanic,
+         p_black = percent_african_american) %&gt;%
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+
+sub_var19 =
+  read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
+  
+
+list_2019 =
+  list(hr2019, demo2019, sub_var19)
+
+total2019 = 
+  list_2019 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2019)
+
+
+# 2020 HR Data
+hr2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+
+sub_var20 =
+  read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+  
+
+list_2020 =
+  list(hr2020, demo2020, sub_var20)
+
+total2020 = 
+  list_2020 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2020)
+
+
+# 2021 HR Data
+hr2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+sub_var21 =
+  read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+
+list_2021 =
+  list(hr2021, demo2021, sub_var21)
+
+total2021 = 
+  list_2021 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2021)
+
+
+# 2022 HR Data
+hr2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+    select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_hispanic + p_black)
+
+sub_var22 =
+  read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+
+list_2022 =
+  list(hr2022, demo2022, sub_var22)
+
+total2022 = 
+  list_2022 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2022)
+
+# Merge
+hr_all = rbind(total2019, total2020, total2021, total2022)</code></pre>
+<pre class="r"><code>ny_test = read_csv(&#39;data/ny_covidtest.csv&#39;) %&gt;% 
+janitor::clean_names() %&gt;% 
+filter(geography == &#39;COUNTY&#39;) %&gt;% 
+select(-geography) %&gt;% 
+rename(date = test_date) %&gt;% 
+mutate(date = lubridate::mdy(date))  
+
+ny_death = read_csv(&quot;data/ny_coviddeaths.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_date, n_fatality = place_of_fatality) %&gt;%
+select(-deaths_by_county_of_residence) %&gt;% 
+mutate(date = lubridate::mdy(date), county = replace(county, county == &#39;Manhattan&#39;, &#39;New York&#39;))
+
+ny_vax = read_csv(&quot;data/ny_covidvax.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_as_of) %&gt;% 
+select(-region, -series_complete) %&gt;% 
+mutate(date = lubridate::mdy(date))
+
+ny_covid_v1 = left_join(ny_test, ny_death, by = c(&quot;date&quot;, &quot;county&quot;))
+
+covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;)) %&gt;% 
+  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
+  mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
+
+covid_df = covid_df_v1 %&gt;% 
+  group_by(year, county) %&gt;% 
+  summarise(n_cases = sum(new_positives),
+            vax_dose1 = max(first_dose),
+            n_deaths = max(n_fatality, na.rm = TRUE))</code></pre>
+</div>
+<div id="new-code-1" class="section level3">
+<h3>NEW CODE!</h3>
+<p>I made a different df for my models that i will run to have a more
+focused df.</p>
+<p>For the regression analysis that will use the sub-variables for the
+Health Behaviors ranking, a new dataset was created that was a
+combination of the Census demographics, NY COVID data, and the
+Sub-variables dataset from the “Ranked Measure Data” sheet for each of
+the four Health Ranking datasets.</p>
+<pre class="r"><code># My final dataset for analysis:
+
+sub_var_data =
+  hr_all %&gt;%
+  select(-ends_with(&quot;_r&quot;))
+
+covid_hr = left_join(covid_df, sub_var_data, by = c(&quot;county&quot;, &quot;year&quot;)) 
+
+new_comb = left_join(covid_hr, nys_df, by = &#39;county&#39;)</code></pre>
+</div>
+<div id="models" class="section level2">
+<h2>Models:</h2>
+<p style="color: red">
+<strong><em>Question: Are county percentages of smokers, obesity,
+physical inactivity, and excessive alcohol drinking associated with
+receiving at least the first dose of any COVID-19 vaccine?</em></strong>
+</p>
+<p>The health behaviors ranking was a significant predictor of having
+increases in the amount of people who have had at least their first dose
+of the COVID-19 vaccine. The health behaviors ranking encompasses a
+broad array of sub-variables. Of particular interest to explore are well
+known factors such as smoking, obesity, exercise, and alcohol
+consumptions. All these factors are well established predictors of many
+existing health conditions such as CVD, diabetes, cancer, etc.
+Therefore, We are now interested in seeing if these factor’s affect the
+attainment of getting at least the first dose of the COVID vaccine.</p>
+<p><strong>Model 1</strong>
+<img src="Ashwini/Ash_mod1.jpg" style="width:100%"></p>
+<pre class="r"><code>subm1 =
+  new_comb %&gt;%
+  filter(year == &#39;2021&#39;) %&gt;%
+  lm(vax_dose1 ~ percent_smokers + percent_obese + percent_physically_inactive + percent_excessive_drinking, data = .)
+
+subm1 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">2292873.03</td>
+<td align="right">0.007</td>
+</tr>
+<tr class="even">
+<td align="left">percent_smokers</td>
+<td align="right">-76643.87</td>
+<td align="right">0.009</td>
+</tr>
+<tr class="odd">
+<td align="left">percent_obese</td>
+<td align="right">-36671.94</td>
+<td align="right">0.028</td>
+</tr>
+<tr class="even">
+<td align="left">percent_physically_inactive</td>
+<td align="right">49265.75</td>
+<td align="right">0.015</td>
+</tr>
+<tr class="odd">
+<td align="left">percent_excessive_drinking</td>
+<td align="right">-26836.39</td>
+<td align="right">0.410</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>subm2 =
+  new_comb %&gt;%
+  filter(year == &#39;2021&#39;) %&gt;%
+  lm(vax_dose1 ~ medage + percent_unemployed, data = .)
+
+subm2 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">3142966.29</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">medage</td>
+<td align="right">-50421.47</td>
+<td align="right">0.002</td>
+</tr>
+<tr class="odd">
+<td align="left">percent_unemployed</td>
+<td align="right">-200310.36</td>
+<td align="right">0.014</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
