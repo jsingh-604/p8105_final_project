@@ -3,7 +3,7 @@ title: "Spatio-temporal Association of Health and SES Measures with COVID-19 Ris
 author: "Jagjit Singh, Grace Jang, Ashwini Varghese" 
 ---
 
-<img src = "./newyork.png" style = "width:40%; float:right; padding-left:25px; padding-bottom:25px">
+![](cover.gif){height="40%" width="40%" style="float:right; padding-left:20px; padding-bottom:20px"}.
 
 
 ### Motivation

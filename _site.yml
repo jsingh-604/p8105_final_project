@@ -27,4 +27,4 @@ navbar:
       href: https://github.com/jsingh-604/p8105_final_project/
 output:
   html_document:
-    theme: flatly
+    theme: lumen
