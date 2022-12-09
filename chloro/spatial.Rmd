@@ -1,0 +1,120 @@
+---
+title: "Shiny Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
+---
+```{r}
+require(data.table)
+require(tidycensus)
+require(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(shiny)
+library(plotly)
+```
+
+
+```{r import_data, results = FALSE, message = FALSE, warning = FALSE}
+
+census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
+
+census_data <- load_variables(2018, "acs5", cache=T)
+fwrite(census_data, "census_variables.csv")
+
+vars <- c(tpop = 'P001001',
+          medage = 'P013001',
+          wpop = 'P003002',
+          bpop = 'P003003',
+          apop = 'P003005',
+          hpop = 'P004003')
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+
+
+
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+ 
+ny_covid = read.csv('./www/shiny.csv')  %>%
+  janitor::clean_names()
+
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+This `flexdashboard` made with Shiny contains interactive chloropleth maps of the New York state. The top chart shows new postie cases per county between any two time points from 2020 to 2022. The bottom chart contains reflects the total number of tests performed per county between any two time points from 2020 to 2022
+
+```{r}
+###############################
+ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
+##############################
+total <- merge(ny_covid,NY_df,by="county")   
+
+sliderInput("month_year",
+                "Dates:",
+                min = as.Date("2020-03-01","%Y-%m-%d"),
+                max = as.Date("2022-10-01","%Y-%m-%d"),
+                value=c(as.Date("2020-04-01"),as.Date("2021-03-02")))
+
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Positive Cases
+```{r}
+
+renderPlot({
+  sub_df = total %>%
+    filter(
+      test_date %in% input$month_year[[1]]:input$month_year[[2]]
+    )
+  group_df =  sub_df %>% group_by(county)  %>%
+    summarise(total_covid = sum(new_positives))
+  df = dplyr :: left_join(group_df, NY_df, by = 'county')
+  df %>%
+    ggplot() +
+    geom_sf(aes(fill = total_covid, geometry = geometry)) + 
+    scale_fill_viridis_c(option = "mako", direction = -1) +
+    ggtitle(paste("Positive Cases Between", input$month_year[[1]], "and",
+                  input$month_year[[2]])) +
+    theme(plot.title = element_text(face="bold", size=18))
+
+})
+
+
+```
+
+Row {.tabset .tabset-fade }
+-----------------------------------------------------------------------
+### Covid Tests Performed
+```{r}
+
+renderPlot({
+  sub_df = total %>%
+    filter(
+      test_date %in% input$month_year[[1]]:input$month_year[[2]]
+    )
+  group_df =  sub_df %>% group_by(county)  %>%
+    summarise(total_covid = sum(total_number_of_tests_performed))
+  df = dplyr :: left_join(group_df, NY_df, by = 'county')
+  df %>%
+    ggplot() +
+    geom_sf(aes(fill = total_covid, geometry = geometry)) + 
+    scale_fill_viridis_c(option = "mako", direction = -1) +
+    ggtitle(paste("Covid Teste Peformed Between", input$month_year[[1]], "and",
+                  input$month_year[[2]])) +
+    theme(plot.title = element_text(face="bold", size=18))
+})
+
+
+```

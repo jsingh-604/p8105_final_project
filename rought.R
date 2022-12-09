@@ -6,6 +6,12 @@ data <- gapminder %>% filter(year=="2007") %>% dplyr::select(-year) %>%
 
 
 
+getwd()
+
+library(rsconnect)
+rsconnect::deployApp('./Jug/spatial.Rmd')
+
+
 NY_df <- get_decennial(state = "ny", 
                        geography = "county",
                        variables = vars,
@@ -53,5 +59,20 @@ p1 = NY_df  %>%
   geom_sf(color = NA) + 
   scale_fill_viridis_c(option = "magma") 
 p1
+
+
+
+
+
+total = st_as_sf(total)
+p1 = total  %>%
+  ggplot(aes(fill = medage)) + 
+  scale_fill_viridis_c(option = "magma") 
+
+p1
+p2 =  total %>%
+  ggplot(aes(fill = health)) + 
+  scale_fill_viridis_c(option = "magma") 
+
 
 rsconnect::setAccountInfo(name='jagjit-singh', token='A9B0E64A15CDF1328B2A2D89AA0C8AAE', secret='6pNP/jt0TLjHOn+fuj0eqrDyDKm/qj1xyKQDgsCX')

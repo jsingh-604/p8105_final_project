@@ -1,0 +1,88 @@
+---
+title: "Shiny Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
+---
+```{r}
+require(data.table)
+require(tidycensus)
+require(ggplot2)
+library(dplyr)
+library(tidyverse)
+
+library(shiny)
+library(plotly)
+library(shinyWidgets)
+
+census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
+
+census_data <- load_variables(2018, "acs5", cache=T)
+fwrite(census_data, "census_variables.csv")
+
+vars <- c(tpop = 'P001001',
+          medage = 'P013001',
+          wpop = 'P003002',
+          bpop = 'P003003',
+          apop = 'P003005',
+          hpop = 'P004003')
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+
+
+```
+
+Rows {.sidebar}
+-----------------------------------------------------------------------
+```{r}
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+ 
+ny_covid = read.csv('/Users/jag/Desktop/Fall\ 2022/P8105/p8105_final_project/data/covid_testing.csv')  %>%
+  janitor::clean_names()
+
+###############################
+ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
+##############################
+total <- merge(ny_covid,NY_df,by="county")   
+
+
+sliderInput("month_year",
+                "Dates:",
+                min = as.Date("2020-03-01","%Y-%m-%d"),
+                max = as.Date("2022-10-01","%Y-%m-%d"),
+                value=c(as.Date("2020-03-01"),as.Date("2020-03-02")))
+
+
+```
+
+Rows {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+```{r}
+
+
+renderPlot({
+  sub_df = total %>%
+    filter(
+      test_date %in% input$month_year[[1]]:input$month_year[[2]]
+    )
+  group_df =  sub_df %>% group_by(county)  %>%
+    summarise(total_covid = sum(new_positives))
+  df = dplyr :: left_join(group_df, NY_df, by = 'county')
+  df %>%
+    ggplot() +
+    geom_sf(aes(fill = total_covid, geometry = geometry)) + 
+    scale_fill_viridis_c(option = "viridis") 
+})
+
+
+```
