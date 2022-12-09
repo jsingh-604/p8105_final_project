@@ -52,6 +52,8 @@ ny_covid = read.csv('./www/shiny.csv')  %>%
 
 Column {.sidebar}
 -----------------------------------------------------------------------
+This `flexdashboard` made with Shiny contains interactive chloropleth maps of the New York state. The top chart shows new postie cases per county between any two time points from 2020 to 2022. The bottom chart contains reflects the total number of tests performed per county between any two time points from 2020 to 2022
+
 ```{r}
 ###############################
 ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
@@ -63,7 +65,7 @@ sliderInput("month_year",
                 "Dates:",
                 min = as.Date("2020-03-01","%Y-%m-%d"),
                 max = as.Date("2022-10-01","%Y-%m-%d"),
-                value=c(as.Date("2020-03-01"),as.Date("2020-03-02")))
+                value=c(as.Date("2020-04-01"),as.Date("2021-03-02")))
 
 
 ```
@@ -85,8 +87,7 @@ renderPlot({
   df %>%
     ggplot() +
     geom_sf(aes(fill = total_covid, geometry = geometry)) + 
-    scale_fill_viridis_c(option = "viridis",direction = -1) +
-    xla
+    scale_fill_viridis_c(option = "mako", direction = -1) 
 })
 
 
@@ -108,7 +109,7 @@ renderPlot({
   df %>%
     ggplot() +
     geom_sf(aes(fill = total_covid, geometry = geometry)) + 
-    scale_fill_viridis_c(option = "viridis",direction = -1) 
+    scale_fill_viridis_c(option = "mako", direction = -1) 
 })
 
 

@@ -9,10 +9,10 @@ navbar:
   right:
     - text: "Data"
       href: data.html
+    - text: "Shiny App"
+      href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Analysis"
       menu:
-        - text: "Shiny App"
-          href: https://jagjit-singh.shinyapps.io/spatial/
         - text: "Trends over time"
           href: 
         - text: "Health Factor & SES "
