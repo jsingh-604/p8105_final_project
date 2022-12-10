@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 	warning = FALSE,
 	fig.width = 8, 
   fig.height = 6,
-  out.width = "90%")
+  out.width = "100%")
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
@@ -36,7 +36,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 
 
-```{r NY vax plot}
+```{r NY vax plot, warning = FALSE, message = FALSE}
 
 ny_vax =
   read_csv("./data/ny_covidvax.csv") %>% 
@@ -71,7 +71,7 @@ From the plot created of the cumulative distribution of people who have at-least
 
 
 
-```{r NY death plot}
+```{r NY death plot, warning = FALSE, message = FALSE}
 
 ny_death =
   read_csv("./data/ny_coviddeaths.csv") %>% 
