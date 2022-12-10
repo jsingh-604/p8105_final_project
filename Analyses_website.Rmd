@@ -1,0 +1,23 @@
+---
+title: "Statistical Analyses"
+output: html_document
+html_document:
+  code_folding: hide
+  toc: true
+  toc_float: true
+  theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+```
+
+### Linear Regression - Health Factors and COVID-19 Outbreak
+
+Based on the bubble plot, which shows that the relaionship between socioeconomic factors (education, employment, income, etc.) and health behaviors (tobacco use, diet/exercise, etc.) show no clear pattern
+
+From the bubble plot, we see that the relationship between socioeconomic factors and health behaviors -- two of the subfactors for health factors -- show no correlation
+
+
