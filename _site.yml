@@ -8,11 +8,21 @@ navbar:
       href: Final-Report-Main.html
   right:
     - text: "Exploratory Analysis"
-      href: EDA.html
-    - text: "Shiny App"
+      menu:
+      - text: "EDA 1"
+      - href: sf
+      - text: "EDA 2"
+      - href: k
+      - text: "EDA 3"
+      - href: km
+    - text: "Shiny Spatial"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
-      href: data.html
+      menu:
+      - text: "Statistical Analysis 1"
+      - href : web_analysis_1.html
+      - text: "Statistical Analysis 2"
+      - href: web_analysis_2.html
     - text: "Autoregressive Analysis"
       href: Autoregression.html
     - text: "Screencast"
