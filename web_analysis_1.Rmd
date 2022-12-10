@@ -26,6 +26,8 @@ In the data visualization for HF and COVID-19, we observe patterns across all th
 
 First, we tested for association among HF (health behavior, clinical care, physical environment, and socioeconomic factors) and COVID-19 cases after adjusting for median age and population density in each county. 
 
+$N_{Covid\_Cases} \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Median\_Age + \beta_{6} Population\_Density + \epsilon$
+
 ```{r, message = FALSE, warning = FALSE}
 m1 = comb %>% 
   filter(year == '2021') %>% 
@@ -46,6 +48,8 @@ Among the 4 factors, only health behaviors ranking's p-value is < .05, indicatin
 
 ### COVID Deaths
 
+$N_{Deaths} \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Population\_Density + \beta_{6} Median\_Age + \epsilon$
+
 ```{r}
 m2 = comb %>% 
   filter(year == '2021') %>% 
@@ -65,6 +69,8 @@ broom::tidy() %>%
 For COVID fatalities, once again, only the p-value for health behaviors ranking is statistically significant (p < .05).
 
 ### COVID Vaccination
+
+$Vaccine\_Dose1 \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} SES\_Factors + \beta_{4} Physical\_Environment + \beta_{5} Population\_Density + \epsilon$
 
 ```{r}
 m3 = comb %>% 
@@ -87,6 +93,9 @@ The results indicate that only health behaviors ranking is significantly associa
 ### Subfactor Analyses
 
 **Health Behavior Subfactors & Covid Vaccination (Dose 1)**
+
+$vax_dose_1 = \beta_{0} + \beta_{1} percent\_smokers + \beta_{2} percent\_obese + \beta_{3} percent\_physically\_inactive + \beta_{4} percent\_excessive\_drinking$
+
 ```{r}
 subm1 =
   new_comb %>%

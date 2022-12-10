@@ -22,6 +22,8 @@ source("code/data_cleaning.R")
 
 ### COVID Vaccination Rate
 
+$Vaccination \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Median\_Income + \beta_{3} Percent\_Minority + \beta_{4} Population\_Density + \epsilon$
+
 ```{r}
 m4 = comb %>% 
   filter(year == '2022') %>% 
@@ -44,6 +46,8 @@ m4 %>%
 After adjusting for population density, among the socioeconomic factors in the model, median income and % minority (Black and Hispanic) are statistically significant (p < .05).
 
 ### COVID Fatalities
+
+$N_{Deaths} \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Percent\_Minority + \beta_{3} Median\_Income + \beta_{4} Median\_Age + \beta_{5} Population\_Density + \epsilon$
 
 ```{r}
 m5 = comb %>% 
