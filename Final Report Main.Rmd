@@ -344,17 +344,17 @@ In order to have a better understanding of the existing socioeconomic and health
 
 ```{r}
 library(plotly)
-data = read.csv("./data/bubble.csv") %>%
-  mutate(County = as.factor(County),
-         health = as.numeric(health),
-         socio = as.numeric(socio)) %>%
+data = bubble_df %>%
+  mutate(county = as.factor(county),
+         health_beh_r = as.numeric(health_beh_r),
+         ses_r = as.numeric(ses_r)) %>%
   janitor::clean_names()
 
 
-total <- merge(data,NY_df,by="county")
+total <- merge(bubble_df,NY_df,by="county")
 
-fig <- plot_ly(total, x = ~health, y = ~socio, text = ~county, type = 'scatter',
-               mode = 'markers', size = ~tpop, color = ~county, colors = 'Paired',
+fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county, type = 'scatter',
+               mode = 'markers', size = ~tpop.y, color = ~county, colors = 'Paired',
                marker = list(opacity = 0.5, sizemode = 'diameter'))
 fig <- fig %>% layout(title = 'health-socio',
                       xaxis = list(showgrid = FALSE),
@@ -362,6 +362,7 @@ fig <- fig %>% layout(title = 'health-socio',
                       showlegend = FALSE)
 
 fig
+write.csv(total,"./data/eda_bubble.csv")
 
 ```
 
@@ -381,7 +382,7 @@ p[[1]] = total %>%
 
 p[[2]] = total %>%
   ggplot() +
-  geom_sf(aes(fill = health, geometry = geometry)) + 
+  geom_sf(aes(fill = health_beh_r, geometry = geometry)) + 
   scale_fill_viridis_c(option = "viridis") 
 
 grid.arrange(p[[1]], p[[2]], nrow = 1)
