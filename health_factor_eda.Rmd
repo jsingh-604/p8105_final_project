@@ -332,17 +332,11 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
                              vax_dose1 < .83*(tpop) ~ 0))
 ```
 
-For our exploratory data analysis, we wanted to see if there is a pattern to being of a certain rank in each of the four rankings (health behaviors, clinical care, SES, and physical environment) and the number of COVID cases, deaths, and vaccinations. For each health factor ranking, we made quartiles to group the rankings, with Quartile 1 having the lowest (best) rankings and Quartile 4 having the highest (worst) rankings.
+For our exploratory data analysis, we wanted to see if there is a pattern to being of a certain rank in each of the four rankings (health behaviors, clinical care, SES, and physical environment) and the number of COVID cases, deaths, and vaccinations. For each health factor ranking, we made quartiles to group the rankings, with Quartile 1 having the best rankings and Quartile 4 having the worst rankings.
 
-To graph each plot, we had to create a new dataframe, from the `comb` final dataset, and used `pivot_longer` to separate the ranking variables into 2 different variables: the rank name and the rank number; we also renamed the ranking variable. We also created a new `quartile` variable for each ranking that assigns each observation to one of four quartiles based on the following cutoffs: 
-
-* Q1 if rank is less than 17 
-* Q2 if rank is 17 or greater but less than 32 
-* Q3 if rank is 32 or greater but less than 46 
-* Q4 if rank is 46 or up to 62 
+To graph each plot, we had to create a new dataframe, from the `comb` final dataset, and used `pivot_longer` to separate the ranking variables into 2 different variables: the rank name and the rank number; we also renamed the ranking variable. We also created a new `quartile` variable for each ranking that assigns each observation to one of four quartiles based on ranks. 
 
 Again, we filtered out only 2021 values for each county as there is only complete vaccination information available for the year 2021.   
-
 
 ```{r}
 eda1 = 
@@ -355,73 +349,44 @@ eda1 =
                names_to = "rank_var",
                values_to = "rank") %>% 
   filter(year == '2021') %>% 
-  mutate(Quartile = case_when(rank < 17 ~ 'Quartile 1',
-                              rank < 32 ~ 'Quartile 2',
-                              rank < 46 ~ 'Quartile 3',
-                              rank < 63 ~ 'Quartile 4')) %>% 
+  mutate(Quartile = case_when(rank < 17 ~ 'Quartile 4',
+                              rank < 32 ~ 'Quartile 3',
+                              rank < 46 ~ 'Quartile 2',
+                              rank < 63 ~ 'Quartile 1')) %>% 
   mutate(Quartile = as.factor(Quartile)) 
 ```
 
-
-## Number of COVID Deaths and County Health Factors by Quartile
-
+## COVID Deaths, Cases, and Vaccination
 
 ```{r}
-
-p1 = 
-  ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=Quartile)) +
+p1 = ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=Quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Reds") + 
   theme_minimal() +
   labs(title="Number of COVID Deaths and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of Deaths")
 
-p1
-
-```
-
-
-The Clinical Care, Physical Environment, and Social and Economic Factors rankings all have Quartile 4 (the counties with the worst rankings) as the quartile with the highest number of deaths. However, it is the Health Behaviors ranking which has Quartile 1 (counties with the best ranks) that have the highest number of deaths. 
-
-
-## Number of COVID Cases and County Health Factors by Quartile
-
-
-```{r}
-
-p2 = 
-  ggplot(data=eda1, aes(x=rank_var, y=n_cases, fill=Quartile)) +
+p2 = ggplot(data=eda1, aes(x=rank_var, y=n_cases, fill=Quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Oranges") + 
   theme_minimal() +
   labs(title="Number of COVID Cases and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of Cases")
 
-p2
-
-```
-
-
-Here, we also see that Clinical Care, Physical Environment, and Social and Economic Factors rankings all have Quartile 4 (the counties with the worst rankings) as the quartile with the highest number of cases And again, it is the Health Behaviors ranking which has Quartile 1 (counties with the best ranks) that have the highest number of cases. 
-
-
-## Covid Vaccination (Dose 1) and County Health Factors by Quartile
-
-
-```{r, message = FALSE, warning = FALSE}
-
-p3 = 
-  ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=Quartile)) +
+p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=Quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Greens") + 
   theme_minimal() +
   labs(title="Covid Vaccination (Dose 1) and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of People Vaccinated")
 
-p3
-
+grid.arrange(p1, p2, p3, ncol = 1)
 ```
+COVID Deaths Plot:
+The Clinical Care, Physical Environment, and Social and Economic Factors rankings all have Quartile 4 (the counties with the worst rankings) as the quartile with the highest number of deaths. However, it is the Health Behaviors ranking which has Quartile 1 (counties with the best ranks) that have the highest number of deaths. 
 
+COVID
+Here, we also see that Clinical Care, Physical Environment, and Social and Economic Factors rankings all have Quartile 4 (the counties with the worst rankings) as the quartile with the highest number of cases And again, it is the Health Behaviors ranking which has Quartile 1 (counties with the best ranks) that have the highest number of cases. 
 
 For the number of people with at least one dose of the COVID vaccine, the Health Behaviors ranking has Quartile 1 as the highest bar. This is expected as people who have positive health behaviors are more likely to also get a vaccine. For the other rankings, the results were not as expected. The Quartiles that have the worst rankings (Quartiles 3 and 4) have a majority of the number of people who got vaccinated. 
 

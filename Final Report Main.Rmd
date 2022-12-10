@@ -426,15 +426,19 @@ County health factors ranking (HR) was categorized into 4 quartiles quartile 1 =
 
 ```{r}
 eda1 = comb %>% 
-  pivot_longer(health_beh_r:env_r,
+  rename("Clinical Care" = clinical_care_r,
+         "Physical Environment" = env_r,
+         "Health Behaviors" = health_beh_r,
+         "Social and Economic Factors" = ses_r) %>% 
+  pivot_longer("Health Behaviors":"Physical Environment",
                names_to = "rank_var",
                values_to = "rank") %>% 
   filter(year == '2021') %>% 
-  mutate(quartile = case_when(rank < 17 ~ 'q1',
-                              rank < 32 ~ 'q2',
-                              rank < 46 ~ 'q3',
-                              rank < 63 ~ 'q4')) %>% 
-  mutate(quartile = as.factor(quartile))
+  mutate(Quartile = case_when(rank < 17 ~ 'Quartile 4',
+                              rank < 32 ~ 'Quartile 3',
+                              rank < 46 ~ 'Quartile 2',
+                              rank < 63 ~ 'Quartile 1')) %>% 
+  mutate(Quartile = as.factor(Quartile)) 
 ```
 
 
@@ -495,21 +499,21 @@ On the left we can see a chloropleth mao of medage per county in new york on the
 
 Before testing association between county health factors (HR) and COVID, we wanted to see rather there are any observable patterns between COVID cases & HR, COVID vaccination & HR, and COVID deaths & HR.
 ```{r, message = FALSE, warning = FALSE}
-p1 = ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=quartile)) +
+p1 = ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=Quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Reds") + 
   theme_minimal() +
   labs(title="Number of COVID Deaths and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of Deaths")
 
-p2 = ggplot(data=eda1, aes(x=rank_var, y=n_cases, fill=quartile)) +
+p2 = ggplot(data=eda1, aes(x=rank_var, y=n_cases, fill=Quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Oranges") + 
   theme_minimal() +
   labs(title="Number of COVID Cases and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of Cases")
 
-p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=quartile)) +
+p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=Quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Greens") + 
   theme_minimal() +
