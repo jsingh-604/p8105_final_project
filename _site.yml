@@ -5,14 +5,14 @@ navbar:
   href: index.html
   left: 
     - text: "Final Report"
-      href: data.html
+      href: Final-Report-Main.html
   right:
     - text: "Exploratory Analysis"
       href: EDA.html
     - text: "Shiny App"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
-      href: data.htm
+      href: data.html
     - text: "Autoregressive Analysis"
       href: Autoregression.html
     - text: "Screencast"

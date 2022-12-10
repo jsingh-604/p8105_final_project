@@ -6,7 +6,7 @@ output:
     toc: true
     toc_float: true
     toc_depth: 4
-    theme: cosmo
+    theme: lumen
 ---
 
 ```{r, include=FALSE}
@@ -291,7 +291,8 @@ total2021 =
   mutate(year = 2021)
 
 # 2022 HR Data
-hr2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2022 = read_excel('data/ny_hr22.xlsx', 
+                    sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -469,13 +470,15 @@ Note: Though we initially planned to adjust for racial diversity in our model, t
 <p style="color: red">***Question 1: Which health factors are associated with COVID-19?***</p>
 Health factors--health behaviors, clinical care, physical environment, and socioeconomic factors--are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases, deaths, and vaccination. To do so, we ran multiple linear regression test.
 
-**Model 1**
-<img src="images/model1.png" style="width:100%">
+### Model 1
+
+$N_{Covid\_Cases} \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Median\_Age + \beta_{6} Population\_Density + \epsilon$
 
 ```{r, message = FALSE}
 m1 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + pop_d, data = .)
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + 
+       pop_d, data = .)
 
 m1 %>% 
   broom::tidy() %>%
@@ -484,7 +487,8 @@ m1 %>%
     caption = "Health Factor Ranking & COVID Outbreak"
     , col.names = c("Predictor", "Estimate", "p-value")
     , digits = 3) %>% 
-  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "condensed"), 
+                full_width = FALSE)
 ```
 
 After adjusting for median age and population density, only health behaviors ranking was shown to be significantly associated with the number of COVID-19 cases (p < .05). The estimate for health behavior ranking was -2399.531, indicating that counties with higher health behavior ranking had lower number of COVID cases.  
@@ -500,12 +504,14 @@ plot(m1)
 
 Test for linearity (residual vs. fitted values) does not show strong pattern; however, the points are not perfectly, randomly scattered around residual = 0. Test for influential observations (residual vs. leverage) shows that there is one influential point (#31), which should be tested to see whether it should be removed or kept. Test for homoscedasticity (scale-location) indicates potential heteroscedasticity. Lastly, test for normality of residuals (normal Q-Q plot) confirms that there is no extreme skewness in our data with  majority of the points falling along the line. Some deviations at the lowest and highest quantiles suggest that random fluctuation may be seen at extreme ends. Combined, the plots indicate that our model, though sufficient, can be improved (i.e., add interaction terms, adjust for more variables).
 
-**Model 2**
-<img src="images/model2.png" style="width:100%">
+### Model 2
+
+$N_{Deaths} \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Population\_Density + \beta_{6} Median\_Age + \epsilon$
 ```{r, rmessage = FALSE}
 m2 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + pop_d + medage, data = .)
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + pop_d + 
+       medage, data = .)
 
 m2 %>% 
 broom::tidy() %>%
@@ -526,8 +532,10 @@ plot(m2)
 
 Results of regression assumption tests are also similar to that of model 1's, indicating that there is more to be explored in the association between health factor and COVID-19 fatalities. Once again, point 31 shows up as an outlier that needs to be tested further.
 
-**Model 3**
-<img src="images/model3.png" style="width:100%">
+### Model 3
+
+$Vaccine\_Dose1 \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} SES\_Factors + \beta_{4} Physical\_Environment + \beta_{5} Population\_Density + \epsilon$
+
 ```{r, message = FALSE}
 m3 = comb %>% 
   filter(year == '2022') %>% 
@@ -554,8 +562,11 @@ Regression assumption tests, once again, show room for improvement in our model 
 
 <p style="color: red">***Question 2: Can SES factors and race/ethnicity alone predict COVID-19 vaccination or fatalities?***</p>
 
-**Model 4**
-<img src="images/model4.png" style="width:100%">
+### Model 4
+
+$Vaccination \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Median\_Income + \beta_{3} Percent\_Minority + \beta_{4} Population\_Density + \epsilon$
+
+
 ```{r, message = FALSE}
 m4 = comb %>% 
   filter(year == '2022') %>% 
@@ -586,8 +597,8 @@ plot(m4)
 
 we did see the need to adjust our model; however, with the lack of 2022 data and demographics information, further analysis and modifications could not be completed. The residual vs. fitted plot did not give us much information as the outcome variable of our model is binary. The normal Q-Q plot showed that our data is not skewed, though there are deviations at extreme quantiles. Furthermore, there appears to be potential heteroscedasticity per scale-location plot and one outlier (point #3 falls outside Cook's distance). 
 
-**Model 5**
-<img src="images/model5.png" style="width:100%">
+$N_{Deaths} \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Percent\_Minority + \beta_{3} Median\_Income + \beta_{4} Median\_Age + \beta_{5} Population\_Density + \epsilon$
+
 ```{r, echo = FALSE}
 m5 = comb %>% 
   filter(year == '2021') %>% 
@@ -612,17 +623,16 @@ plot(m5)
 
 For regression test plots, the conclusions are very similar to that of model 4's. The residual vs. fitted plot does not show clear patterns; however, the points are also not equally, randomly distributed along residual = 0 line. The Q-Q plot confirms our data is normally distributed with no extreme skewness. Scale-location shows possibility of homoscedasticity violation and residual vs. leverage, shows that points #3 and #31 are influential observations; combined with model 1 to model 4, this indicates that points 3 and 31 should be identified and tested to determine whether they should be kept or removed from our dataset.
 
-## Additional Statistical Analysis
 
+
+### Model 5
 <p style="color: red">***Question 3: Are county percentages of smokers, obesity, physical inactivity, and excessive alcohol drinking associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
 
 The health behaviors ranking was a significant predictor of having increases in the amount of people who have had at least their first dose of the COVID-19 vaccine. The health behaviors ranking encompasses a broad array of sub-variables. Of particular interest to explore are well known factors such as smoking, obesity, exercise, and alcohol consumption. All these factors are well established predictors of many existing health conditions such as CVD, diabetes, cancer, etc. Therefore, we are now interested in seeing if these factor's affect the attainment of getting at least the first dose of the COVID vaccine. 
 
 Note: Again, since the distribution of vaccines for COVID began in 2021 and the complete data for 2022 is not yet available, we will focus our model on data from the 2021 year.
 
-**Model 1**
-ADD MODEL PICTURE HERE
-
+$vax_dose_1 = \beta_{0} + \beta_{1} percent\_smokers + \beta_{2} percent\_obese + \beta_{3} percent\_physically\_inactive + \beta_{4} percent\_excessive\_drinking$
 
 ```{r}
 
@@ -643,13 +653,15 @@ subm1 %>%
 From the results, we can see that every predictor has a significant p-value of less than 0.05, except for the variable `percent_excessive_drinking`. The negative estimates for smokers and obesity suggests that for each percent increase in the adults with obesity or smoking, the amount of people in that county who have at least the first dose of a COVID vaccine decreases. However, for the variables for physical inactivity, the estimate is positive. The estimates in this model are not completely reliable as we have previously established that our COVID outcomes (cases, deaths, and first dose of vaccine) is dependent on geospacial factors. Our data is by county and not individuals which have an influence on the results. Further analysis is necessary on the group level to get more precise estimates. However, from these results, public health professional can focus resources and interventions on smokers and those with obesity to increase vaccination numbers. 
 
 
+### Model 6
+
 <p style="color: red">***Question 4: Adjusting for median age, is unemployment associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
 
 
 Unemployment can be a predictor for a variety of outcomes. Often times, people cannot prioritize their health as a result of a lack of money due. It is worth seeing if unemployment is associated with getting the first dose of a COVID vaccine. 
 
-**Model 2**
-ADD MODEL PICTURE HERE
+
+$vax_dose_1 = \beta_{0} + \beta_{1} medage + \beta_{2} percent\_unemployed$
 
 ```{r}
 
@@ -667,7 +679,7 @@ subm2 %>%
 
 From the results, we can see that after adjusting for median age, the p-value for unemployment is significant. As stated before, since the outcomes are geospacially correlated, the estimate values are not accurate. But the direction states that for each percent increase in unemployment in a county, the number of people who have had at least one dose of a COVID vaccine decreases. This information can help public health professionals direct resources and attention towards people who are currently unemployed. People who are unemployment may not have gotten the vaccine because they think that it may be an extra expense that they cannot afford to have. This is where it is important to reach out to this group to make sure they are informed that the vaccine is free for everyone and encourage them to get vaccinated.
 
-# Spatial Analysis
+## Spatial Analysis
 
 ```{r}
 ny_covid = read.csv('data/covid_testing.csv')  %>%
@@ -680,7 +692,6 @@ total <- merge(ny_covid,NY_df,by="county")
 
 
 ```
-
 
 
 ```{r}
@@ -710,7 +721,7 @@ do.call(grid.arrange,p)
 The above 4 chloroplast maps are a summary 
 
 
-# Autoregression
+## Autoregression
 
 ```{r}
 ny_covid = read.csv('data/covid_testing.csv')  %>%
@@ -721,12 +732,11 @@ ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
 sub_df = ny_covid[ny_covid$county == 'New York City', ]
 sub_df<- sub_df[seq(dim(sub_df)[1],1),]
 
-# basic scatterplot
 ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
   geom_point(alpha = 10/100, colour = "red") + 
   scale_x_date(date_labels = "%m-%Y") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  labs(title = "New positives per month in NYC")
+  labs(title = "New positive  covid cases per month in NYC")
 
 ```
 The above plot is a scatter plot of the daily positive cases in New York City from March 2020 up-till now. We can see the wave like trend, especially from hill shaped curves at the start of the 2020, start of 2021, start of 2022 when it peaked around mid 2022. This implies the existence of auto regressive behavior which we were interested to investigate. To better understand the auto-regressive trend we built a Autocorrelation Function (ACF) plot and Partial Autocorrelation Function (PACF) plot. The ACF and PACF plots are used to figure out the order of AR, MA, and ARMA models. Autocorrelation is the correlation between a time series with a lagged version.
@@ -745,7 +755,8 @@ bacf <- acf(sub_df$new_positives, plot = FALSE)
 bacfdf <- with(bacf, data.frame(lag, acf))
 
 p1 <- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
-       geom_bar(stat = "identity", position = "identity")
+       geom_bar(stat = "identity", position = "identity") +
+  ggtitle("Autocorrelation Plot")
 
 
 ########### PACF ###################
@@ -754,7 +765,8 @@ bacfdf <- with(bacf, data.frame(lag, acf))
 
 
 p2 <- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
-  geom_bar(stat = "identity", position = "identity",fill="lightblue")  
+  geom_bar(stat = "identity", position = "identity",fill="lightblue")  +
+  ggtitle("Partial Autocorrelation Plot")
 
 grid.arrange(p1,p2)
 
@@ -787,6 +799,20 @@ ggplot(sub_df, aes(x=test_date, y=new_positives)) +
        y = 'Positive Cases Detected') +
   geom_line(aes(y=ar,color = "ARIMA trend line")) +  
   scale_color_manual(values = c("ARIMA trend line" = "black"),
-                                          labels = "Fitted Arima Model")
+                                          labels = "Fitted Arima Model") 
 
 ```
+
+
+## Discussions 
+
+
+
+
+
+## Limitations 
+
+
+
+
+## Conclusion 
