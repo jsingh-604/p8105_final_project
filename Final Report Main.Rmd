@@ -445,27 +445,6 @@ bubble_df = comb %>%
   filter(year == '2021')
 ```
 
-6. **Bar Graphs for EDA**  
-County health factors ranking (HR) was categorized into 4 quartiles based on ranking with quartile 1 = highest ranks quartile and quartile 4 = lowest ranks.[(source)](https://www.countyhealthrankings.org/reports/state-reports/2022-new-york-state-report)
-
-```{r}
-eda1 = comb %>% 
-  rename("Clinical Care" = clinical_care_r,
-         "Physical Environment" = env_r,
-         "Health Behaviors" = health_beh_r,
-         "Social and Economic Factors" = ses_r) %>% 
-  pivot_longer("Health Behaviors":"Physical Environment",
-               names_to = "rank_var",
-               values_to = "rank") %>% 
-  filter(year == '2021') %>% 
-  mutate(Quartile = case_when(rank < 17 ~ 'Quartile 4',
-                              rank < 32 ~ 'Quartile 3',
-                              rank < 46 ~ 'Quartile 2',
-                              rank < 63 ~ 'Quartile 1')) %>% 
-  mutate(Quartile = as.factor(Quartile)) 
-```
-
-
 ## Exploratory Data Analysis
 
 In order to have a better understanding of the existing socioeconomic and health factor status of the counties we conducted some exploratory data analysis mainly through visualization. We first tried to see which counties have the highest socio-economic and heath factor scores
@@ -530,8 +509,24 @@ On the left we can see a chloropleth mao of medage per county in new york on the
 
 ### Barplots
 
-Before testing association between county health factors (HR) and COVID, we wanted to see rather there are any observable patterns between COVID cases & HR, COVID vaccination & HR, and COVID deaths & HR.
+Before testing association between county health factors (HR) and COVID, we wanted to see rather there are any observable patterns between COVID cases & HR, COVID vaccination & HR, and COVID deaths & HR. County health factors ranking was categorized into 4 quartiles based on ranks with quartile 1 = highest ranks quartile and quartile 4 = lowest ranks.[(source)](https://www.countyhealthrankings.org/reports/state-reports/2022-new-york-state-report)
+
 ```{r, message = FALSE, warning = FALSE}
+eda1 = comb %>% 
+  rename("Clinical Care" = clinical_care_r,
+         "Physical Environment" = env_r,
+         "Health Behaviors" = health_beh_r,
+         "Social and Economic Factors" = ses_r) %>% 
+  pivot_longer("Health Behaviors":"Physical Environment",
+               names_to = "rank_var",
+               values_to = "rank") %>% 
+  filter(year == '2021') %>% 
+  mutate(Quartile = case_when(rank < 17 ~ 'Quartile 4',
+                              rank < 32 ~ 'Quartile 3',
+                              rank < 46 ~ 'Quartile 2',
+                              rank < 63 ~ 'Quartile 1')) %>% 
+  mutate(Quartile = as.factor(Quartile)) 
+
 p1 = ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=Quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Reds") + 

@@ -13,7 +13,7 @@
 
 <title>Health Factors EDA</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -184,8 +184,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -193,16 +193,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -385,292 +378,12 @@ div.tocify {
 </div>
 
 
-<pre class="r"><code>census_api_key(&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;)
-
-census_data &lt;- load_variables(2020, &quot;acs5&quot;, cache=T)
-fwrite(census_data, &quot;census_variables.csv&quot;)
-
-vars &lt;- c(tpop = &#39;P001001&#39;,
-          medage = &#39;P013001&#39;,
-          wpop = &#39;P003002&#39;,
-          bpop = &#39;P003003&#39;,
-          apop = &#39;P003005&#39;,
-          hpop = &#39;P004003&#39;)
-
-nys_df &lt;- get_decennial(state = &quot;ny&quot;, 
-                       geography = &quot;county&quot;,
-                       variables = vars,
-                       geometry = T,
-                       output = &quot;wide&quot;)
-
-NY_df &lt;- get_decennial(state = &quot;ny&quot;, 
-                       geography = &quot;county&quot;,
-                       variables = vars,
-                       geometry = T,
-                       output = &quot;wide&quot;)
-
-NY_df = NY_df %&gt;%
-  mutate(
-    county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
-
-nys_df = nys_df %&gt;%
-  mutate(
-    county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
-
-nys_df$race_div &lt;- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
-                          (nys_df$bpop*(nys_df$bpop-1))+
-                          (nys_df$hpop*(nys_df$hpop-1))+
-                          (nys_df$apop*(nys_df$apop-1)))/
-                         (nys_df$tpop*(nys_df$tpop-1)))
-
-nys_df = nys_df %&gt;% 
-  select(tpop, medage, county, race_div)
-
-
-area = read_excel(&#39;data/pop_density.xlsx&#39;) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  rename(area = value)
-
-nys_df = left_join(nys_df, area, by = &#39;county&#39;) %&gt;% 
-  mutate(pop_d = tpop/area)
-
-
-# 2019 HR Data
-
-hr2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)
-
-demo2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(&#39;county&#39;, 
-         &#39;segregation_index_2&#39;,
-         &#39;household_income&#39;,
-         &#39;percent_hispanic&#39;,
-         &#39;percent_african_american&#39;) %&gt;% 
-  rename(median_income = household_income,
-         segregation_score = segregation_index_2,
-         p_hispanic = percent_hispanic,
-         p_black = percent_african_american) %&gt;%
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_black + p_hispanic)
-
-sub_var19 =
-  read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
-  
-
-list_2019 =
-  list(hr2019, demo2019, sub_var19)
-
-total2019 = 
-  list_2019 %&gt;%
-  reduce(full_join, by = &quot;county&quot;) %&gt;%
-  mutate(year = 2019)
-
-# 2020 HR Data
-hr2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)
-
-demo2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(&#39;county&#39;, 
-         &#39;median_household_income&#39;, 
-         &#39;segregation_index_2&#39;,
-         &#39;percent_black&#39;,
-         &#39;percent_hispanic&#39;) %&gt;% 
-  rename(median_income = median_household_income, 
-         segregation_score = segregation_index_2,
-         p_black = percent_black,
-         p_hispanic = percent_hispanic) %&gt;% 
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_black + p_hispanic)
-
-sub_var20 =
-  read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
-  rename(percent_obese = percent_adults_with_obesity,
-         percent_with_access = percent_with_access_to_exercise_opportunities,
-         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
-  
-
-list_2020 =
-  list(hr2020, demo2020, sub_var20)
-
-total2020 = 
-  list_2020 %&gt;%
-  reduce(full_join, by = &quot;county&quot;) %&gt;%
-  mutate(year = 2020)
-
-# 2021 HR Data
-hr2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)
-
-demo2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(&#39;county&#39;, 
-         &#39;median_household_income&#39;, 
-         &#39;segregation_index_2&#39;,
-         &#39;percent_black&#39;,
-         &#39;percent_hispanic&#39;) %&gt;% 
-  rename(median_income = median_household_income, 
-         segregation_score = segregation_index_2,
-         p_black = percent_black,
-         p_hispanic = percent_hispanic) %&gt;% 
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_black + p_hispanic)
-
-sub_var21 =
-  read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
-  rename(percent_obese = percent_adults_with_obesity,
-         percent_with_access = percent_with_access_to_exercise_opportunities,
-         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
-
-list_2021 =
-  list(hr2021, demo2021, sub_var21)
-
-total2021 = 
-  list_2021 %&gt;%
-  reduce(full_join, by = &quot;county&quot;) %&gt;%
-  mutate(year = 2021)
-
-# 2022 HR Data
-hr2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, 
-                    sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
-  rename(longevity_r = rank_5,
-         qol_r = rank_7,
-         health_beh_r = rank_9,
-         clinical_care_r = rank_11,
-         ses_r = rank_13,
-         env_r = rank_15)
-
-demo2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;% 
-    select(&#39;county&#39;, 
-         &#39;median_household_income&#39;, 
-         &#39;segregation_index&#39;,
-         &#39;percent_black&#39;,
-         &#39;percent_hispanic&#39;) %&gt;% 
-  rename(median_income = median_household_income, 
-         segregation_score = segregation_index,
-         p_black = percent_black,
-         p_hispanic = percent_hispanic) %&gt;% 
-    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
-                                 segregation_score &gt;= 30 ~ 1),
-           p_minority = p_hispanic + p_black)
-
-sub_var22 =
-  read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  slice(-c(1)) %&gt;%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
-  rename(percent_obese = percent_adults_with_obesity,
-         percent_with_access = percent_with_access_to_exercise_opportunities,
-         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
-
-list_2022 =
-  list(hr2022, demo2022, sub_var22)
-
-total2022 = 
-  list_2022 %&gt;%
-  reduce(full_join, by = &quot;county&quot;) %&gt;%
-  mutate(year = 2022)
-
-# Merge
-hr_all = rbind(total2019, total2020, total2021, total2022)
-
-
-ny_test = read_csv(&#39;data/ny_covidtest.csv&#39;) %&gt;% 
-janitor::clean_names() %&gt;% 
-filter(geography == &#39;COUNTY&#39;) %&gt;% 
-select(-geography) %&gt;% 
-rename(date = test_date) %&gt;% 
-mutate(date = lubridate::mdy(date))  
-
-ny_death = read_csv(&quot;data/ny_coviddeaths.csv&quot;) %&gt;% 
-janitor::clean_names() %&gt;% 
-rename(date = report_date, n_fatality = place_of_fatality) %&gt;%
-select(-deaths_by_county_of_residence) %&gt;% 
-mutate(date = lubridate::mdy(date), county = replace(county, county == &#39;Manhattan&#39;, &#39;New York&#39;))
-
-ny_vax = read_csv(&quot;data/ny_covidvax.csv&quot;) %&gt;% 
-janitor::clean_names() %&gt;% 
-rename(date = report_as_of) %&gt;% 
-select(-region, -series_complete) %&gt;% 
-mutate(date = lubridate::mdy(date))
-
-ny_covid_v1 = left_join(ny_test, ny_death, by = c(&quot;date&quot;, &quot;county&quot;))
-
-covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;)) %&gt;% 
-  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
-  mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
-
-covid_df = covid_df_v1 %&gt;% 
-  group_by(year, county) %&gt;% 
-  summarise(n_cases = sum(new_positives),
-            vax_dose1 = max(first_dose),
-            n_deaths = max(n_fatality, na.rm = TRUE))
-
-
-covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;)) 
-comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;% 
-  mutate(tpop_50 = tpop/2,
-         vax_maj = case_when(vax_dose1 &gt;= .83*(tpop) ~ 1,
-                             vax_dose1 &lt; .83*(tpop) ~ 0))</code></pre>
 <p>For our exploratory data analysis, we wanted to see if there is a
-pattern to being of a certain rank in each of the four rankings (health
-behaviors, clinical care, SES, and physical environment) and the number
-of COVID cases, deaths, and vaccinations. For each health factor
-ranking, we made quartiles to group the rankings, with Quartile 1 having
-the best rankings and Quartile 4 having the worst rankings.</p>
-<p>To graph each plot, we had to create a new dataframe, from the
-<code>comb</code> final dataset, and used <code>pivot_longer</code> to
-separate the ranking variables into 2 different variables: the rank name
-and the rank number; we also renamed the ranking variable. We also
-created a new <code>quartile</code> variable for each ranking that
-assigns each observation to one of four quartiles based on ranks.</p>
-<p>Again, we filtered out only 2021 values for each county as there is
-only complete vaccination information available for the year 2021.</p>
+pattern between health county rankings (health behaviors, clinical care,
+socioeconomic (SE) factors, and physical environment) and the number of
+COVID cases, deaths, and vaccinations. We divided the county health
+rankings into 4 quartiles based on ranks with quartile 1 having the best
+rankings and quartile 4 having the worst rankings.</p>
 <pre class="r"><code>eda1 = 
   comb %&gt;% 
   rename(&quot;Clinical Care&quot; = clinical_care_r,
@@ -710,7 +423,7 @@ p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=Quartile)) +
         x =&quot;County Health Factors&quot;, y = &quot;Number of People Vaccinated&quot;)
 
 grid.arrange(p1, p2, p3, ncol = 1)</code></pre>
-<p><img src="health_factor_eda_files/figure-html/unnamed-chunk-2-1.png" width="100%" /></p>
+<p><img src="health_factor_eda_files/figure-html/unnamed-chunk-2-1.png" width="90%" /></p>
 <p>From the results of the plots, we can see that there is a general
 pattern across all the COVID-19 outcomes (cases, deaths, and first dose
 of a vaccine) for the Health Behaviors Rankings. Counties with higher
