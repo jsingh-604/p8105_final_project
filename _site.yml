@@ -9,7 +9,7 @@ navbar:
   right:
     - text: "Exploratory Analysis"
       href: EDA.html
-    - test: "Shiny App"
+    - text: "Shiny App"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
       href: data.htm

@@ -330,16 +330,16 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="data.html">Exploratory Analysis</a>
+  <a href="EDA.html">Exploratory Analysis</a>
 </li>
 <li>
-  <a href="https://jagjit-singh.shinyapps.io/spatial/"></a>
+  <a href="https://jagjit-singh.shinyapps.io/spatial/">Shiny App</a>
 </li>
 <li>
   <a href="data.htm">Statistical Analysis</a>
 </li>
 <li>
-  <a href="data.html">Autogressive Analysis</a>
+  <a href="Autoregression.html">Autoregressive Analysis</a>
 </li>
 <li>
   <a href="data.html">Screencast</a>
@@ -382,8 +382,10 @@ div.tocify {
 City. New York City had the highest covid cases and would make most of
 the cases in the New York city due to the very high population city.
 Below is a times series plot of the daily covid cases in New York.</p>
-<div id="time-series-plot" class="section level3">
-<h3>Time Series Plot</h3>
+<div id="time-series-plot" class="section level2">
+<h2>Time Series Plot</h2>
+<p>Below is a scatter plot of the daily positive cases in New York City
+from March 2020 up-till November 2022:</p>
 <pre class="r"><code>ny_covid = read.csv(&#39;data/covid_testing.csv&#39;)  %&gt;%
   janitor::clean_names()
 
@@ -398,22 +400,20 @@ ggplot(sub_df, aes(x=test_date, y=new_positives)) +
   scale_x_date(date_labels = &quot;%m-%Y&quot;) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   labs(title = &quot;New positives per month in NYC&quot;)</code></pre>
-<p><img src="Autoregression_files/figure-html/unnamed-chunk-2-1.png" width="672" />
-The above plot is a scatter plot of the daily positive cases in New York
-City from March 2020 up-till now. We can see the wave like trend,
-especially from hill shaped curves at the start of the 2020, start of
-2021, start of 2022 when it peaked around mid 2022. This implies the
-existence of auto regressive behavior which we were interested to
-investigate. To better understand the auto-regressive trend we built a
-Autocorrelation Function (ACF) plot and Partial Autocorrelation Function
-(PACF) plot. The ACF and PACF plots are used to figure out the order of
-AR, MA, and ARMA models. Autocorrelation is the correlation between a
-time series with a lagged version. The partial autocorrelation at lag k
-is the autocorrelation between X_t_t and X_(t-k) that is not accounted
-for by lags 1 through 𝑘−1.</p>
+<p><img src="Autoregression_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>We can see the wave like trend, especially from hill shaped curves at
+the start of the 2020, start of 2021, start of 2022 when it peaked
+around mid 2022. This implies the existence of auto regressive behavior
+which we were interested to investigate. To better understand the
+auto-regressive trend we built a Autocorrelation Function (ACF) plot and
+Partial Autocorrelation Function (PACF) plot. The ACF and PACF plots are
+used to estimate the Auto-regressive models. Autocorrelation is the
+correlation between a time series with a lagged version. The partial
+autocorrelation at lag k is the autocorrelation between X_t_t and
+X_(t-k) that is not accounted for by lags 1 through 𝑘−1.</p>
 </div>
-<div id="autocorrelations" class="section level3">
-<h3>Autocorrelations</h3>
+<div id="autocorrelations" class="section level2">
+<h2>Autocorrelations</h2>
 <pre class="r"><code>library(forecast)
 library(ggplot2)
 
@@ -425,7 +425,8 @@ bacf &lt;- acf(sub_df$new_positives, plot = FALSE)
 bacfdf &lt;- with(bacf, data.frame(lag, acf))
 
 p1 &lt;- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
-       geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;)
+       geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;) +
+  ggtitle(&quot;Autocorrelation Plot&quot;)
 
 
 ########### PACF ###################
@@ -434,22 +435,23 @@ bacfdf &lt;- with(bacf, data.frame(lag, acf))
 
 
 p2 &lt;- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
-  geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;,fill=&quot;lightblue&quot;)  
+  geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;,fill=&quot;lightblue&quot;) +
+  ggtitle(&quot;Partial Autocorrelation Plot&quot;)
 
 grid.arrange(p1,p2)</code></pre>
-<p><img src="Autoregression_files/figure-html/unnamed-chunk-3-1.png" width="672" />
-Both the ACF and PACF start with a lag of 0, which is the correlation of
-the time series with itself and therefore results in a correlation of 1.
-However after a lag of 1, ACF gives us values of auto-correlation of any
-series with its lagged values whereas PACF finds correlation of the
+<p><img src="Autoregression_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Both the ACF and PACF start with a lag of 0, which is the correlation
+of the time series with itself and therefore results in a correlation of
+1. However after a lag of 1, ACF gives us values of auto-correlation of
+any series with its lagged values whereas PACF finds correlation of the
 residuals that remains after removing the effects which are already
 explained by the earlier lag(s). Thus PACF might be a better indicator
 of how many lag terms to keep. In our case we decided to move with the 8
 lag terms since they seem to have significant partial autcorrelation
 with value at lag = 0 (present value).</p>
 </div>
-<div id="arima" class="section level3">
-<h3>ARIMA</h3>
+<div id="auto-regressive-model" class="section level2">
+<h2>Auto-regressive Model</h2>
 <p>The coefficients for an AR(8) model represent the weights that are
 applied to the past 8 values of the time series (i.e. <span
 class="math inline">\(y_{t-1}\)</span>, <span
@@ -485,8 +487,8 @@ ggplot(sub_df, aes(x=test_date, y=new_positives)) +
   geom_point(alpha = 20/100, color = &quot;red&quot;) + 
   scale_x_date(date_labels = &quot;%m-%Y&quot;,date_breaks = &quot;1 month&quot;) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  labs(title = &quot;Scatter Plot of Daily Postive Cases in New York City from 2020-2022
-       with ARIMA trend line&quot;, x= &quot;Test Date&quot;,
+  labs(title = &quot;Scatter Plot of Daily Postive Cases in New York City from 
+  March 2020 to November 2022 with ARIMA trend line&quot;, x= &quot;Test Date&quot;,
        y = &#39;Positive Cases Detected&#39;) +
   geom_line(aes(y=ar,color = &quot;ARIMA trend line&quot;)) +  
   scale_color_manual(values = c(&quot;ARIMA trend line&quot; = &quot;black&quot;),

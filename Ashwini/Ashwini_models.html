@@ -1702,7 +1702,6 @@ total2021 =
   reduce(full_join, by = &quot;county&quot;) %&gt;%
   mutate(year = 2021)
 
-
 # 2022 HR Data
 hr2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
   janitor::clean_names() %&gt;% 
