@@ -11,7 +11,7 @@
 
 
 
-<title>Statistical Analyses</title>
+<title>County Health Factors Ranking &amp; COVID-19 Analysis</title>
 
 <script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -32,6 +32,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -245,7 +247,7 @@ $(document).ready(function () {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="data.html">Final Report</a>
+  <a href="Final-Report-Main.html">Final Report</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -253,10 +255,10 @@ $(document).ready(function () {
   <a href="EDA.html">Exploratory Analysis</a>
 </li>
 <li>
-  <a href="https://jagjit-singh.shinyapps.io/spatial/"></a>
+  <a href="https://jagjit-singh.shinyapps.io/spatial/">Shiny App</a>
 </li>
 <li>
-  <a href="data.htm">Statistical Analysis</a>
+  <a href="data.html">Statistical Analysis</a>
 </li>
 <li>
   <a href="Autoregression.html">Autoregressive Analysis</a>
@@ -285,20 +287,258 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Statistical Analyses</h1>
+<h1 class="title toc-ignore">County Health Factors Ranking &amp;
+COVID-19 Analysis</h1>
 
 </div>
 
 
-<div id="linear-regression---health-factors-and-covid-19-outbreak"
-class="section level3">
-<h3>Linear Regression - Health Factors and COVID-19 Outbreak</h3>
-<p>Based on the bubble plot, which shows that the relaionship between
-socioeconomic factors (education, employment, income, etc.) and health
-behaviors (tobacco use, diet/exercise, etc.) show no clear pattern</p>
-<p>From the bubble plot, we see that the relationship between
-socioeconomic factors and health behaviors – two of the subfactors for
-health factors – show no correlation</p>
+<div id="county-health-factors-and-covid-19" class="section level3">
+<h3>County Health Factors and COVID-19</h3>
+<p>In the data visualization for HF and COVID-19, we observe patterns
+across all three COVID-19 variables: fatalities, cases, and vaccination
+for only health behaviors. Therefore, we decided to explore this further
+and test whether this holds true even after adjusting for population
+density and median age, which were often shown to be strongly correlated
+and/or associated with COVID-19.</p>
+<div id="county-health-factors-and-number-of-covid-cases"
+class="section level4">
+<h4>County Health Factors and Number of COVID Cases</h4>
+<p>First, we tested for association among HF (health behavior, clinical
+care, physical environment, and socioeconomic factors) crankings (health
+b) and COVID-19 cases after adjusting for median age and population
+density in each county.</p>
+<pre class="r"><code>m1 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + 
+       pop_d, data = .)
+
+m1 %&gt;% 
+  broom::tidy() %&gt;%
+  select(term, estimate, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Health Factor Ranking &amp; COVID Outbreak&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
+    , digits = 3) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Health Factor Ranking &amp; COVID Outbreak
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+190698.492
+</td>
+<td style="text-align:right;">
+0.025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+health_beh_r
+</td>
+<td style="text-align:right;">
+-2399.531
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+clinical_care_r
+</td>
+<td style="text-align:right;">
+844.353
+</td>
+<td style="text-align:right;">
+0.056
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+env_r
+</td>
+<td style="text-align:right;">
+304.032
+</td>
+<td style="text-align:right;">
+0.409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ses_r
+</td>
+<td style="text-align:right;">
+798.434
+</td>
+<td style="text-align:right;">
+0.127
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+medage
+</td>
+<td style="text-align:right;">
+-3583.385
+</td>
+<td style="text-align:right;">
+0.074
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pop_d
+</td>
+<td style="text-align:right;">
+3.042
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+</tbody>
+</table>
+<p>Among the 4 factors, only health behaviors ranking’s p-value is &lt;
+.05, indicating that health behaviors ranking is significantly
+associated with the number of COVID cases.</p>
+</div>
+<div id="county-health-factors-and-number-of-covid-deaths"
+class="section level4">
+<h4>County Health Factors and Number of COVID Deaths</h4>
+<pre class="r"><code>m2 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + pop_d + medage, data = .)
+
+m2 %&gt;% 
+broom::tidy() %&gt;%
+  select(term, estimate, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Health Factor Ranking &amp; COVID Deaths&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
+    , digits = 3) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Health Factor Ranking &amp; COVID Deaths
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+3346.642
+</td>
+<td style="text-align:right;">
+0.037
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+health_beh_r
+</td>
+<td style="text-align:right;">
+-43.684
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+clinical_care_r
+</td>
+<td style="text-align:right;">
+12.660
+</td>
+<td style="text-align:right;">
+0.127
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+env_r
+</td>
+<td style="text-align:right;">
+6.440
+</td>
+<td style="text-align:right;">
+0.355
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ses_r
+</td>
+<td style="text-align:right;">
+16.106
+</td>
+<td style="text-align:right;">
+0.104
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pop_d
+</td>
+<td style="text-align:right;">
+0.075
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+medage
+</td>
+<td style="text-align:right;">
+-62.656
+</td>
+<td style="text-align:right;">
+0.098
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="county-health-factors-and-number-of-covid-vaccination"
+class="section level4">
+<h4>County Health Factors and Number of COVID Vaccination</h4>
+</div>
 </div>
 
 
