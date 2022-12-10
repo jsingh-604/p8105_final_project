@@ -1,0 +1,57 @@
+---
+title: "Code for EDA Plot"
+output: github_document
+date: "2022-12-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(plotly)
+```
+
+```{r}
+## Cases
+
+#health
+d_beh = plot_df %>% 
+  filter(rank_var == "health_beh_r")
+
+n_beh = 
+d_beh %>%
+  mutate(text_label = str_c("County: ", county, "\nRank: ", rank)) %>% 
+  plot_ly(x = ~rank, y = ~n_cases, color = ~county, text = ~text_label, alpha = .5, 
+          type = "scatter", mode = "markers", colors = "inferno")
+
+#env
+d_env = plot_df %>% 
+  filter(rank_var == "env_r")
+
+n_env =
+d_env %>%
+  mutate(text_label = str_c("County: ", county, "\nRank: ", rank)) %>% 
+  plot_ly(x = ~rank, y = ~n_cases, color = ~county, text = ~text_label, alpha = .5, 
+          type = "scatter", mode = "markers", colors = "inferno")
+
+#cc
+d_cc = plot_df %>% 
+  filter(rank_var == "clinical_care_r")
+
+n_cc =
+d_cc %>%
+  mutate(text_label = str_c("County: ", county, "\nRank: ", rank)) %>% 
+  plot_ly(x = ~rank, y = ~n_cases, color = ~county, text = ~text_label, alpha = .5, 
+          type = "scatter", mode = "markers", colors = "inferno")
+
+#ses
+d_ses = plot_df %>% 
+  filter(rank_var == "ses_r")
+
+n_ses =
+d_ses %>%
+  mutate(text_label = str_c("County: ", county, "\nRank: ", rank)) %>% 
+  plot_ly(x = ~rank, y = ~n_cases, color = ~county, text = ~text_label, alpha = .5, 
+          type = "scatter", mode = "markers", colors = "inferno")
+```
+
