@@ -449,15 +449,15 @@ p = list()
 p[[1]] = total %>%
   ggplot() +
   geom_sf(aes(fill = medage, geometry = geometry)) + 
-  scale_fill_viridis_c(option = "viridis") +
-  ggtitle("Median Age Per County New York State")
+  scale_fill_viridis_c(option = "viridis", name = "Median Age") +
+  ggtitle("Median Age Per County in New York State")
 
 
 p[[2]] = total %>%
   ggplot() +
   geom_sf(aes(fill = health_beh_r, geometry = geometry)) + 
-  scale_fill_viridis_c(option = "viridis") +
-  ggtitle("Heath Rank Per County New York State")
+  scale_fill_viridis_c(option = "viridis",name = "Health Factor Score") +
+  ggtitle("Heath Rank Per County in New York State")
 
 grid.arrange(p[[1]], p[[2]], nrow = 1)
 
@@ -697,6 +697,11 @@ total <- merge(ny_covid,NY_df,by="county")
 
 
 ```{r}
+df_list[[1]]
+```
+
+
+```{r}
 
 mon = seq(as.Date("2021-01-01"), as.Date("2022-01-01"), by = "3 months")
 df_list = list()
@@ -714,7 +719,8 @@ p <- list()
 for(i in 1:4){
   p[[i]] <- df_list[[i]] %>%
     ggplot() +geom_sf(aes(fill = total_covid, geometry = geometry)) + 
-    scale_fill_viridis_c(option = "viridis") 
+    scale_fill_viridis_c(option = "viridis")  +
+    ggtitle()
 }
 
 do.call(grid.arrange,p)
@@ -738,7 +744,7 @@ ggplot(sub_df, aes(x=test_date, y=new_positives)) +
   geom_point(alpha = 10/100, colour = "red") + 
   scale_x_date(date_labels = "%m-%Y") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  labs(title = "New positive  covid cases per month in NYC")
+  labs(title = "New positive covid cases per month in NYC")
 
 ```
 The above plot is a scatter plot of the daily positive cases in New York City from March 2020 up-till now. We can see the wave like trend, especially from hill shaped curves at the start of the 2020, start of 2021, start of 2022 when it peaked around mid 2022. This implies the existence of auto regressive behavior which we were interested to investigate. To better understand the auto-regressive trend we built a Autocorrelation Function (ACF) plot and Partial Autocorrelation Function (PACF) plot. The ACF and PACF plots are used to figure out the order of AR, MA, and ARMA models. Autocorrelation is the correlation between a time series with a lagged version.
