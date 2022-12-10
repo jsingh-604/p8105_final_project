@@ -1,6 +1,7 @@
 ---
-title: "Spatio-temporal Association of Health and SES Measures with COVID-19 Risk in NY"
-author: "Jagjit Singh, Grace Jang, Ashwini Varghese" 
+title: "Spatio-temporal Association of Health and SES Measures with COVID-19 Risk
+  in NY"
+author: "Jagjit Singh, Grace Jang, Ashwini Varghese"
 ---
 
 ![](cover.gif){height="40%" width="40%" style="float:right; padding-left:20px; padding-bottom:20px"}.

@@ -1,0 +1,64 @@
+---
+title: "Covid Risk"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+
+### Choropleth Map
+
+Below is a chloropleth map to good understanding on the above in a spatial context: 
+
+```{r, message=FALSE, warning=FALSE, results=FALSE,echo=FALSE}
+source("code/data_cleaning.R")
+library(gridExtra)
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+
+bubble_df = comb %>% 
+  select(year, county, health_beh_r, ses_r, tpop) %>% 
+  filter(year == '2021')
+
+data = bubble_df %>%
+  mutate(county = as.factor(county),
+         health_beh_r = as.numeric(health_beh_r),
+         ses_r = as.numeric(ses_r)) %>%
+  janitor::clean_names()
+
+
+total <- merge(bubble_df,NY_df,by="county")
+
+```
+
+```{r}
+p = list()
+p[[1]] = total %>%
+  ggplot() +
+  geom_sf(aes(fill = medage, geometry = geometry)) + 
+  scale_fill_viridis_c(option = "viridis", name = "Median Age") +
+  ggtitle("Median Age Per County in New York State")
+
+
+p[[2]] = total %>%
+  ggplot() +
+  geom_sf(aes(fill = health_beh_r, geometry = geometry)) + 
+  scale_fill_viridis_c(option = "viridis",name = "Health Factor Score") +
+  ggtitle("Heath Rank Per County in New York State")
+
+grid.arrange(p[[1]], p[[2]], nrow = 1)
+
+```
