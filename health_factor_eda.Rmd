@@ -1,5 +1,5 @@
 ---
-title: "EDA"
+title: "Health Factors EDA"
 output: 
   html_document:
     code_folding: hide
@@ -382,13 +382,7 @@ p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=Quartile)) +
 
 grid.arrange(p1, p2, p3, ncol = 1)
 ```
-COVID Deaths Plot:
-The Clinical Care, Physical Environment, and Social and Economic Factors rankings all have Quartile 4 (the counties with the worst rankings) as the quartile with the highest number of deaths. However, it is the Health Behaviors ranking which has Quartile 1 (counties with the best ranks) that have the highest number of deaths. 
 
-COVID
-Here, we also see that Clinical Care, Physical Environment, and Social and Economic Factors rankings all have Quartile 4 (the counties with the worst rankings) as the quartile with the highest number of cases And again, it is the Health Behaviors ranking which has Quartile 1 (counties with the best ranks) that have the highest number of cases. 
-
-For the number of people with at least one dose of the COVID vaccine, the Health Behaviors ranking has Quartile 1 as the highest bar. This is expected as people who have positive health behaviors are more likely to also get a vaccine. For the other rankings, the results were not as expected. The Quartiles that have the worst rankings (Quartiles 3 and 4) have a majority of the number of people who got vaccinated. 
-
+From the results of the plots, we can see that there is a general pattern across all the COVID-19 outcomes (cases, deaths, and first dose of a vaccine) for the Health Behaviors Rankings. Counties with higher (worse) ranks show a higher number of cases, deaths, and first dose of vaccines. We will explore the variables that contribute to this pattern in our statistical analysis.
 
 
