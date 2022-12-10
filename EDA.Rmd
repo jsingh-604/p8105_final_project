@@ -36,6 +36,27 @@ scale_fill_discrete = scale_fill_viridis_d
 
 
 
+```{r}
+total = read.csv('data/eda_bubble.csv')
+
+fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county, type = 'scatter',
+               mode = 'markers', size = ~tpop.y, color = ~county, colors = 'Paired',
+               marker = list(opacity = 0.5, sizemode = 'diameter'))
+fig <- fig %>% layout(title = 'health-socio',
+                      xaxis = list(showgrid = FALSE),
+                      yaxis = list(showgrid = FALSE),
+                      showlegend = FALSE)
+
+fig
+
+
+```
+
+
+
+
+
+
 ```{r NY vax plot, warning = FALSE, message = FALSE}
 
 ny_vax =
