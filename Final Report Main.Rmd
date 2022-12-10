@@ -177,11 +177,13 @@ demo2019 = read_excel('data/ny_hr19.xls',
          'segregation_index_2',
          'household_income',
          'percent_hispanic',
-         'percent_african_american') %>% 
+         'percent_african_american',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = household_income,
          segregation_score = segregation_index_2,
          p_hispanic = percent_hispanic,
-         p_black = percent_african_american) %>%
+         p_black = percent_african_american,
+         p_white = percent_non_hispanic_white) %>%
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
@@ -222,11 +224,13 @@ demo2020 = read_excel('data/ny_hr20.xlsx',
          'median_household_income', 
          'segregation_index_2',
          'percent_black',
-         'percent_hispanic') %>% 
+         'percent_hispanic',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = median_household_income, 
          segregation_score = segregation_index_2,
          p_black = percent_black,
-         p_hispanic = percent_hispanic) %>% 
+         p_hispanic = percent_hispanic,
+         p_white = percent_non_hispanic_white) %>% 
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
@@ -270,11 +274,13 @@ demo2021 = read_excel('data/ny_hr21.xlsx',
          'median_household_income', 
          'segregation_index_2',
          'percent_black',
-         'percent_hispanic') %>% 
+         'percent_hispanic',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = median_household_income, 
          segregation_score = segregation_index_2,
          p_black = percent_black,
-         p_hispanic = percent_hispanic) %>% 
+         p_hispanic = percent_hispanic,
+         p_white = percent_non_hispanic_white) %>% 
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
@@ -317,11 +323,13 @@ demo2022 = read_excel('data/ny_hr22.xlsx',
          'median_household_income', 
          'segregation_index',
          'percent_black',
-         'percent_hispanic') %>% 
+         'percent_hispanic',
+         'percent_non_hispanic_white') %>% 
   rename(median_income = median_household_income, 
          segregation_score = segregation_index,
          p_black = percent_black,
-         p_hispanic = percent_hispanic) %>% 
+         p_hispanic = percent_hispanic,
+         p_white = percent_non_hispanic_white) %>% 
     mutate(segregation = case_when(segregation_score < 30 ~ 0,
                                  segregation_score >= 30 ~ 1),
            p_minority = p_hispanic + p_black)
@@ -409,7 +417,6 @@ sub_var_data =
 covid_hr = left_join(covid_df, sub_var_data, by = c("county", "year")) 
 
 new_comb = left_join(covid_hr, nys_df, by = 'county')
-
 ```
 
 5. **Bubble Plot**  
