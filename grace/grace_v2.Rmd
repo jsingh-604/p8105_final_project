@@ -417,3 +417,46 @@ m5 %>%
     , digits = 3) %>% 
   kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
 ```
+
+```{r}
+plot_df = comb %>% 
+  pivot_longer(health_beh_r:env_r,
+               names_to = "rank_var",
+               values_to = "rank") %>% 
+  filter(year == "2021")
+               
+               
+## Deaths
+
+#health
+d_beh = plot_df %>% 
+  filter(rank_var == "health_beh_r")
+
+d_beh %>%
+  mutate(text_label = str_c("Name: ", dba, "\nZip Code: ", zipcode)) %>% 
+  plot_ly(x = ~grade, y = ~score, color = ~boro, text = ~text_label, alpha = .5, 
+          type = "scatter", mode = "markers", colors = "plasma")
+#env
+#cc
+#ses
+final_df %>%
+  mutate(text_label = str_c("Name: ", dba, "\nZip Code: ", zipcode)) %>% 
+  plot_ly(x = ~grade, y = ~score, color = ~boro, text = ~text_label, alpha = .5, 
+          type = "scatter", mode = "markers", colors = "plasma")
+
+fat_beh %>% 
+  mutate(text_label = str_c("County: ", county, "\nRank", rank)) %>% # \n = create new line
+  plot_ly(x = ~lat, y = ~long, color = ~price, text = ~text_label, 
+          alpha = .5, type = "scatter", mode = "markers")
+
+fat_beh %>% 
+  mutate(text_label = str_c("County: ", county, "\nRank", rank)) %>% 
+  plot_ly(x = ~rank, y = ~n_deaths, color = ~county, text = ~text_label, 
+          alpha = .5, type = "scatter", mode = "markers")
+
+
+# Cases
+# Vaccination
+```
+
+
