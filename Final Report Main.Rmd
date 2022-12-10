@@ -148,10 +148,11 @@ nys_df = left_join(nys_df, area, by = 'county') %>%
 ```
 
 3. **New York State Health Ranking**  
-Same steps were taken for each year:
+Same steps were taken for each year except 2019; for this year, the sub-variables from the "Ranked Measure Data" sheet were labeled slightly different compared to the follow years so for consistency, each of the successive years, the variables needed to be renamed to match the original names from the 2019 dataset: 
 As the original excel files contain multiple sheets. We only imported the sheets that contain variables of interest.  
  <br>Each county's health ranking was imported from the sheet named "Outcomes & Factors SubRankings." From the sheet, only the following variables were selected for future analysis: each county's rank for health outcomes (quality of life, renamed to qol_r; length of life, renamed to longevity_r), health factors (health behaviors, renamed to health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic factors, renamed to ses_r; physical environment, renamed to env_r).
  <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % Hispanic, p_hispanic; % black, renamed p_black). As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (hispanic + black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30. [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)
+ <br>Lastly, we imported data from the sheet labeled "Ranked Measure Data" to import the sub-variables that make up the Health Behaviors Ranking. We imported the variables county, percent of smokers, percent of adults with obesity, food environment index (0-10 with 10 as the best), percent of adults who are physically inactive, percent of adults with access to location with opportunities to exercise, percent of adults who report excessive drinking, percent of driving related deaths with alcohol involved, the number of chlamydia cases, and the teen birth rate per every 1000 females aged 15-19.
 
 ```{r, results = FALSE, message = FALSE} 
 # 2019 HR Data
@@ -183,7 +184,19 @@ demo2019 = read_excel('data/ny_hr19.xls', sheet = 'Additional Measure Data', ski
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2019 = merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>% 
+sub_var19 =
+  read_excel('data/ny_hr19.xls', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
+  
+
+list_2019 =
+  list(hr2019, demo2019, sub_var19)
+
+total2019 = 
+  list_2019 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2019)
 
 # 2020 HR Data
@@ -214,7 +227,22 @@ demo2020 = read_excel('data/ny_hr20.xlsx', sheet = 'Additional Measure Data', sk
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2020 = merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>% 
+sub_var20 =
+  read_excel('data/ny_hr20.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+  
+
+list_2020 =
+  list(hr2020, demo2020, sub_var20)
+
+total2020 = 
+  list_2020 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2020)
 
 # 2021 HR Data
@@ -245,7 +273,21 @@ demo2021 = read_excel('data/ny_hr21.xlsx', sheet = 'Additional Measure Data', sk
                                  segregation_score >= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2021 = merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
+sub_var21 =
+  read_excel('data/ny_hr21.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+list_2021 =
+  list(hr2021, demo2021, sub_var21)
+
+total2021 = 
+  list_2021 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2021)
 
 # 2022 HR Data
@@ -276,7 +318,21 @@ demo2022 = read_excel('data/ny_hr22.xlsx', sheet = 'Additional Measure Data', sk
                                  segregation_score >= 30 ~ 1),
            p_minority = p_hispanic + p_black)
 
-total2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
+sub_var22 =
+  read_excel('data/ny_hr22.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+list_2022 =
+  list(hr2022, demo2022, sub_var22)
+
+total2022 = 
+  list_2022 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2022)
 
 # Merge
@@ -318,8 +374,8 @@ covid_df = covid_df_v1 %>%
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))
 ```
-4. **Dataset for Analysis**  
-For regression tests, demographics dataset, HR dataset, and COVID dataset were merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 79% as it was reported that nearly ~79% of the US population had completed at least one dose of vaccine by the end of 2022. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states/state/new-york)  
+4. **Datasets for Analysis**  
+For the first section of regression tests, the demographics dataset, HR dataset, and COVID dataset were merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 79% as it was reported that nearly ~79% of the US population had completed at least one dose of vaccine by the end of 2022. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states/state/new-york)  
 
 ```{r, results = FALSE, message = FALSE}
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year")) 
@@ -327,6 +383,21 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
                              vax_dose1 < .83*(tpop) ~ 0))
+```
+
+5. **Dataset for Additional Analysis **  
+For the additional regression analysis section, in order to have a more focused dataset, a new dataset was created that is a combination of the Census demographics, NY COVID data, and the Sub-variables dataset from the "Ranked Measure Data" sheet for each of the four Health Ranking datasets. 
+
+```{r, results = FALSE, message = FALSE}
+
+sub_var_data =
+  hr_all %>%
+  select(-ends_with("_r"))
+
+covid_hr = left_join(covid_df, sub_var_data, by = c("county", "year")) 
+
+new_comb = left_join(covid_hr, nys_df, by = 'county')
+
 ```
 
 5. **Bubble Plot**
@@ -390,54 +461,6 @@ grid.arrange(p[[1]], p[[2]], nrow = 1)
 ```
 
 On the left we can see a chloropleth mao of medage per county in new york on the right is a chloropleth map of health factor rank per county. 
-
-```{r NY vax plot}
-ny_vax =
-  read_csv("./data/ny_covidvax.csv") %>% 
-  janitor::clean_names() %>% 
-  select(-region, -series_complete) %>% 
-  rename(date = report_as_of) %>% 
-  mutate(date = lubridate::mdy(date))
-vax_plotly =
-  ny_vax %>%
-  filter(date == "2022-11-14") %>%
-  mutate(county = fct_reorder(county, first_dose, .desc = TRUE)) %>%
-  mutate(text_label = str_c("County: ", county, "\nVaccinations: ", first_dose)) %>% 
-  plot_ly(x = ~county, 
-          y = ~first_dose, 
-          type = "bar", 
-          text = ~text_label) |>
-          layout(xaxis = list(title = "County in New York State"), 
-                 yaxis = list(title = "Cumulative Number of People with at least one dose"),          
-                 title = "Cumulative people with at least one dose of any COVID-19 vaccine by county by 11/14/2022")
-vax_plotly
-```
-From the plot created of the cumulative distribution of people who have at-least the first dose of any COVID-19 vaccine by 11/14/2022, the highest ranking counties are all located in three major regions of New York State: New York City, Long Island, and Hudson Valley. Erie and Monroe counties also have high counts and they are from Western NY and Finger Lakes. This is expected as these are some of the most populous counties in New York State.
-
-```{r}
-ny_death =
-  read_csv("./data/ny_coviddeaths.csv") %>% 
-  janitor::clean_names() %>%
-  rename(date = report_date, n_fatality = place_of_fatality) %>% 
-  mutate(date = lubridate::mdy(date)) %>%
-  select(-deaths_by_county_of_residence) %>%
-  filter(county != "Statewide Total")
-deaths_plotly =
-  ny_death %>%
-  filter(date == "2022-11-14") %>%
-  mutate(county = fct_reorder(county, n_fatality, .desc = TRUE)) %>% 
-  mutate(text_label = str_c("County: ", county, "\nDeaths: ", n_fatality)) %>% 
-  plot_ly(x = ~county, 
-          y = ~n_fatality, 
-          type = "bar", 
-          text = ~text_label) |>
-          layout(xaxis = list(title = "County in New York State"), 
-                 yaxis = list(title = "Cumulative Number of Fatalities"),          
-                 title = "Cumulative COVID-19 deaths by county by 11/14/2022")
-deaths_plotly
-```
-From the plot created of the cumulative distribution of people who have died from COVID-19 by 11/14/2022, the highest ranking counties are also all located in three major regions of New York State: New York City, Long Island, and Hudson Valley, along with Erie and Monroe counties from Western NY and Finger Lakes. Again, this is expected as these are some of the most populous counties in New York State. 
-
 
 ## Statistical Analysis
 
@@ -587,7 +610,62 @@ par(mfrow = c(2,2))
 plot(m5)
 ```
 
-For regression test plots, the conclusions are very similar to that of model 4's. The residual vs. fitted plot does not show clear patterns; however, the points are also not equally, randomly distributed along residual = 0 line. The Q-Q plot confirms our data is normally distributed with no extreme skewness. Scale-location shows possibility of homoscedasticity violation and residual vs. leverage, shows that points #3 and #31 are influential observations; combined with model 1 to model 4, this indicates that points 3 and 31 should be identified and tested to determine whetehr they should be kept or removed from our dataset.
+For regression test plots, the conclusions are very similar to that of model 4's. The residual vs. fitted plot does not show clear patterns; however, the points are also not equally, randomly distributed along residual = 0 line. The Q-Q plot confirms our data is normally distributed with no extreme skewness. Scale-location shows possibility of homoscedasticity violation and residual vs. leverage, shows that points #3 and #31 are influential observations; combined with model 1 to model 4, this indicates that points 3 and 31 should be identified and tested to determine whether they should be kept or removed from our dataset.
+
+## Additional Statistical Analysis
+
+<p style="color: red">***Question 3: Are county percentages of smokers, obesity, physical inactivity, and excessive alcohol drinking associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
+
+The health behaviors ranking was a significant predictor of having increases in the amount of people who have had at least their first dose of the COVID-19 vaccine. The health behaviors ranking encompasses a broad array of sub-variables. Of particular interest to explore are well known factors such as smoking, obesity, exercise, and alcohol consumption. All these factors are well established predictors of many existing health conditions such as CVD, diabetes, cancer, etc. Therefore, we are now interested in seeing if these factor's affect the attainment of getting at least the first dose of the COVID vaccine. 
+
+Note: Again, since the distribution of vaccines for COVID began in 2021 and the complete data for 2022 is not yet available, we will focus our model on data from the 2021 year.
+
+**Model 1**
+ADD MODEL PICTURE HERE
+
+
+```{r}
+
+subm1 =
+  new_comb %>%
+  filter(year == '2021') %>%
+  lm(vax_dose1 ~ percent_smokers + percent_obese + percent_physically_inactive + percent_excessive_drinking, data = .)
+
+subm1 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
+
+
+```
+
+
+From the results, we can see that every predictor has a significant p-value of less than 0.05, except for the variable `percent_excessive_drinking`. The negative estimates for smokers and obesity suggests that for each percent increase in the adults with obesity or smoking, the amount of people in that county who have at least the first dose of a COVID vaccine decreases. However, for the variables for physical inactivity, the estimate is positive. The estimates in this model are not completely reliable as we have previously established that our COVID outcomes (cases, deaths, and first dose of vaccine) is dependent on geospacial factors. Our data is by county and not individuals which have an influence on the results. Further analysis is necessary on the group level to get more precise estimates. However, from these results, public health professional can focus resources and interventions on smokers and those with obesity to increase vaccination numbers. 
+
+
+<p style="color: red">***Question 4: Adjusting for median age, is unemployment associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
+
+
+Unemployment can be a predictor for a variety of outcomes. Often times, people cannot prioritize their health as a result of a lack of money due. It is worth seeing if unemployment is associated with getting the first dose of a COVID vaccine. 
+
+**Model 2**
+ADD MODEL PICTURE HERE
+
+```{r}
+
+subm2 =
+  new_comb %>%
+  filter(year == '2021') %>%
+  lm(vax_dose1 ~ medage + percent_unemployed, data = .)
+
+subm2 %>% 
+  broom::tidy() %>% 
+  select(term, estimate, p.value) %>% 
+  knitr::kable(digits = 3) 
+
+```
+
+From the results, we can see that after adjusting for median age, the p-value for unemployment is significant. As stated before, since the outcomes are geospacially correlated, the estimate values are not accurate. But the direction states that for each percent increase in unemployment in a county, the number of people who have had at least one dose of a COVID vaccine decreases. This information can help public health professionals direct resources and attention towards people who are currently unemployed. People who are unemployment may not have gotten the vaccine because they think that it may be an extra expense that they cannot afford to have. This is where it is important to reach out to this group to make sure they are informed that the vaccine is free for everyone and encourage them to get vaccinated.
 
 # Spatial Analysis
 

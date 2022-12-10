@@ -13,7 +13,7 @@
 
 <title>Final Report</title>
 
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -37,12 +37,12 @@
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
-<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/plotly-binding-4.10.0.9001/plotly.js"></script>
 <script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
 <link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
 <script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
-<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
-<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
@@ -193,8 +193,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "\e259";
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -202,9 +202,16 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "\e258";
-  font-family: 'Glyphicons Halflings';
+  content: "&#xe258;";
   border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -530,9 +537,13 @@ nys_df = left_join(nys_df, area, by = &#39;county&#39;) %&gt;%
   mutate(pop_d = tpop/area)</code></pre>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>New York State Health Ranking</strong><br />
-Same steps were taken for each year: As the original excel files contain
-multiple sheets. We only imported the sheets that contain variables of
-interest.<br />
+Same steps were taken for each year except 2019; for this year, the
+sub-variables from the “Ranked Measure Data” sheet were labeled slightly
+different compared to the follow years so for consistency, each of the
+successive years, the variables needed to be renamed to match the
+original names from the 2019 dataset: As the original excel files
+contain multiple sheets. We only imported the sheets that contain
+variables of interest.<br />
 <br>Each county’s health ranking was imported from the sheet named
 “Outcomes &amp; Factors SubRankings.” From the sheet, only the following
 variables were selected for future analysis: each county’s rank for
@@ -550,7 +561,16 @@ observing racial and socioeconomic disparities in COVID, we then created
 the following variables: % minority (hispanic + black), named
 p_minority; binary variable for low vs. moderate/high level of
 segregation. The cutoff value for level of segregation was set as 30. <a
-href="https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm">(source)</a></li>
+href="https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm">(source)</a>
+<br>Lastly, we imported data from the sheet labeled “Ranked Measure
+Data” to import the sub-variables that make up the Health Behaviors
+Ranking. We imported the variables county, percent of smokers, percent
+of adults with obesity, food environment index (0-10 with 10 as the
+best), percent of adults who are physically inactive, percent of adults
+with access to location with opportunities to exercise, percent of
+adults who report excessive drinking, percent of driving related deaths
+with alcohol involved, the number of chlamydia cases, and the teen birth
+rate per every 1000 females aged 15-19.</li>
 </ol>
 <pre class="r"><code># 2019 HR Data
 
@@ -581,7 +601,19 @@ demo2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Additional Measur
                                  segregation_score &gt;= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2019 = merge(x = hr2019, y = demo2019, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+sub_var19 =
+  read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
+  
+
+list_2019 =
+  list(hr2019, demo2019, sub_var19)
+
+total2019 = 
+  list_2019 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
   mutate(year = 2019)
 
 # 2020 HR Data
@@ -612,7 +644,22 @@ demo2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measu
                                  segregation_score &gt;= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2020 = merge(x = hr2020, y = demo2020, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+sub_var20 =
+  read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+  
+
+list_2020 =
+  list(hr2020, demo2020, sub_var20)
+
+total2020 = 
+  list_2020 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
   mutate(year = 2020)
 
 # 2021 HR Data
@@ -643,7 +690,21 @@ demo2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measu
                                  segregation_score &gt;= 30 ~ 1),
            p_minority = p_black + p_hispanic)
 
-total2021 = merge(x = hr2021, y = demo2021, by = &quot;county&quot;, all.x = TRUE) %&gt;%
+sub_var21 =
+  read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+list_2021 =
+  list(hr2021, demo2021, sub_var21)
+
+total2021 = 
+  list_2021 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
   mutate(year = 2021)
 
 # 2022 HR Data
@@ -674,7 +735,21 @@ demo2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measu
                                  segregation_score &gt;= 30 ~ 1),
            p_minority = p_hispanic + p_black)
 
-total2022 = merge(x = hr2022, y = demo2022, by = &quot;county&quot;, all.x = TRUE) %&gt;% 
+sub_var22 =
+  read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+list_2022 =
+  list(hr2022, demo2022, sub_var22)
+
+total2022 = 
+  list_2022 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
   mutate(year = 2022)
 
 # Merge
@@ -725,14 +800,14 @@ covid_df = covid_df_v1 %&gt;%
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))</code></pre>
 <ol start="4" style="list-style-type: decimal">
-<li><strong>Dataset for Analysis</strong><br />
-For regression tests, demographics dataset, HR dataset, and COVID
-dataset were merged into one dataset called “comb.” At the end, we added
-a new binary variable called vax_maj to see whether majority of the
-residents in the county had received the first dose of vaccine. The
-cutoff value used was 79% as it was reported that nearly ~79% of the US
-population had completed at least one dose of vaccine by the end of
-2022. <a
+<li><strong>Datasets for Analysis</strong><br />
+For the first section of regression tests, the demographics dataset, HR
+dataset, and COVID dataset were merged into one dataset called “comb.”
+At the end, we added a new binary variable called vax_maj to see whether
+majority of the residents in the county had received the first dose of
+vaccine. The cutoff value used was 79% as it was reported that nearly
+~79% of the US population had completed at least one dose of vaccine by
+the end of 2022. <a
 href="https://usafacts.org/visualizations/covid-vaccine-tracker-states/state/new-york">(source)</a></li>
 </ol>
 <pre class="r"><code>covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;)) 
@@ -740,6 +815,21 @@ comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;%
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 &gt;= .83*(tpop) ~ 1,
                              vax_dose1 &lt; .83*(tpop) ~ 0))</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li><strong>Dataset for Additional Analysis </strong><br />
+For the additional regression analysis section, in order to have a more
+focused dataset, a new dataset was created that is a combination of the
+Census demographics, NY COVID data, and the Sub-variables dataset from
+the “Ranked Measure Data” sheet for each of the four Health Ranking
+datasets.</li>
+</ol>
+<pre class="r"><code>sub_var_data =
+  hr_all %&gt;%
+  select(-ends_with(&quot;_r&quot;))
+
+covid_hr = left_join(covid_df, sub_var_data, by = c(&quot;county&quot;, &quot;year&quot;)) 
+
+new_comb = left_join(covid_hr, nys_df, by = &#39;county&#39;)</code></pre>
 <ol start="5" style="list-style-type: decimal">
 <li><strong>Bubble Plot</strong> We were interested in seeing whether
 there is a correlation between SES factors ranking and health behaviors
@@ -775,8 +865,8 @@ fig &lt;- fig %&gt;% layout(title = &#39;health-socio&#39;,
                       showlegend = FALSE)
 
 fig</code></pre>
-<div id="htmlwidget-6f69a6a0e538adb4b0ef" style="width:90%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6f69a6a0e538adb4b0ef">{"x":{"visdat":{"d05fd0fa777":["function () ","plotlyVisDat"]},"cur_data":"d05fd0fa777","attrs":{"d05fd0fa777":{"x":{},"y":{},"text":{},"mode":"markers","marker":{"opacity":0.5,"sizemode":"diameter"},"color":{},"size":{},"colors":"Paired","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"health-socio","xaxis":{"domain":[0,1],"automargin":true,"showgrid":false,"title":"health_beh_r"},"yaxis":{"domain":[0,1],"automargin":true,"showgrid":false,"title":"ses_r"},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[13],"y":[7],"text":"Albany","mode":"markers","marker":{"color":"rgba(166,206,227,1)","size":[20.7778343141867],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(166,206,227,1)"}},"type":"scatter","name":"Albany","textfont":{"color":"rgba(166,206,227,1)","size":20.7778343141867},"error_y":{"color":"rgba(166,206,227,1)","width":20.7778343141867},"error_x":{"color":"rgba(166,206,227,1)","width":20.7778343141867},"line":{"color":"rgba(166,206,227,1)","width":20.7778343141867},"xaxis":"x","yaxis":"y","frame":null},{"x":[47],"y":[53],"text":"Allegany","mode":"markers","marker":{"color":"rgba(146,190,219,1)","size":[11.5880463897236],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(146,190,219,1)"}},"type":"scatter","name":"Allegany","textfont":{"color":"rgba(146,190,219,1)","size":11.5880463897236},"error_y":{"color":"rgba(146,190,219,1)","width":11.5880463897236},"error_x":{"color":"rgba(146,190,219,1)","width":11.5880463897236},"line":{"color":"rgba(146,190,219,1)","width":11.5880463897236},"xaxis":"x","yaxis":"y","frame":null},{"x":[28],"y":[62],"text":"Bronx","mode":"markers","marker":{"color":"rgba(126,174,210,1)","size":[59.6924952717428],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(126,174,210,1)"}},"type":"scatter","name":"Bronx","textfont":{"color":"rgba(126,174,210,1)","size":59.6924952717428},"error_y":{"color":"rgba(126,174,210,1)","width":59.6924952717428},"error_x":{"color":"rgba(126,174,210,1)","width":59.6924952717428},"line":{"color":"rgba(126,174,210,1)","width":59.6924952717428},"xaxis":"x","yaxis":"y","frame":null},{"x":[35],"y":[48],"text":"Broome","mode":"markers","marker":{"color":"rgba(104,158,202,1)","size":[17.0478874050748],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(104,158,202,1)"}},"type":"scatter","name":"Broome","textfont":{"color":"rgba(104,158,202,1)","size":17.0478874050748},"error_y":{"color":"rgba(104,158,202,1)","width":17.0478874050748},"error_x":{"color":"rgba(104,158,202,1)","width":17.0478874050748},"line":{"color":"rgba(104,158,202,1)","width":17.0478874050748},"xaxis":"x","yaxis":"y","frame":null},{"x":[60],"y":[51],"text":"Cattaraugus","mode":"markers","marker":{"color":"rgba(81,143,193,1)","size":[12.7174638300324],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(81,143,193,1)"}},"type":"scatter","name":"Cattaraugus","textfont":{"color":"rgba(81,143,193,1)","size":12.7174638300324},"error_y":{"color":"rgba(81,143,193,1)","width":12.7174638300324},"error_x":{"color":"rgba(81,143,193,1)","width":12.7174638300324},"line":{"color":"rgba(81,143,193,1)","width":12.7174638300324},"xaxis":"x","yaxis":"y","frame":null},{"x":[46],"y":[41],"text":"Cayuga","mode":"markers","marker":{"color":"rgba(53,128,185,1)","size":[12.7069872601069],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(53,128,185,1)"}},"type":"scatter","name":"Cayuga","textfont":{"color":"rgba(53,128,185,1)","size":12.7069872601069},"error_y":{"color":"rgba(53,128,185,1)","width":12.7069872601069},"error_x":{"color":"rgba(53,128,185,1)","width":12.7069872601069},"line":{"color":"rgba(53,128,185,1)","width":12.7069872601069},"xaxis":"x","yaxis":"y","frame":null},{"x":[54],"y":[50],"text":"Chautauqua","mode":"markers","marker":{"color":"rgba(58,128,177,1)","size":[14.6827387409875],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(58,128,177,1)"}},"type":"scatter","name":"Chautauqua","textfont":{"color":"rgba(58,128,177,1)","size":14.6827387409875},"error_y":{"color":"rgba(58,128,177,1)","width":14.6827387409875},"error_x":{"color":"rgba(58,128,177,1)","width":14.6827387409875},"line":{"color":"rgba(58,128,177,1)","width":14.6827387409875},"xaxis":"x","yaxis":"y","frame":null},{"x":[51],"y":[36],"text":"Chemung","mode":"markers","marker":{"color":"rgba(93,145,171,1)","size":[13.0239485027986],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(93,145,171,1)"}},"type":"scatter","name":"Chemung","textfont":{"color":"rgba(93,145,171,1)","size":13.0239485027986},"error_y":{"color":"rgba(93,145,171,1)","width":13.0239485027986},"error_x":{"color":"rgba(93,145,171,1)","width":13.0239485027986},"line":{"color":"rgba(93,145,171,1)","width":13.0239485027986},"xaxis":"x","yaxis":"y","frame":null},{"x":[45],"y":[43],"text":"Chenango","mode":"markers","marker":{"color":"rgba(118,164,164,1)","size":[11.6431653881971],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(118,164,164,1)"}},"type":"scatter","name":"Chenango","textfont":{"color":"rgba(118,164,164,1)","size":11.6431653881971},"error_y":{"color":"rgba(118,164,164,1)","width":11.6431653881971},"error_x":{"color":"rgba(118,164,164,1)","width":11.6431653881971},"line":{"color":"rgba(118,164,164,1)","width":11.6431653881971},"xaxis":"x","yaxis":"y","frame":null},{"x":[41],"y":[38],"text":"Clinton","mode":"markers","marker":{"color":"rgba(139,182,157,1)","size":[12.7826633768877],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(139,182,157,1)"}},"type":"scatter","name":"Clinton","textfont":{"color":"rgba(139,182,157,1)","size":12.7826633768877},"error_y":{"color":"rgba(139,182,157,1)","width":12.7826633768877},"error_x":{"color":"rgba(139,182,157,1)","width":12.7826633768877},"line":{"color":"rgba(139,182,157,1)","width":12.7826633768877},"xaxis":"x","yaxis":"y","frame":null},{"x":[19],"y":[11],"text":"Columbia","mode":"markers","marker":{"color":"rgba(159,202,148,1)","size":[12.0974741025912],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(159,202,148,1)"}},"type":"scatter","name":"Columbia","textfont":{"color":"rgba(159,202,148,1)","size":12.0974741025912},"error_y":{"color":"rgba(159,202,148,1)","width":12.0974741025912},"error_x":{"color":"rgba(159,202,148,1)","width":12.0974741025912},"line":{"color":"rgba(159,202,148,1)","width":12.0974741025912},"xaxis":"x","yaxis":"y","frame":null},{"x":[36],"y":[34],"text":"Cortland","mode":"markers","marker":{"color":"rgba(176,221,139,1)","size":[11.6020871535412],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(176,221,139,1)"}},"type":"scatter","name":"Cortland","textfont":{"color":"rgba(176,221,139,1)","size":11.6020871535412},"error_y":{"color":"rgba(176,221,139,1)","width":11.6020871535412},"error_x":{"color":"rgba(176,221,139,1)","width":11.6020871535412},"line":{"color":"rgba(176,221,139,1)","width":11.6020871535412},"xaxis":"x","yaxis":"y","frame":null},{"x":[39],"y":[47],"text":"Delaware","mode":"markers","marker":{"color":"rgba(159,213,123,1)","size":[11.5532684978063],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(159,213,123,1)"}},"type":"scatter","name":"Delaware","textfont":{"color":"rgba(159,213,123,1)","size":11.5532684978063},"error_y":{"color":"rgba(159,213,123,1)","width":11.5532684978063},"error_x":{"color":"rgba(159,213,123,1)","width":11.5532684978063},"line":{"color":"rgba(159,213,123,1)","width":11.5532684978063},"xaxis":"x","yaxis":"y","frame":null},{"x":[10],"y":[8],"text":"Dutchess","mode":"markers","marker":{"color":"rgba(138,201,106,1)","size":[20.5360451608568],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(138,201,106,1)"}},"type":"scatter","name":"Dutchess","textfont":{"color":"rgba(138,201,106,1)","size":20.5360451608568},"error_y":{"color":"rgba(138,201,106,1)","width":20.5360451608568},"error_x":{"color":"rgba(138,201,106,1)","width":20.5360451608568},"line":{"color":"rgba(138,201,106,1)","width":20.5360451608568},"xaxis":"x","yaxis":"y","frame":null},{"x":[26],"y":[30],"text":"Erie","mode":"markers","marker":{"color":"rgba(117,190,89,1)","size":[42.9131344745154],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(117,190,89,1)"}},"type":"scatter","name":"Erie","textfont":{"color":"rgba(117,190,89,1)","size":42.9131344745154},"error_y":{"color":"rgba(117,190,89,1)","width":42.9131344745154},"error_x":{"color":"rgba(117,190,89,1)","width":42.9131344745154},"line":{"color":"rgba(117,190,89,1)","width":42.9131344745154},"xaxis":"x","yaxis":"y","frame":null},{"x":[17],"y":[29],"text":"Essex","mode":"markers","marker":{"color":"rgba(94,179,73,1)","size":[11.2432916350649],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(94,179,73,1)"}},"type":"scatter","name":"Essex","textfont":{"color":"rgba(94,179,73,1)","size":11.2432916350649},"error_y":{"color":"rgba(94,179,73,1)","width":11.2432916350649},"error_x":{"color":"rgba(94,179,73,1)","width":11.2432916350649},"line":{"color":"rgba(94,179,73,1)","width":11.2432916350649},"xaxis":"x","yaxis":"y","frame":null},{"x":[62],"y":[57],"text":"Franklin","mode":"markers","marker":{"color":"rgba(69,167,56,1)","size":[11.6835595856415],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(69,167,56,1)"}},"type":"scatter","name":"Franklin","textfont":{"color":"rgba(69,167,56,1)","size":11.6835595856415},"error_y":{"color":"rgba(69,167,56,1)","width":11.6835595856415},"error_x":{"color":"rgba(69,167,56,1)","width":11.6835595856415},"line":{"color":"rgba(69,167,56,1)","width":11.6835595856415},"xaxis":"x","yaxis":"y","frame":null},{"x":[53],"y":[59],"text":"Fulton","mode":"markers","marker":{"color":"rgba(73,161,52,1)","size":[11.8251192864892],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(73,161,52,1)"}},"type":"scatter","name":"Fulton","textfont":{"color":"rgba(73,161,52,1)","size":11.8251192864892},"error_y":{"color":"rgba(73,161,52,1)","width":11.8251192864892},"error_x":{"color":"rgba(73,161,52,1)","width":11.8251192864892},"line":{"color":"rgba(73,161,52,1)","width":11.8251192864892},"xaxis":"x","yaxis":"y","frame":null},{"x":[42],"y":[12],"text":"Genesee","mode":"markers","marker":{"color":"rgba(117,162,73,1)","size":[11.9888561937769],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(117,162,73,1)"}},"type":"scatter","name":"Genesee","textfont":{"color":"rgba(117,162,73,1)","size":11.9888561937769},"error_y":{"color":"rgba(117,162,73,1)","width":11.9888561937769},"error_x":{"color":"rgba(117,162,73,1)","width":11.9888561937769},"line":{"color":"rgba(117,162,73,1)","width":11.9888561937769},"xaxis":"x","yaxis":"y","frame":null},{"x":[40],"y":[52],"text":"Greene","mode":"markers","marker":{"color":"rgba(152,163,93,1)","size":[11.5979469283129],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(152,163,93,1)"}},"type":"scatter","name":"Greene","textfont":{"color":"rgba(152,163,93,1)","size":11.5979469283129},"error_y":{"color":"rgba(152,163,93,1)","width":11.5979469283129},"error_x":{"color":"rgba(152,163,93,1)","width":11.5979469283129},"line":{"color":"rgba(152,163,93,1)","width":11.5979469283129},"xaxis":"x","yaxis":"y","frame":null},{"x":[24],"y":[55],"text":"Hamilton","mode":"markers","marker":{"color":"rgba(184,162,112,1)","size":[10],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(184,162,112,1)"}},"type":"scatter","name":"Hamilton","textfont":{"color":"rgba(184,162,112,1)","size":10},"error_y":{"color":"rgba(184,162,112,1)","width":10},"error_x":{"color":"rgba(184,162,112,1)","width":10},"line":{"color":"rgba(184,162,112,1)","width":10},"xaxis":"x","yaxis":"y","frame":null},{"x":[56],"y":[37],"text":"Herkimer","mode":"markers","marker":{"color":"rgba(215,159,131,1)","size":[12.148704889546],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(215,159,131,1)"}},"type":"scatter","name":"Herkimer","textfont":{"color":"rgba(215,159,131,1)","size":12.148704889546},"error_y":{"color":"rgba(215,159,131,1)","width":12.148704889546},"error_x":{"color":"rgba(215,159,131,1)","width":12.148704889546},"line":{"color":"rgba(215,159,131,1)","width":12.148704889546},"xaxis":"x","yaxis":"y","frame":null},{"x":[61],"y":[49],"text":"Jefferson","mode":"markers","marker":{"color":"rgba(246,155,150,1)","size":[14.0103661639193],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(246,155,150,1)"}},"type":"scatter","name":"Jefferson","textfont":{"color":"rgba(246,155,150,1)","size":14.0103661639193},"error_y":{"color":"rgba(246,155,150,1)","width":14.0103661639193},"error_x":{"color":"rgba(246,155,150,1)","width":14.0103661639193},"line":{"color":"rgba(246,155,150,1)","width":14.0103661639193},"xaxis":"x","yaxis":"y","frame":null},{"x":[9],"y":[56],"text":"Kings","mode":"markers","marker":{"color":"rgba(250,139,134,1)","size":[100],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(250,139,134,1)"}},"type":"scatter","name":"Kings","textfont":{"color":"rgba(250,139,134,1)","size":100},"error_y":{"color":"rgba(250,139,134,1)","width":100},"error_x":{"color":"rgba(250,139,134,1)","width":100},"line":{"color":"rgba(250,139,134,1)","width":100},"xaxis":"x","yaxis":"y","frame":null},{"x":[58],"y":[46],"text":"Lewis","mode":"markers","marker":{"color":"rgba(247,120,111,1)","size":[10.8010795787291],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(247,120,111,1)"}},"type":"scatter","name":"Lewis","textfont":{"color":"rgba(247,120,111,1)","size":10.8010795787291},"error_y":{"color":"rgba(247,120,111,1)","width":10.8010795787291},"error_x":{"color":"rgba(247,120,111,1)","width":10.8010795787291},"line":{"color":"rgba(247,120,111,1)","width":10.8010795787291},"xaxis":"x","yaxis":"y","frame":null},{"x":[29],"y":[20],"text":"Livingston","mode":"markers","marker":{"color":"rgba(243,101,89,1)","size":[12.1801706012807],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(243,101,89,1)"}},"type":"scatter","name":"Livingston","textfont":{"color":"rgba(243,101,89,1)","size":12.1801706012807},"error_y":{"color":"rgba(243,101,89,1)","width":12.1801706012807},"error_x":{"color":"rgba(243,101,89,1)","width":12.1801706012807},"line":{"color":"rgba(243,101,89,1)","width":12.1801706012807},"xaxis":"x","yaxis":"y","frame":null},{"x":[23],"y":[16],"text":"Madison","mode":"markers","marker":{"color":"rgba(238,79,67,1)","size":[12.4699503652999],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(238,79,67,1)"}},"type":"scatter","name":"Madison","textfont":{"color":"rgba(238,79,67,1)","size":12.4699503652999},"error_y":{"color":"rgba(238,79,67,1)","width":12.4699503652999},"error_x":{"color":"rgba(238,79,67,1)","width":12.4699503652999},"line":{"color":"rgba(238,79,67,1)","width":12.4699503652999},"xaxis":"x","yaxis":"y","frame":null},{"x":[20],"y":[31],"text":"Monroe","mode":"markers","marker":{"color":"rgba(232,54,45,1)","size":[36.6237363312564],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(232,54,45,1)"}},"type":"scatter","name":"Monroe","textfont":{"color":"rgba(232,54,45,1)","size":36.6237363312564},"error_y":{"color":"rgba(232,54,45,1)","width":36.6237363312564},"error_x":{"color":"rgba(232,54,45,1)","width":36.6237363312564},"line":{"color":"rgba(232,54,45,1)","width":36.6237363312564},"xaxis":"x","yaxis":"y","frame":null},{"x":[52],"y":[58],"text":"Montgomery","mode":"markers","marker":{"color":"rgba(229,43,32,1)","size":[11.6338768829024],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(229,43,32,1)"}},"type":"scatter","name":"Montgomery","textfont":{"color":"rgba(229,43,32,1)","size":11.6338768829024},"error_y":{"color":"rgba(229,43,32,1)","width":11.6338768829024},"error_x":{"color":"rgba(229,43,32,1)","width":11.6338768829024},"line":{"color":"rgba(229,43,32,1)","width":11.6338768829024},"xaxis":"x","yaxis":"y","frame":null},{"x":[1],"y":[2],"text":"Nassau","mode":"markers","marker":{"color":"rgba(236,81,46,1)","size":[58.0516700108486],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,81,46,1)"}},"type":"scatter","name":"Nassau","textfont":{"color":"rgba(236,81,46,1)","size":58.0516700108486},"error_y":{"color":"rgba(236,81,46,1)","width":58.0516700108486},"error_x":{"color":"rgba(236,81,46,1)","width":58.0516700108486},"line":{"color":"rgba(236,81,46,1)","width":58.0516700108486},"xaxis":"x","yaxis":"y","frame":null},{"x":[3],"y":[23],"text":"New York","mode":"markers","marker":{"color":"rgba(242,110,60,1)","size":[66.9204284713088],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(242,110,60,1)"}},"type":"scatter","name":"New York","textfont":{"color":"rgba(242,110,60,1)","size":66.9204284713088},"error_y":{"color":"rgba(242,110,60,1)","width":66.9204284713088},"error_x":{"color":"rgba(242,110,60,1)","width":66.9204284713088},"line":{"color":"rgba(242,110,60,1)","width":66.9204284713088},"xaxis":"x","yaxis":"y","frame":null},{"x":[34],"y":[44],"text":"Niagara","mode":"markers","marker":{"color":"rgba(246,136,75,1)","size":[17.6192024846152],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(246,136,75,1)"}},"type":"scatter","name":"Niagara","textfont":{"color":"rgba(246,136,75,1)","size":17.6192024846152},"error_y":{"color":"rgba(246,136,75,1)","width":17.6192024846152},"error_x":{"color":"rgba(246,136,75,1)","width":17.6192024846152},"line":{"color":"rgba(246,136,75,1)","width":17.6192024846152},"xaxis":"x","yaxis":"y","frame":null},{"x":[33],"y":[39],"text":"Oneida","mode":"markers","marker":{"color":"rgba(250,161,91,1)","size":[18.2819625387621],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(250,161,91,1)"}},"type":"scatter","name":"Oneida","textfont":{"color":"rgba(250,161,91,1)","size":18.2819625387621},"error_y":{"color":"rgba(250,161,91,1)","width":18.2819625387621},"error_x":{"color":"rgba(250,161,91,1)","width":18.2819625387621},"line":{"color":"rgba(250,161,91,1)","width":18.2819625387621},"xaxis":"x","yaxis":"y","frame":null},{"x":[22],"y":[24],"text":"Onondaga","mode":"markers","marker":{"color":"rgba(253,185,107,1)","size":[26.639745202139],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(253,185,107,1)"}},"type":"scatter","name":"Onondaga","textfont":{"color":"rgba(253,185,107,1)","size":26.639745202139},"error_y":{"color":"rgba(253,185,107,1)","width":26.639745202139},"error_x":{"color":"rgba(253,185,107,1)","width":26.639745202139},"line":{"color":"rgba(253,185,107,1)","width":26.639745202139},"xaxis":"x","yaxis":"y","frame":null},{"x":[16],"y":[5],"text":"Ontario","mode":"markers","marker":{"color":"rgba(254,183,100,1)","size":[13.711621912232],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(254,183,100,1)"}},"type":"scatter","name":"Ontario","textfont":{"color":"rgba(254,183,100,1)","size":13.711621912232},"error_y":{"color":"rgba(254,183,100,1)","width":13.711621912232},"error_x":{"color":"rgba(254,183,100,1)","width":13.711621912232},"line":{"color":"rgba(254,183,100,1)","width":13.711621912232},"xaxis":"x","yaxis":"y","frame":null},{"x":[15],"y":[22],"text":"Orange","mode":"markers","marker":{"color":"rgba(255,172,84,1)","size":[23.2478926853621],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,172,84,1)"}},"type":"scatter","name":"Orange","textfont":{"color":"rgba(255,172,84,1)","size":23.2478926853621},"error_y":{"color":"rgba(255,172,84,1)","width":23.2478926853621},"error_x":{"color":"rgba(255,172,84,1)","width":23.2478926853621},"line":{"color":"rgba(255,172,84,1)","width":23.2478926853621},"xaxis":"x","yaxis":"y","frame":null},{"x":[57],"y":[45],"text":"Orleans","mode":"markers","marker":{"color":"rgba(255,160,67,1)","size":[11.3697665152984],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,160,67,1)"}},"type":"scatter","name":"Orleans","textfont":{"color":"rgba(255,160,67,1)","size":11.3697665152984},"error_y":{"color":"rgba(255,160,67,1)","width":11.3697665152984},"error_x":{"color":"rgba(255,160,67,1)","width":11.3697665152984},"line":{"color":"rgba(255,160,67,1)","width":11.3697665152984},"xaxis":"x","yaxis":"y","frame":null},{"x":[55],"y":[61],"text":"Oswego","mode":"markers","marker":{"color":"rgba(255,149,50,1)","size":[14.2220576799378],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,149,50,1)"}},"type":"scatter","name":"Oswego","textfont":{"color":"rgba(255,149,50,1)","size":14.2220576799378},"error_y":{"color":"rgba(255,149,50,1)","width":14.2220576799378},"error_x":{"color":"rgba(255,149,50,1)","width":14.2220576799378},"line":{"color":"rgba(255,149,50,1)","width":14.2220576799378},"xaxis":"x","yaxis":"y","frame":null},{"x":[27],"y":[21],"text":"Otsego","mode":"markers","marker":{"color":"rgba(255,137,29,1)","size":[12.0673404633212],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,137,29,1)"}},"type":"scatter","name":"Otsego","textfont":{"color":"rgba(255,137,29,1)","size":12.0673404633212},"error_y":{"color":"rgba(255,137,29,1)","width":12.0673404633212},"error_x":{"color":"rgba(255,137,29,1)","width":12.0673404633212},"line":{"color":"rgba(255,137,29,1)","width":12.0673404633212},"xaxis":"x","yaxis":"y","frame":null},{"x":[5],"y":[3],"text":"Putnam","mode":"markers","marker":{"color":"rgba(254,129,19,1)","size":[13.4156498113497],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(254,129,19,1)"}},"type":"scatter","name":"Putnam","textfont":{"color":"rgba(254,129,19,1)","size":13.4156498113497},"error_y":{"color":"rgba(254,129,19,1)","width":13.4156498113497},"error_x":{"color":"rgba(254,129,19,1)","width":13.4156498113497},"line":{"color":"rgba(254,129,19,1)","width":13.4156498113497},"xaxis":"x","yaxis":"y","frame":null},{"x":[6],"y":[28],"text":"Queens","mode":"markers","marker":{"color":"rgba(250,138,67,1)","size":[90.1362554122944],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(250,138,67,1)"}},"type":"scatter","name":"Queens","textfont":{"color":"rgba(250,138,67,1)","size":90.1362554122944},"error_y":{"color":"rgba(250,138,67,1)","width":90.1362554122944},"error_x":{"color":"rgba(250,138,67,1)","width":90.1362554122944},"line":{"color":"rgba(250,138,67,1)","width":90.1362554122944},"xaxis":"x","yaxis":"y","frame":null},{"x":[31],"y":[10],"text":"Rensselaer","mode":"markers","marker":{"color":"rgba(244,147,103,1)","size":[15.565650771402],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(244,147,103,1)"}},"type":"scatter","name":"Rensselaer","textfont":{"color":"rgba(244,147,103,1)","size":15.565650771402},"error_y":{"color":"rgba(244,147,103,1)","width":15.565650771402},"error_x":{"color":"rgba(244,147,103,1)","width":15.565650771402},"line":{"color":"rgba(244,147,103,1)","width":15.565650771402},"xaxis":"x","yaxis":"y","frame":null},{"x":[11],"y":[25],"text":"Richmond","mode":"markers","marker":{"color":"rgba(236,156,136,1)","size":[26.7010925394341],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,156,136,1)"}},"type":"scatter","name":"Richmond","textfont":{"color":"rgba(236,156,136,1)","size":26.7010925394341},"error_y":{"color":"rgba(236,156,136,1)","width":26.7010925394341},"error_x":{"color":"rgba(236,156,136,1)","width":26.7010925394341},"line":{"color":"rgba(236,156,136,1)","width":26.7010925394341},"xaxis":"x","yaxis":"y","frame":null},{"x":[4],"y":[14],"text":"Rockland","mode":"markers","marker":{"color":"rgba(224,166,169,1)","size":[21.0472369696912],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(224,166,169,1)"}},"type":"scatter","name":"Rockland","textfont":{"color":"rgba(224,166,169,1)","size":21.0472369696912},"error_y":{"color":"rgba(224,166,169,1)","width":21.0472369696912},"error_x":{"color":"rgba(224,166,169,1)","width":21.0472369696912},"line":{"color":"rgba(224,166,169,1)","width":21.0472369696912},"xaxis":"x","yaxis":"y","frame":null},{"x":[12],"y":[1],"text":"Saratoga","mode":"markers","marker":{"color":"rgba(209,175,202,1)","size":[17.7321766304087],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(209,175,202,1)"}},"type":"scatter","name":"Saratoga","textfont":{"color":"rgba(209,175,202,1)","size":17.7321766304087},"error_y":{"color":"rgba(209,175,202,1)","width":17.7321766304087},"error_x":{"color":"rgba(209,175,202,1)","width":17.7321766304087},"line":{"color":"rgba(209,175,202,1)","width":17.7321766304087},"xaxis":"x","yaxis":"y","frame":null},{"x":[18],"y":[26],"text":"Schenectady","mode":"markers","marker":{"color":"rgba(191,164,207,1)","size":[15.3963695625042],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(191,164,207,1)"}},"type":"scatter","name":"Schenectady","textfont":{"color":"rgba(191,164,207,1)","size":15.3963695625042},"error_y":{"color":"rgba(191,164,207,1)","width":15.3963695625042},"error_x":{"color":"rgba(191,164,207,1)","width":15.3963695625042},"line":{"color":"rgba(191,164,207,1)","width":15.3963695625042},"xaxis":"x","yaxis":"y","frame":null},{"x":[32],"y":[32],"text":"Schoharie","mode":"markers","marker":{"color":"rgba(174,142,196,1)","size":[11.0049226677931],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(174,142,196,1)"}},"type":"scatter","name":"Schoharie","textfont":{"color":"rgba(174,142,196,1)","size":11.0049226677931},"error_y":{"color":"rgba(174,142,196,1)","width":11.0049226677931},"error_x":{"color":"rgba(174,142,196,1)","width":11.0049226677931},"line":{"color":"rgba(174,142,196,1)","width":11.0049226677931},"xaxis":"x","yaxis":"y","frame":null},{"x":[37],"y":[42],"text":"Schuyler","mode":"markers","marker":{"color":"rgba(157,121,186,1)","size":[10.4862784535479],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(157,121,186,1)"}},"type":"scatter","name":"Schuyler","textfont":{"color":"rgba(157,121,186,1)","size":10.4862784535479},"error_y":{"color":"rgba(157,121,186,1)","width":10.4862784535479},"error_x":{"color":"rgba(157,121,186,1)","width":10.4862784535479},"line":{"color":"rgba(157,121,186,1)","width":10.4862784535479},"xaxis":"x","yaxis":"y","frame":null},{"x":[59],"y":[40],"text":"Seneca","mode":"markers","marker":{"color":"rgba(140,100,175,1)","size":[11.0949995679765],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(140,100,175,1)"}},"type":"scatter","name":"Seneca","textfont":{"color":"rgba(140,100,175,1)","size":11.0949995679765},"error_y":{"color":"rgba(140,100,175,1)","width":11.0949995679765},"error_x":{"color":"rgba(140,100,175,1)","width":11.0949995679765},"line":{"color":"rgba(140,100,175,1)","width":11.0949995679765},"xaxis":"x","yaxis":"y","frame":null},{"x":[48],"y":[60],"text":"St. Lawrence","mode":"markers","marker":{"color":"rgba(122,80,164,1)","size":[13.8560977717188],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(122,80,164,1)"}},"type":"scatter","name":"St. Lawrence","textfont":{"color":"rgba(122,80,164,1)","size":13.8560977717188},"error_y":{"color":"rgba(122,80,164,1)","width":13.8560977717188},"error_x":{"color":"rgba(122,80,164,1)","width":13.8560977717188},"line":{"color":"rgba(122,80,164,1)","width":13.8560977717188},"xaxis":"x","yaxis":"y","frame":null},{"x":[38],"y":[33],"text":"Steuben","mode":"markers","marker":{"color":"rgba(109,64,154,1)","size":[13.389728401225],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(109,64,154,1)"}},"type":"scatter","name":"Steuben","textfont":{"color":"rgba(109,64,154,1)","size":13.389728401225},"error_y":{"color":"rgba(109,64,154,1)","width":13.389728401225},"error_x":{"color":"rgba(109,64,154,1)","width":13.389728401225},"line":{"color":"rgba(109,64,154,1)","width":13.389728401225},"xaxis":"x","yaxis":"y","frame":null},{"x":[7],"y":[6],"text":"Suffolk","mode":"markers","marker":{"color":"rgba(140,97,157,1)","size":[63.589419264408],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(140,97,157,1)"}},"type":"scatter","name":"Suffolk","textfont":{"color":"rgba(140,97,157,1)","size":63.589419264408},"error_y":{"color":"rgba(140,97,157,1)","width":63.589419264408},"error_x":{"color":"rgba(140,97,157,1)","width":63.589419264408},"line":{"color":"rgba(140,97,157,1)","width":63.589419264408},"xaxis":"x","yaxis":"y","frame":null},{"x":[49],"y":[54],"text":"Sullivan","mode":"markers","marker":{"color":"rgba(168,131,158,1)","size":[12.6177384049692],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(168,131,158,1)"}},"type":"scatter","name":"Sullivan","textfont":{"color":"rgba(168,131,158,1)","size":12.6177384049692},"error_y":{"color":"rgba(168,131,158,1)","width":12.6177384049692},"error_x":{"color":"rgba(168,131,158,1)","width":12.6177384049692},"line":{"color":"rgba(168,131,158,1)","width":12.6177384049692},"xaxis":"x","yaxis":"y","frame":null},{"x":[30],"y":[13],"text":"Tioga","mode":"markers","marker":{"color":"rgba(194,166,158,1)","size":[11.6664946573094],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(194,166,158,1)"}},"type":"scatter","name":"Tioga","textfont":{"color":"rgba(194,166,158,1)","size":11.6664946573094},"error_y":{"color":"rgba(194,166,158,1)","width":11.6664946573094},"error_x":{"color":"rgba(194,166,158,1)","width":11.6664946573094},"line":{"color":"rgba(194,166,158,1)","width":11.6664946573094},"xaxis":"x","yaxis":"y","frame":null},{"x":[8],"y":[4],"text":"Tompkins","mode":"markers","marker":{"color":"rgba(220,202,157,1)","size":[13.4823974424209],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(220,202,157,1)"}},"type":"scatter","name":"Tompkins","textfont":{"color":"rgba(220,202,157,1)","size":13.4823974424209},"error_y":{"color":"rgba(220,202,157,1)","width":13.4823974424209},"error_x":{"color":"rgba(220,202,157,1)","width":13.4823974424209},"line":{"color":"rgba(220,202,157,1)","width":13.4823974424209},"xaxis":"x","yaxis":"y","frame":null},{"x":[14],"y":[17],"text":"Ulster","mode":"markers","marker":{"color":"rgba(244,238,155,1)","size":[16.3959999423969],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(244,238,155,1)"}},"type":"scatter","name":"Ulster","textfont":{"color":"rgba(244,238,155,1)","size":16.3959999423969},"error_y":{"color":"rgba(244,238,155,1)","width":16.3959999423969},"error_x":{"color":"rgba(244,238,155,1)","width":16.3959999423969},"line":{"color":"rgba(244,238,155,1)","width":16.3959999423969},"xaxis":"x","yaxis":"y","frame":null},{"x":[25],"y":[15],"text":"Warren","mode":"markers","marker":{"color":"rgba(249,238,141,1)","size":[12.1914752162518],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(249,238,141,1)"}},"type":"scatter","name":"Warren","textfont":{"color":"rgba(249,238,141,1)","size":12.1914752162518},"error_y":{"color":"rgba(249,238,141,1)","width":12.1914752162518},"error_x":{"color":"rgba(249,238,141,1)","width":12.1914752162518},"line":{"color":"rgba(249,238,141,1)","width":12.1914752162518},"xaxis":"x","yaxis":"y","frame":null},{"x":[50],"y":[27],"text":"Washington","mode":"markers","marker":{"color":"rgba(236,208,120,1)","size":[12.101794337612],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,208,120,1)"}},"type":"scatter","name":"Washington","textfont":{"color":"rgba(236,208,120,1)","size":12.101794337612},"error_y":{"color":"rgba(236,208,120,1)","width":12.101794337612},"error_x":{"color":"rgba(236,208,120,1)","width":12.101794337612},"line":{"color":"rgba(236,208,120,1)","width":12.101794337612},"xaxis":"x","yaxis":"y","frame":null},{"x":[43],"y":[19],"text":"Wayne","mode":"markers","marker":{"color":"rgba(223,178,99,1)","size":[13.2018701817379],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(223,178,99,1)"}},"type":"scatter","name":"Wayne","textfont":{"color":"rgba(223,178,99,1)","size":13.2018701817379},"error_y":{"color":"rgba(223,178,99,1)","width":13.2018701817379},"error_x":{"color":"rgba(223,178,99,1)","width":13.2018701817379},"line":{"color":"rgba(223,178,99,1)","width":13.2018701817379},"xaxis":"x","yaxis":"y","frame":null},{"x":[2],"y":[9],"text":"Westchester","mode":"markers","marker":{"color":"rgba(208,148,78,1)","size":[43.9958213726827],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(208,148,78,1)"}},"type":"scatter","name":"Westchester","textfont":{"color":"rgba(208,148,78,1)","size":43.9958213726827},"error_y":{"color":"rgba(208,148,78,1)","width":43.9958213726827},"error_x":{"color":"rgba(208,148,78,1)","width":43.9958213726827},"line":{"color":"rgba(208,148,78,1)","width":43.9958213726827},"xaxis":"x","yaxis":"y","frame":null},{"x":[44],"y":[18],"text":"Wyoming","mode":"markers","marker":{"color":"rgba(193,119,59,1)","size":[11.3435570895057],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(193,119,59,1)"}},"type":"scatter","name":"Wyoming","textfont":{"color":"rgba(193,119,59,1)","size":11.3435570895057},"error_y":{"color":"rgba(193,119,59,1)","width":11.3435570895057},"error_x":{"color":"rgba(193,119,59,1)","width":11.3435570895057},"line":{"color":"rgba(193,119,59,1)","width":11.3435570895057},"xaxis":"x","yaxis":"y","frame":null},{"x":[21],"y":[35],"text":"Yates","mode":"markers","marker":{"color":"rgba(177,89,40,1)","size":[10.7384721728862],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(177,89,40,1)"}},"type":"scatter","name":"Yates","textfont":{"color":"rgba(177,89,40,1)","size":10.7384721728862},"error_y":{"color":"rgba(177,89,40,1)","width":10.7384721728862},"error_x":{"color":"rgba(177,89,40,1)","width":10.7384721728862},"line":{"color":"rgba(177,89,40,1)","width":10.7384721728862},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-dfd356875a55513c4baa" style="width:90%;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-dfd356875a55513c4baa">{"x":{"visdat":{"1a8430dc23be":["function () ","plotlyVisDat"]},"cur_data":"1a8430dc23be","attrs":{"1a8430dc23be":{"x":{},"y":{},"text":{},"mode":"markers","marker":{"opacity":0.5,"sizemode":"diameter"},"color":{},"size":{},"colors":"Paired","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"health-socio","xaxis":{"domain":[0,1],"automargin":true,"showgrid":false,"title":"health_beh_r"},"yaxis":{"domain":[0,1],"automargin":true,"showgrid":false,"title":"ses_r"},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[13],"y":[7],"text":"Albany","mode":"markers","marker":{"color":"rgba(166,206,227,1)","size":[20.7778343141867],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(166,206,227,1)"}},"type":"scatter","name":"Albany","textfont":{"color":"rgba(166,206,227,1)","size":20.7778343141867},"error_y":{"color":"rgba(166,206,227,1)","width":20.7778343141867},"error_x":{"color":"rgba(166,206,227,1)","width":20.7778343141867},"line":{"color":"rgba(166,206,227,1)","width":20.7778343141867},"xaxis":"x","yaxis":"y","frame":null},{"x":[47],"y":[53],"text":"Allegany","mode":"markers","marker":{"color":"rgba(146,190,219,1)","size":[11.5880463897236],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(146,190,219,1)"}},"type":"scatter","name":"Allegany","textfont":{"color":"rgba(146,190,219,1)","size":11.5880463897236},"error_y":{"color":"rgba(146,190,219,1)","width":11.5880463897236},"error_x":{"color":"rgba(146,190,219,1)","width":11.5880463897236},"line":{"color":"rgba(146,190,219,1)","width":11.5880463897236},"xaxis":"x","yaxis":"y","frame":null},{"x":[28],"y":[62],"text":"Bronx","mode":"markers","marker":{"color":"rgba(126,174,210,1)","size":[59.6924952717428],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(126,174,210,1)"}},"type":"scatter","name":"Bronx","textfont":{"color":"rgba(126,174,210,1)","size":59.6924952717428},"error_y":{"color":"rgba(126,174,210,1)","width":59.6924952717428},"error_x":{"color":"rgba(126,174,210,1)","width":59.6924952717428},"line":{"color":"rgba(126,174,210,1)","width":59.6924952717428},"xaxis":"x","yaxis":"y","frame":null},{"x":[35],"y":[48],"text":"Broome","mode":"markers","marker":{"color":"rgba(104,158,202,1)","size":[17.0478874050748],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(104,158,202,1)"}},"type":"scatter","name":"Broome","textfont":{"color":"rgba(104,158,202,1)","size":17.0478874050748},"error_y":{"color":"rgba(104,158,202,1)","width":17.0478874050748},"error_x":{"color":"rgba(104,158,202,1)","width":17.0478874050748},"line":{"color":"rgba(104,158,202,1)","width":17.0478874050748},"xaxis":"x","yaxis":"y","frame":null},{"x":[60],"y":[51],"text":"Cattaraugus","mode":"markers","marker":{"color":"rgba(81,143,193,1)","size":[12.7174638300324],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(81,143,193,1)"}},"type":"scatter","name":"Cattaraugus","textfont":{"color":"rgba(81,143,193,1)","size":12.7174638300324},"error_y":{"color":"rgba(81,143,193,1)","width":12.7174638300324},"error_x":{"color":"rgba(81,143,193,1)","width":12.7174638300324},"line":{"color":"rgba(81,143,193,1)","width":12.7174638300324},"xaxis":"x","yaxis":"y","frame":null},{"x":[46],"y":[41],"text":"Cayuga","mode":"markers","marker":{"color":"rgba(53,128,185,1)","size":[12.7069872601069],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(53,128,185,1)"}},"type":"scatter","name":"Cayuga","textfont":{"color":"rgba(53,128,185,1)","size":12.7069872601069},"error_y":{"color":"rgba(53,128,185,1)","width":12.7069872601069},"error_x":{"color":"rgba(53,128,185,1)","width":12.7069872601069},"line":{"color":"rgba(53,128,185,1)","width":12.7069872601069},"xaxis":"x","yaxis":"y","frame":null},{"x":[54],"y":[50],"text":"Chautauqua","mode":"markers","marker":{"color":"rgba(58,128,177,1)","size":[14.6827387409875],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(58,128,177,1)"}},"type":"scatter","name":"Chautauqua","textfont":{"color":"rgba(58,128,177,1)","size":14.6827387409875},"error_y":{"color":"rgba(58,128,177,1)","width":14.6827387409875},"error_x":{"color":"rgba(58,128,177,1)","width":14.6827387409875},"line":{"color":"rgba(58,128,177,1)","width":14.6827387409875},"xaxis":"x","yaxis":"y","frame":null},{"x":[51],"y":[36],"text":"Chemung","mode":"markers","marker":{"color":"rgba(93,145,171,1)","size":[13.0239485027986],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(93,145,171,1)"}},"type":"scatter","name":"Chemung","textfont":{"color":"rgba(93,145,171,1)","size":13.0239485027986},"error_y":{"color":"rgba(93,145,171,1)","width":13.0239485027986},"error_x":{"color":"rgba(93,145,171,1)","width":13.0239485027986},"line":{"color":"rgba(93,145,171,1)","width":13.0239485027986},"xaxis":"x","yaxis":"y","frame":null},{"x":[45],"y":[43],"text":"Chenango","mode":"markers","marker":{"color":"rgba(118,164,164,1)","size":[11.6431653881971],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(118,164,164,1)"}},"type":"scatter","name":"Chenango","textfont":{"color":"rgba(118,164,164,1)","size":11.6431653881971},"error_y":{"color":"rgba(118,164,164,1)","width":11.6431653881971},"error_x":{"color":"rgba(118,164,164,1)","width":11.6431653881971},"line":{"color":"rgba(118,164,164,1)","width":11.6431653881971},"xaxis":"x","yaxis":"y","frame":null},{"x":[41],"y":[38],"text":"Clinton","mode":"markers","marker":{"color":"rgba(139,182,157,1)","size":[12.7826633768877],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(139,182,157,1)"}},"type":"scatter","name":"Clinton","textfont":{"color":"rgba(139,182,157,1)","size":12.7826633768877},"error_y":{"color":"rgba(139,182,157,1)","width":12.7826633768877},"error_x":{"color":"rgba(139,182,157,1)","width":12.7826633768877},"line":{"color":"rgba(139,182,157,1)","width":12.7826633768877},"xaxis":"x","yaxis":"y","frame":null},{"x":[19],"y":[11],"text":"Columbia","mode":"markers","marker":{"color":"rgba(159,202,148,1)","size":[12.0974741025912],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(159,202,148,1)"}},"type":"scatter","name":"Columbia","textfont":{"color":"rgba(159,202,148,1)","size":12.0974741025912},"error_y":{"color":"rgba(159,202,148,1)","width":12.0974741025912},"error_x":{"color":"rgba(159,202,148,1)","width":12.0974741025912},"line":{"color":"rgba(159,202,148,1)","width":12.0974741025912},"xaxis":"x","yaxis":"y","frame":null},{"x":[36],"y":[34],"text":"Cortland","mode":"markers","marker":{"color":"rgba(176,221,139,1)","size":[11.6020871535412],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(176,221,139,1)"}},"type":"scatter","name":"Cortland","textfont":{"color":"rgba(176,221,139,1)","size":11.6020871535412},"error_y":{"color":"rgba(176,221,139,1)","width":11.6020871535412},"error_x":{"color":"rgba(176,221,139,1)","width":11.6020871535412},"line":{"color":"rgba(176,221,139,1)","width":11.6020871535412},"xaxis":"x","yaxis":"y","frame":null},{"x":[39],"y":[47],"text":"Delaware","mode":"markers","marker":{"color":"rgba(159,213,123,1)","size":[11.5532684978063],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(159,213,123,1)"}},"type":"scatter","name":"Delaware","textfont":{"color":"rgba(159,213,123,1)","size":11.5532684978063},"error_y":{"color":"rgba(159,213,123,1)","width":11.5532684978063},"error_x":{"color":"rgba(159,213,123,1)","width":11.5532684978063},"line":{"color":"rgba(159,213,123,1)","width":11.5532684978063},"xaxis":"x","yaxis":"y","frame":null},{"x":[10],"y":[8],"text":"Dutchess","mode":"markers","marker":{"color":"rgba(138,201,106,1)","size":[20.5360451608568],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(138,201,106,1)"}},"type":"scatter","name":"Dutchess","textfont":{"color":"rgba(138,201,106,1)","size":20.5360451608568},"error_y":{"color":"rgba(138,201,106,1)","width":20.5360451608568},"error_x":{"color":"rgba(138,201,106,1)","width":20.5360451608568},"line":{"color":"rgba(138,201,106,1)","width":20.5360451608568},"xaxis":"x","yaxis":"y","frame":null},{"x":[26],"y":[30],"text":"Erie","mode":"markers","marker":{"color":"rgba(117,190,89,1)","size":[42.9131344745154],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(117,190,89,1)"}},"type":"scatter","name":"Erie","textfont":{"color":"rgba(117,190,89,1)","size":42.9131344745154},"error_y":{"color":"rgba(117,190,89,1)","width":42.9131344745154},"error_x":{"color":"rgba(117,190,89,1)","width":42.9131344745154},"line":{"color":"rgba(117,190,89,1)","width":42.9131344745154},"xaxis":"x","yaxis":"y","frame":null},{"x":[17],"y":[29],"text":"Essex","mode":"markers","marker":{"color":"rgba(94,179,73,1)","size":[11.2432916350649],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(94,179,73,1)"}},"type":"scatter","name":"Essex","textfont":{"color":"rgba(94,179,73,1)","size":11.2432916350649},"error_y":{"color":"rgba(94,179,73,1)","width":11.2432916350649},"error_x":{"color":"rgba(94,179,73,1)","width":11.2432916350649},"line":{"color":"rgba(94,179,73,1)","width":11.2432916350649},"xaxis":"x","yaxis":"y","frame":null},{"x":[62],"y":[57],"text":"Franklin","mode":"markers","marker":{"color":"rgba(69,167,56,1)","size":[11.6835595856415],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(69,167,56,1)"}},"type":"scatter","name":"Franklin","textfont":{"color":"rgba(69,167,56,1)","size":11.6835595856415},"error_y":{"color":"rgba(69,167,56,1)","width":11.6835595856415},"error_x":{"color":"rgba(69,167,56,1)","width":11.6835595856415},"line":{"color":"rgba(69,167,56,1)","width":11.6835595856415},"xaxis":"x","yaxis":"y","frame":null},{"x":[53],"y":[59],"text":"Fulton","mode":"markers","marker":{"color":"rgba(73,161,52,1)","size":[11.8251192864892],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(73,161,52,1)"}},"type":"scatter","name":"Fulton","textfont":{"color":"rgba(73,161,52,1)","size":11.8251192864892},"error_y":{"color":"rgba(73,161,52,1)","width":11.8251192864892},"error_x":{"color":"rgba(73,161,52,1)","width":11.8251192864892},"line":{"color":"rgba(73,161,52,1)","width":11.8251192864892},"xaxis":"x","yaxis":"y","frame":null},{"x":[42],"y":[12],"text":"Genesee","mode":"markers","marker":{"color":"rgba(117,162,73,1)","size":[11.9888561937769],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(117,162,73,1)"}},"type":"scatter","name":"Genesee","textfont":{"color":"rgba(117,162,73,1)","size":11.9888561937769},"error_y":{"color":"rgba(117,162,73,1)","width":11.9888561937769},"error_x":{"color":"rgba(117,162,73,1)","width":11.9888561937769},"line":{"color":"rgba(117,162,73,1)","width":11.9888561937769},"xaxis":"x","yaxis":"y","frame":null},{"x":[40],"y":[52],"text":"Greene","mode":"markers","marker":{"color":"rgba(152,163,93,1)","size":[11.5979469283129],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(152,163,93,1)"}},"type":"scatter","name":"Greene","textfont":{"color":"rgba(152,163,93,1)","size":11.5979469283129},"error_y":{"color":"rgba(152,163,93,1)","width":11.5979469283129},"error_x":{"color":"rgba(152,163,93,1)","width":11.5979469283129},"line":{"color":"rgba(152,163,93,1)","width":11.5979469283129},"xaxis":"x","yaxis":"y","frame":null},{"x":[24],"y":[55],"text":"Hamilton","mode":"markers","marker":{"color":"rgba(184,162,112,1)","size":[10],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(184,162,112,1)"}},"type":"scatter","name":"Hamilton","textfont":{"color":"rgba(184,162,112,1)","size":10},"error_y":{"color":"rgba(184,162,112,1)","width":10},"error_x":{"color":"rgba(184,162,112,1)","width":10},"line":{"color":"rgba(184,162,112,1)","width":10},"xaxis":"x","yaxis":"y","frame":null},{"x":[56],"y":[37],"text":"Herkimer","mode":"markers","marker":{"color":"rgba(215,159,131,1)","size":[12.148704889546],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(215,159,131,1)"}},"type":"scatter","name":"Herkimer","textfont":{"color":"rgba(215,159,131,1)","size":12.148704889546},"error_y":{"color":"rgba(215,159,131,1)","width":12.148704889546},"error_x":{"color":"rgba(215,159,131,1)","width":12.148704889546},"line":{"color":"rgba(215,159,131,1)","width":12.148704889546},"xaxis":"x","yaxis":"y","frame":null},{"x":[61],"y":[49],"text":"Jefferson","mode":"markers","marker":{"color":"rgba(246,155,150,1)","size":[14.0103661639193],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(246,155,150,1)"}},"type":"scatter","name":"Jefferson","textfont":{"color":"rgba(246,155,150,1)","size":14.0103661639193},"error_y":{"color":"rgba(246,155,150,1)","width":14.0103661639193},"error_x":{"color":"rgba(246,155,150,1)","width":14.0103661639193},"line":{"color":"rgba(246,155,150,1)","width":14.0103661639193},"xaxis":"x","yaxis":"y","frame":null},{"x":[9],"y":[56],"text":"Kings","mode":"markers","marker":{"color":"rgba(250,139,134,1)","size":[100],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(250,139,134,1)"}},"type":"scatter","name":"Kings","textfont":{"color":"rgba(250,139,134,1)","size":100},"error_y":{"color":"rgba(250,139,134,1)","width":100},"error_x":{"color":"rgba(250,139,134,1)","width":100},"line":{"color":"rgba(250,139,134,1)","width":100},"xaxis":"x","yaxis":"y","frame":null},{"x":[58],"y":[46],"text":"Lewis","mode":"markers","marker":{"color":"rgba(247,120,111,1)","size":[10.8010795787291],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(247,120,111,1)"}},"type":"scatter","name":"Lewis","textfont":{"color":"rgba(247,120,111,1)","size":10.8010795787291},"error_y":{"color":"rgba(247,120,111,1)","width":10.8010795787291},"error_x":{"color":"rgba(247,120,111,1)","width":10.8010795787291},"line":{"color":"rgba(247,120,111,1)","width":10.8010795787291},"xaxis":"x","yaxis":"y","frame":null},{"x":[29],"y":[20],"text":"Livingston","mode":"markers","marker":{"color":"rgba(243,101,89,1)","size":[12.1801706012807],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(243,101,89,1)"}},"type":"scatter","name":"Livingston","textfont":{"color":"rgba(243,101,89,1)","size":12.1801706012807},"error_y":{"color":"rgba(243,101,89,1)","width":12.1801706012807},"error_x":{"color":"rgba(243,101,89,1)","width":12.1801706012807},"line":{"color":"rgba(243,101,89,1)","width":12.1801706012807},"xaxis":"x","yaxis":"y","frame":null},{"x":[23],"y":[16],"text":"Madison","mode":"markers","marker":{"color":"rgba(238,79,67,1)","size":[12.4699503652999],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(238,79,67,1)"}},"type":"scatter","name":"Madison","textfont":{"color":"rgba(238,79,67,1)","size":12.4699503652999},"error_y":{"color":"rgba(238,79,67,1)","width":12.4699503652999},"error_x":{"color":"rgba(238,79,67,1)","width":12.4699503652999},"line":{"color":"rgba(238,79,67,1)","width":12.4699503652999},"xaxis":"x","yaxis":"y","frame":null},{"x":[20],"y":[31],"text":"Monroe","mode":"markers","marker":{"color":"rgba(232,54,45,1)","size":[36.6237363312564],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(232,54,45,1)"}},"type":"scatter","name":"Monroe","textfont":{"color":"rgba(232,54,45,1)","size":36.6237363312564},"error_y":{"color":"rgba(232,54,45,1)","width":36.6237363312564},"error_x":{"color":"rgba(232,54,45,1)","width":36.6237363312564},"line":{"color":"rgba(232,54,45,1)","width":36.6237363312564},"xaxis":"x","yaxis":"y","frame":null},{"x":[52],"y":[58],"text":"Montgomery","mode":"markers","marker":{"color":"rgba(229,43,32,1)","size":[11.6338768829024],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(229,43,32,1)"}},"type":"scatter","name":"Montgomery","textfont":{"color":"rgba(229,43,32,1)","size":11.6338768829024},"error_y":{"color":"rgba(229,43,32,1)","width":11.6338768829024},"error_x":{"color":"rgba(229,43,32,1)","width":11.6338768829024},"line":{"color":"rgba(229,43,32,1)","width":11.6338768829024},"xaxis":"x","yaxis":"y","frame":null},{"x":[1],"y":[2],"text":"Nassau","mode":"markers","marker":{"color":"rgba(236,81,46,1)","size":[58.0516700108486],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,81,46,1)"}},"type":"scatter","name":"Nassau","textfont":{"color":"rgba(236,81,46,1)","size":58.0516700108486},"error_y":{"color":"rgba(236,81,46,1)","width":58.0516700108486},"error_x":{"color":"rgba(236,81,46,1)","width":58.0516700108486},"line":{"color":"rgba(236,81,46,1)","width":58.0516700108486},"xaxis":"x","yaxis":"y","frame":null},{"x":[3],"y":[23],"text":"New York","mode":"markers","marker":{"color":"rgba(242,110,60,1)","size":[66.9204284713088],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(242,110,60,1)"}},"type":"scatter","name":"New York","textfont":{"color":"rgba(242,110,60,1)","size":66.9204284713088},"error_y":{"color":"rgba(242,110,60,1)","width":66.9204284713088},"error_x":{"color":"rgba(242,110,60,1)","width":66.9204284713088},"line":{"color":"rgba(242,110,60,1)","width":66.9204284713088},"xaxis":"x","yaxis":"y","frame":null},{"x":[34],"y":[44],"text":"Niagara","mode":"markers","marker":{"color":"rgba(246,136,75,1)","size":[17.6192024846152],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(246,136,75,1)"}},"type":"scatter","name":"Niagara","textfont":{"color":"rgba(246,136,75,1)","size":17.6192024846152},"error_y":{"color":"rgba(246,136,75,1)","width":17.6192024846152},"error_x":{"color":"rgba(246,136,75,1)","width":17.6192024846152},"line":{"color":"rgba(246,136,75,1)","width":17.6192024846152},"xaxis":"x","yaxis":"y","frame":null},{"x":[33],"y":[39],"text":"Oneida","mode":"markers","marker":{"color":"rgba(250,161,91,1)","size":[18.2819625387621],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(250,161,91,1)"}},"type":"scatter","name":"Oneida","textfont":{"color":"rgba(250,161,91,1)","size":18.2819625387621},"error_y":{"color":"rgba(250,161,91,1)","width":18.2819625387621},"error_x":{"color":"rgba(250,161,91,1)","width":18.2819625387621},"line":{"color":"rgba(250,161,91,1)","width":18.2819625387621},"xaxis":"x","yaxis":"y","frame":null},{"x":[22],"y":[24],"text":"Onondaga","mode":"markers","marker":{"color":"rgba(253,185,107,1)","size":[26.639745202139],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(253,185,107,1)"}},"type":"scatter","name":"Onondaga","textfont":{"color":"rgba(253,185,107,1)","size":26.639745202139},"error_y":{"color":"rgba(253,185,107,1)","width":26.639745202139},"error_x":{"color":"rgba(253,185,107,1)","width":26.639745202139},"line":{"color":"rgba(253,185,107,1)","width":26.639745202139},"xaxis":"x","yaxis":"y","frame":null},{"x":[16],"y":[5],"text":"Ontario","mode":"markers","marker":{"color":"rgba(254,183,100,1)","size":[13.711621912232],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(254,183,100,1)"}},"type":"scatter","name":"Ontario","textfont":{"color":"rgba(254,183,100,1)","size":13.711621912232},"error_y":{"color":"rgba(254,183,100,1)","width":13.711621912232},"error_x":{"color":"rgba(254,183,100,1)","width":13.711621912232},"line":{"color":"rgba(254,183,100,1)","width":13.711621912232},"xaxis":"x","yaxis":"y","frame":null},{"x":[15],"y":[22],"text":"Orange","mode":"markers","marker":{"color":"rgba(255,172,84,1)","size":[23.2478926853621],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,172,84,1)"}},"type":"scatter","name":"Orange","textfont":{"color":"rgba(255,172,84,1)","size":23.2478926853621},"error_y":{"color":"rgba(255,172,84,1)","width":23.2478926853621},"error_x":{"color":"rgba(255,172,84,1)","width":23.2478926853621},"line":{"color":"rgba(255,172,84,1)","width":23.2478926853621},"xaxis":"x","yaxis":"y","frame":null},{"x":[57],"y":[45],"text":"Orleans","mode":"markers","marker":{"color":"rgba(255,160,67,1)","size":[11.3697665152984],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,160,67,1)"}},"type":"scatter","name":"Orleans","textfont":{"color":"rgba(255,160,67,1)","size":11.3697665152984},"error_y":{"color":"rgba(255,160,67,1)","width":11.3697665152984},"error_x":{"color":"rgba(255,160,67,1)","width":11.3697665152984},"line":{"color":"rgba(255,160,67,1)","width":11.3697665152984},"xaxis":"x","yaxis":"y","frame":null},{"x":[55],"y":[61],"text":"Oswego","mode":"markers","marker":{"color":"rgba(255,149,50,1)","size":[14.2220576799378],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,149,50,1)"}},"type":"scatter","name":"Oswego","textfont":{"color":"rgba(255,149,50,1)","size":14.2220576799378},"error_y":{"color":"rgba(255,149,50,1)","width":14.2220576799378},"error_x":{"color":"rgba(255,149,50,1)","width":14.2220576799378},"line":{"color":"rgba(255,149,50,1)","width":14.2220576799378},"xaxis":"x","yaxis":"y","frame":null},{"x":[27],"y":[21],"text":"Otsego","mode":"markers","marker":{"color":"rgba(255,137,29,1)","size":[12.0673404633212],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(255,137,29,1)"}},"type":"scatter","name":"Otsego","textfont":{"color":"rgba(255,137,29,1)","size":12.0673404633212},"error_y":{"color":"rgba(255,137,29,1)","width":12.0673404633212},"error_x":{"color":"rgba(255,137,29,1)","width":12.0673404633212},"line":{"color":"rgba(255,137,29,1)","width":12.0673404633212},"xaxis":"x","yaxis":"y","frame":null},{"x":[5],"y":[3],"text":"Putnam","mode":"markers","marker":{"color":"rgba(254,129,19,1)","size":[13.4156498113497],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(254,129,19,1)"}},"type":"scatter","name":"Putnam","textfont":{"color":"rgba(254,129,19,1)","size":13.4156498113497},"error_y":{"color":"rgba(254,129,19,1)","width":13.4156498113497},"error_x":{"color":"rgba(254,129,19,1)","width":13.4156498113497},"line":{"color":"rgba(254,129,19,1)","width":13.4156498113497},"xaxis":"x","yaxis":"y","frame":null},{"x":[6],"y":[28],"text":"Queens","mode":"markers","marker":{"color":"rgba(250,138,67,1)","size":[90.1362554122944],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(250,138,67,1)"}},"type":"scatter","name":"Queens","textfont":{"color":"rgba(250,138,67,1)","size":90.1362554122944},"error_y":{"color":"rgba(250,138,67,1)","width":90.1362554122944},"error_x":{"color":"rgba(250,138,67,1)","width":90.1362554122944},"line":{"color":"rgba(250,138,67,1)","width":90.1362554122944},"xaxis":"x","yaxis":"y","frame":null},{"x":[31],"y":[10],"text":"Rensselaer","mode":"markers","marker":{"color":"rgba(244,147,103,1)","size":[15.565650771402],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(244,147,103,1)"}},"type":"scatter","name":"Rensselaer","textfont":{"color":"rgba(244,147,103,1)","size":15.565650771402},"error_y":{"color":"rgba(244,147,103,1)","width":15.565650771402},"error_x":{"color":"rgba(244,147,103,1)","width":15.565650771402},"line":{"color":"rgba(244,147,103,1)","width":15.565650771402},"xaxis":"x","yaxis":"y","frame":null},{"x":[11],"y":[25],"text":"Richmond","mode":"markers","marker":{"color":"rgba(236,156,136,1)","size":[26.7010925394341],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,156,136,1)"}},"type":"scatter","name":"Richmond","textfont":{"color":"rgba(236,156,136,1)","size":26.7010925394341},"error_y":{"color":"rgba(236,156,136,1)","width":26.7010925394341},"error_x":{"color":"rgba(236,156,136,1)","width":26.7010925394341},"line":{"color":"rgba(236,156,136,1)","width":26.7010925394341},"xaxis":"x","yaxis":"y","frame":null},{"x":[4],"y":[14],"text":"Rockland","mode":"markers","marker":{"color":"rgba(224,166,169,1)","size":[21.0472369696912],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(224,166,169,1)"}},"type":"scatter","name":"Rockland","textfont":{"color":"rgba(224,166,169,1)","size":21.0472369696912},"error_y":{"color":"rgba(224,166,169,1)","width":21.0472369696912},"error_x":{"color":"rgba(224,166,169,1)","width":21.0472369696912},"line":{"color":"rgba(224,166,169,1)","width":21.0472369696912},"xaxis":"x","yaxis":"y","frame":null},{"x":[12],"y":[1],"text":"Saratoga","mode":"markers","marker":{"color":"rgba(209,175,202,1)","size":[17.7321766304087],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(209,175,202,1)"}},"type":"scatter","name":"Saratoga","textfont":{"color":"rgba(209,175,202,1)","size":17.7321766304087},"error_y":{"color":"rgba(209,175,202,1)","width":17.7321766304087},"error_x":{"color":"rgba(209,175,202,1)","width":17.7321766304087},"line":{"color":"rgba(209,175,202,1)","width":17.7321766304087},"xaxis":"x","yaxis":"y","frame":null},{"x":[18],"y":[26],"text":"Schenectady","mode":"markers","marker":{"color":"rgba(191,164,207,1)","size":[15.3963695625042],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(191,164,207,1)"}},"type":"scatter","name":"Schenectady","textfont":{"color":"rgba(191,164,207,1)","size":15.3963695625042},"error_y":{"color":"rgba(191,164,207,1)","width":15.3963695625042},"error_x":{"color":"rgba(191,164,207,1)","width":15.3963695625042},"line":{"color":"rgba(191,164,207,1)","width":15.3963695625042},"xaxis":"x","yaxis":"y","frame":null},{"x":[32],"y":[32],"text":"Schoharie","mode":"markers","marker":{"color":"rgba(174,142,196,1)","size":[11.0049226677931],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(174,142,196,1)"}},"type":"scatter","name":"Schoharie","textfont":{"color":"rgba(174,142,196,1)","size":11.0049226677931},"error_y":{"color":"rgba(174,142,196,1)","width":11.0049226677931},"error_x":{"color":"rgba(174,142,196,1)","width":11.0049226677931},"line":{"color":"rgba(174,142,196,1)","width":11.0049226677931},"xaxis":"x","yaxis":"y","frame":null},{"x":[37],"y":[42],"text":"Schuyler","mode":"markers","marker":{"color":"rgba(157,121,186,1)","size":[10.4862784535479],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(157,121,186,1)"}},"type":"scatter","name":"Schuyler","textfont":{"color":"rgba(157,121,186,1)","size":10.4862784535479},"error_y":{"color":"rgba(157,121,186,1)","width":10.4862784535479},"error_x":{"color":"rgba(157,121,186,1)","width":10.4862784535479},"line":{"color":"rgba(157,121,186,1)","width":10.4862784535479},"xaxis":"x","yaxis":"y","frame":null},{"x":[59],"y":[40],"text":"Seneca","mode":"markers","marker":{"color":"rgba(140,100,175,1)","size":[11.0949995679765],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(140,100,175,1)"}},"type":"scatter","name":"Seneca","textfont":{"color":"rgba(140,100,175,1)","size":11.0949995679765},"error_y":{"color":"rgba(140,100,175,1)","width":11.0949995679765},"error_x":{"color":"rgba(140,100,175,1)","width":11.0949995679765},"line":{"color":"rgba(140,100,175,1)","width":11.0949995679765},"xaxis":"x","yaxis":"y","frame":null},{"x":[48],"y":[60],"text":"St. Lawrence","mode":"markers","marker":{"color":"rgba(122,80,164,1)","size":[13.8560977717188],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(122,80,164,1)"}},"type":"scatter","name":"St. Lawrence","textfont":{"color":"rgba(122,80,164,1)","size":13.8560977717188},"error_y":{"color":"rgba(122,80,164,1)","width":13.8560977717188},"error_x":{"color":"rgba(122,80,164,1)","width":13.8560977717188},"line":{"color":"rgba(122,80,164,1)","width":13.8560977717188},"xaxis":"x","yaxis":"y","frame":null},{"x":[38],"y":[33],"text":"Steuben","mode":"markers","marker":{"color":"rgba(109,64,154,1)","size":[13.389728401225],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(109,64,154,1)"}},"type":"scatter","name":"Steuben","textfont":{"color":"rgba(109,64,154,1)","size":13.389728401225},"error_y":{"color":"rgba(109,64,154,1)","width":13.389728401225},"error_x":{"color":"rgba(109,64,154,1)","width":13.389728401225},"line":{"color":"rgba(109,64,154,1)","width":13.389728401225},"xaxis":"x","yaxis":"y","frame":null},{"x":[7],"y":[6],"text":"Suffolk","mode":"markers","marker":{"color":"rgba(140,97,157,1)","size":[63.589419264408],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(140,97,157,1)"}},"type":"scatter","name":"Suffolk","textfont":{"color":"rgba(140,97,157,1)","size":63.589419264408},"error_y":{"color":"rgba(140,97,157,1)","width":63.589419264408},"error_x":{"color":"rgba(140,97,157,1)","width":63.589419264408},"line":{"color":"rgba(140,97,157,1)","width":63.589419264408},"xaxis":"x","yaxis":"y","frame":null},{"x":[49],"y":[54],"text":"Sullivan","mode":"markers","marker":{"color":"rgba(168,131,158,1)","size":[12.6177384049692],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(168,131,158,1)"}},"type":"scatter","name":"Sullivan","textfont":{"color":"rgba(168,131,158,1)","size":12.6177384049692},"error_y":{"color":"rgba(168,131,158,1)","width":12.6177384049692},"error_x":{"color":"rgba(168,131,158,1)","width":12.6177384049692},"line":{"color":"rgba(168,131,158,1)","width":12.6177384049692},"xaxis":"x","yaxis":"y","frame":null},{"x":[30],"y":[13],"text":"Tioga","mode":"markers","marker":{"color":"rgba(194,166,158,1)","size":[11.6664946573094],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(194,166,158,1)"}},"type":"scatter","name":"Tioga","textfont":{"color":"rgba(194,166,158,1)","size":11.6664946573094},"error_y":{"color":"rgba(194,166,158,1)","width":11.6664946573094},"error_x":{"color":"rgba(194,166,158,1)","width":11.6664946573094},"line":{"color":"rgba(194,166,158,1)","width":11.6664946573094},"xaxis":"x","yaxis":"y","frame":null},{"x":[8],"y":[4],"text":"Tompkins","mode":"markers","marker":{"color":"rgba(220,202,157,1)","size":[13.4823974424209],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(220,202,157,1)"}},"type":"scatter","name":"Tompkins","textfont":{"color":"rgba(220,202,157,1)","size":13.4823974424209},"error_y":{"color":"rgba(220,202,157,1)","width":13.4823974424209},"error_x":{"color":"rgba(220,202,157,1)","width":13.4823974424209},"line":{"color":"rgba(220,202,157,1)","width":13.4823974424209},"xaxis":"x","yaxis":"y","frame":null},{"x":[14],"y":[17],"text":"Ulster","mode":"markers","marker":{"color":"rgba(244,238,155,1)","size":[16.3959999423969],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(244,238,155,1)"}},"type":"scatter","name":"Ulster","textfont":{"color":"rgba(244,238,155,1)","size":16.3959999423969},"error_y":{"color":"rgba(244,238,155,1)","width":16.3959999423969},"error_x":{"color":"rgba(244,238,155,1)","width":16.3959999423969},"line":{"color":"rgba(244,238,155,1)","width":16.3959999423969},"xaxis":"x","yaxis":"y","frame":null},{"x":[25],"y":[15],"text":"Warren","mode":"markers","marker":{"color":"rgba(249,238,141,1)","size":[12.1914752162518],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(249,238,141,1)"}},"type":"scatter","name":"Warren","textfont":{"color":"rgba(249,238,141,1)","size":12.1914752162518},"error_y":{"color":"rgba(249,238,141,1)","width":12.1914752162518},"error_x":{"color":"rgba(249,238,141,1)","width":12.1914752162518},"line":{"color":"rgba(249,238,141,1)","width":12.1914752162518},"xaxis":"x","yaxis":"y","frame":null},{"x":[50],"y":[27],"text":"Washington","mode":"markers","marker":{"color":"rgba(236,208,120,1)","size":[12.101794337612],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(236,208,120,1)"}},"type":"scatter","name":"Washington","textfont":{"color":"rgba(236,208,120,1)","size":12.101794337612},"error_y":{"color":"rgba(236,208,120,1)","width":12.101794337612},"error_x":{"color":"rgba(236,208,120,1)","width":12.101794337612},"line":{"color":"rgba(236,208,120,1)","width":12.101794337612},"xaxis":"x","yaxis":"y","frame":null},{"x":[43],"y":[19],"text":"Wayne","mode":"markers","marker":{"color":"rgba(223,178,99,1)","size":[13.2018701817379],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(223,178,99,1)"}},"type":"scatter","name":"Wayne","textfont":{"color":"rgba(223,178,99,1)","size":13.2018701817379},"error_y":{"color":"rgba(223,178,99,1)","width":13.2018701817379},"error_x":{"color":"rgba(223,178,99,1)","width":13.2018701817379},"line":{"color":"rgba(223,178,99,1)","width":13.2018701817379},"xaxis":"x","yaxis":"y","frame":null},{"x":[2],"y":[9],"text":"Westchester","mode":"markers","marker":{"color":"rgba(208,148,78,1)","size":[43.9958213726827],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(208,148,78,1)"}},"type":"scatter","name":"Westchester","textfont":{"color":"rgba(208,148,78,1)","size":43.9958213726827},"error_y":{"color":"rgba(208,148,78,1)","width":43.9958213726827},"error_x":{"color":"rgba(208,148,78,1)","width":43.9958213726827},"line":{"color":"rgba(208,148,78,1)","width":43.9958213726827},"xaxis":"x","yaxis":"y","frame":null},{"x":[44],"y":[18],"text":"Wyoming","mode":"markers","marker":{"color":"rgba(193,119,59,1)","size":[11.3435570895057],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(193,119,59,1)"}},"type":"scatter","name":"Wyoming","textfont":{"color":"rgba(193,119,59,1)","size":11.3435570895057},"error_y":{"color":"rgba(193,119,59,1)","width":11.3435570895057},"error_x":{"color":"rgba(193,119,59,1)","width":11.3435570895057},"line":{"color":"rgba(193,119,59,1)","width":11.3435570895057},"xaxis":"x","yaxis":"y","frame":null},{"x":[21],"y":[35],"text":"Yates","mode":"markers","marker":{"color":"rgba(177,89,40,1)","size":[10.7384721728862],"sizemode":"diameter","opacity":0.5,"line":{"color":"rgba(177,89,40,1)"}},"type":"scatter","name":"Yates","textfont":{"color":"rgba(177,89,40,1)","size":10.7384721728862},"error_y":{"color":"rgba(177,89,40,1)","width":10.7384721728862},"error_x":{"color":"rgba(177,89,40,1)","width":10.7384721728862},"line":{"color":"rgba(177,89,40,1)","width":10.7384721728862},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <pre class="r"><code>write.csv(total,&quot;./data/eda_bubble.csv&quot;)</code></pre>
 <p>From the plot we can see that New York, Queens and Kings have the
 highest socio economic score, but have the lowest health factors ranks.
@@ -799,82 +889,10 @@ p[[2]] = total %&gt;%
   scale_fill_viridis_c(option = &quot;viridis&quot;) 
 
 grid.arrange(p[[1]], p[[2]], nrow = 1)</code></pre>
-<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-8-1.png" width="90%" /></p>
+<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-9-1.png" width="90%" /></p>
 <p>On the left we can see a chloropleth mao of medage per county in new
 york on the right is a chloropleth map of health factor rank per
 county.</p>
-<pre class="r"><code>ny_vax =
-  read_csv(&quot;./data/ny_covidvax.csv&quot;) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  select(-region, -series_complete) %&gt;% 
-  rename(date = report_as_of) %&gt;% 
-  mutate(date = lubridate::mdy(date))</code></pre>
-<pre><code>## Rows: 43462 Columns: 5
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (3): Region, County, Report as of
-## dbl (2): First Dose, Series Complete
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>vax_plotly =
-  ny_vax %&gt;%
-  filter(date == &quot;2022-11-14&quot;) %&gt;%
-  mutate(county = fct_reorder(county, first_dose, .desc = TRUE)) %&gt;%
-  mutate(text_label = str_c(&quot;County: &quot;, county, &quot;\nVaccinations: &quot;, first_dose)) %&gt;% 
-  plot_ly(x = ~county, 
-          y = ~first_dose, 
-          type = &quot;bar&quot;, 
-          text = ~text_label) |&gt;
-          layout(xaxis = list(title = &quot;County in New York State&quot;), 
-                 yaxis = list(title = &quot;Cumulative Number of People with at least one dose&quot;),          
-                 title = &quot;Cumulative people with at least one dose of any COVID-19 vaccine by county by 11/14/2022&quot;)
-vax_plotly</code></pre>
-<div id="htmlwidget-9f89a2198415c34149b3" style="width:90%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9f89a2198415c34149b3">{"x":{"visdat":{"d05f438b9ec8":["function () ","plotlyVisDat"]},"cur_data":"d05f438b9ec8","attrs":{"d05f438b9ec8":{"x":{},"y":{},"text":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"County in New York State","type":"category","categoryorder":"array","categoryarray":["Queens","Kings","New York","Nassau","Suffolk","Bronx","Westchester","Erie","Monroe","Richmond","Onondaga","Orange","Albany","Rockland","Dutchess","Saratoga","Oneida","Niagara","Ulster","Schenectady","Broome","Rensselaer","Tompkins","Ontario","Putnam","Chautauqua","Oswego","Jefferson","St. Lawrence","Wayne","Clinton","Steuben","Madison","Warren","Sullivan","Cayuga","Chemung","Columbia","Cattaraugus","Washington","Otsego","Livingston","Genesee","Herkimer","Montgomery","Greene","Chenango","Franklin","Fulton","Cortland","Essex","Delaware","Tioga","Orleans","Allegany","Wyoming","Seneca","Schoharie","Yates","Lewis","Schuyler","Hamilton"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Cumulative Number of People with at least one dose"},"title":"Cumulative people with at least one dose of any COVID-19 vaccine by county by 11/14/2022","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["Albany","Allegany","Bronx","Broome","Cattaraugus","Cayuga","Chautauqua","Chemung","Chenango","Clinton","Columbia","Cortland","Delaware","Dutchess","Erie","Essex","Franklin","Fulton","Genesee","Greene","Hamilton","Herkimer","Jefferson","Kings","Lewis","Livingston","Madison","Monroe","Montgomery","Nassau","New York","Niagara","Oneida","Onondaga","Ontario","Orange","Orleans","Oswego","Otsego","Putnam","Queens","Rensselaer","Richmond","Rockland","Saratoga","Schenectady","Schoharie","Schuyler","Seneca","St. Lawrence","Steuben","Suffolk","Sullivan","Tioga","Tompkins","Ulster","Warren","Washington","Wayne","Westchester","Wyoming","Yates"],"y":[254761,23629,1225792,135771,44136,49997,82083,49607,31489,59422,46096,29855,26715,231477,718286,27955,31342,30288,37942,32436,3547,37058,75922,2097178,14516,40559,54641,587605,35501,1253189,1629986,151127,156578,369703,85604,265080,24480,79684,40618,83285,2208011,119572,392365,233540,188572,136540,19460,11283,19687,74400,56286,1240762,51306,25724,88660,148372,52448,41926,65797,884223,23493,14735],"text":["County: Albany<br />Vaccinations: 254761","County: Allegany<br />Vaccinations: 23629","County: Bronx<br />Vaccinations: 1225792","County: Broome<br />Vaccinations: 135771","County: Cattaraugus<br />Vaccinations: 44136","County: Cayuga<br />Vaccinations: 49997","County: Chautauqua<br />Vaccinations: 82083","County: Chemung<br />Vaccinations: 49607","County: Chenango<br />Vaccinations: 31489","County: Clinton<br />Vaccinations: 59422","County: Columbia<br />Vaccinations: 46096","County: Cortland<br />Vaccinations: 29855","County: Delaware<br />Vaccinations: 26715","County: Dutchess<br />Vaccinations: 231477","County: Erie<br />Vaccinations: 718286","County: Essex<br />Vaccinations: 27955","County: Franklin<br />Vaccinations: 31342","County: Fulton<br />Vaccinations: 30288","County: Genesee<br />Vaccinations: 37942","County: Greene<br />Vaccinations: 32436","County: Hamilton<br />Vaccinations: 3547","County: Herkimer<br />Vaccinations: 37058","County: Jefferson<br />Vaccinations: 75922","County: Kings<br />Vaccinations: 2097178","County: Lewis<br />Vaccinations: 14516","County: Livingston<br />Vaccinations: 40559","County: Madison<br />Vaccinations: 54641","County: Monroe<br />Vaccinations: 587605","County: Montgomery<br />Vaccinations: 35501","County: Nassau<br />Vaccinations: 1253189","County: New York<br />Vaccinations: 1629986","County: Niagara<br />Vaccinations: 151127","County: Oneida<br />Vaccinations: 156578","County: Onondaga<br />Vaccinations: 369703","County: Ontario<br />Vaccinations: 85604","County: Orange<br />Vaccinations: 265080","County: Orleans<br />Vaccinations: 24480","County: Oswego<br />Vaccinations: 79684","County: Otsego<br />Vaccinations: 40618","County: Putnam<br />Vaccinations: 83285","County: Queens<br />Vaccinations: 2208011","County: Rensselaer<br />Vaccinations: 119572","County: Richmond<br />Vaccinations: 392365","County: Rockland<br />Vaccinations: 233540","County: Saratoga<br />Vaccinations: 188572","County: Schenectady<br />Vaccinations: 136540","County: Schoharie<br />Vaccinations: 19460","County: Schuyler<br />Vaccinations: 11283","County: Seneca<br />Vaccinations: 19687","County: St. Lawrence<br />Vaccinations: 74400","County: Steuben<br />Vaccinations: 56286","County: Suffolk<br />Vaccinations: 1240762","County: Sullivan<br />Vaccinations: 51306","County: Tioga<br />Vaccinations: 25724","County: Tompkins<br />Vaccinations: 88660","County: Ulster<br />Vaccinations: 148372","County: Warren<br />Vaccinations: 52448","County: Washington<br />Vaccinations: 41926","County: Wayne<br />Vaccinations: 65797","County: Westchester<br />Vaccinations: 884223","County: Wyoming<br />Vaccinations: 23493","County: Yates<br />Vaccinations: 14735"],"type":"bar","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>From the plot created of the cumulative distribution of people who
-have at-least the first dose of any COVID-19 vaccine by 11/14/2022, the
-highest ranking counties are all located in three major regions of New
-York State: New York City, Long Island, and Hudson Valley. Erie and
-Monroe counties also have high counts and they are from Western NY and
-Finger Lakes. This is expected as these are some of the most populous
-counties in New York State.</p>
-<pre class="r"><code>ny_death =
-  read_csv(&quot;./data/ny_coviddeaths.csv&quot;) %&gt;% 
-  janitor::clean_names() %&gt;%
-  rename(date = report_date, n_fatality = place_of_fatality) %&gt;% 
-  mutate(date = lubridate::mdy(date)) %&gt;%
-  select(-deaths_by_county_of_residence) %&gt;%
-  filter(county != &quot;Statewide Total&quot;)</code></pre>
-<pre><code>## Rows: 57728 Columns: 4
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (2): Report Date, County
-## dbl (2): Place of Fatality, Deaths by County of Residence
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>deaths_plotly =
-  ny_death %&gt;%
-  filter(date == &quot;2022-11-14&quot;) %&gt;%
-  mutate(county = fct_reorder(county, n_fatality, .desc = TRUE)) %&gt;% 
-  mutate(text_label = str_c(&quot;County: &quot;, county, &quot;\nDeaths: &quot;, n_fatality)) %&gt;% 
-  plot_ly(x = ~county, 
-          y = ~n_fatality, 
-          type = &quot;bar&quot;, 
-          text = ~text_label) |&gt;
-          layout(xaxis = list(title = &quot;County in New York State&quot;), 
-                 yaxis = list(title = &quot;Cumulative Number of Fatalities&quot;),          
-                 title = &quot;Cumulative COVID-19 deaths by county by 11/14/2022&quot;)
-deaths_plotly</code></pre>
-<div id="htmlwidget-87769baff137593c5e45" style="width:90%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-87769baff137593c5e45">{"x":{"visdat":{"d05f44099b71":["function () ","plotlyVisDat"]},"cur_data":"d05f44099b71","attrs":{"d05f44099b71":{"x":{},"y":{},"text":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"County in New York State","type":"category","categoryorder":"array","categoryarray":["Kings","Queens","Manhattan","Nassau","Bronx","Suffolk","Westchester","Erie","Monroe","Richmond","Onondaga","Orange","Albany","Rockland","Oneida","Dutchess","Broome","Niagara","Chemung","Schenectady","Chautauqua","Saratoga","Ontario","Cattaraugus","Rensselaer","Warren","Ulster","Steuben","Montgomery","St. Lawrence","Columbia","Genesee","Otsego","Clinton","Cayuga","Jefferson","Madison","Oswego","Putnam","Wayne","Cortland","Fulton","Tompkins","Sullivan","Allegany","Livingston","Chenango","Herkimer","Wyoming","Orleans","Tioga","Washington","Essex","Seneca","Greene","Franklin","Delaware","Yates","Lewis","Schoharie","Schuyler","Hamilton","Non-NYS"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Cumulative Number of Fatalities"},"title":"Cumulative COVID-19 deaths by county by 11/14/2022","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["Albany","Allegany","Bronx","Broome","Cattaraugus","Cayuga","Chautauqua","Chemung","Chenango","Clinton","Columbia","Cortland","Delaware","Dutchess","Erie","Essex","Franklin","Fulton","Genesee","Greene","Hamilton","Herkimer","Jefferson","Kings","Lewis","Livingston","Madison","Manhattan","Monroe","Montgomery","Nassau","Niagara","Non-NYS","Oneida","Onondaga","Ontario","Orange","Orleans","Oswego","Otsego","Putnam","Queens","Rensselaer","Richmond","Rockland","Saratoga","Schenectady","Schoharie","Schuyler","Seneca","St. Lawrence","Steuben","Suffolk","Sullivan","Tioga","Tompkins","Ulster","Warren","Washington","Wayne","Westchester","Wyoming","Yates"],"y":[1031,95,4937,677,249,129,315,323,76,158,174,110,28,758,3146,40,34,107,173,37,0,73,127,8408,21,88,127,6361,2074,199,5023,402,0,877,1412,261,1115,59,127,160,117,7014,245,1470,908,275,323,16,8,38,193,212,4691,103,42,105,215,242,42,114,3156,72,26],"text":["County: Albany<br />Deaths: 1031","County: Allegany<br />Deaths: 95","County: Bronx<br />Deaths: 4937","County: Broome<br />Deaths: 677","County: Cattaraugus<br />Deaths: 249","County: Cayuga<br />Deaths: 129","County: Chautauqua<br />Deaths: 315","County: Chemung<br />Deaths: 323","County: Chenango<br />Deaths: 76","County: Clinton<br />Deaths: 158","County: Columbia<br />Deaths: 174","County: Cortland<br />Deaths: 110","County: Delaware<br />Deaths: 28","County: Dutchess<br />Deaths: 758","County: Erie<br />Deaths: 3146","County: Essex<br />Deaths: 40","County: Franklin<br />Deaths: 34","County: Fulton<br />Deaths: 107","County: Genesee<br />Deaths: 173","County: Greene<br />Deaths: 37","County: Hamilton<br />Deaths: 0","County: Herkimer<br />Deaths: 73","County: Jefferson<br />Deaths: 127","County: Kings<br />Deaths: 8408","County: Lewis<br />Deaths: 21","County: Livingston<br />Deaths: 88","County: Madison<br />Deaths: 127","County: Manhattan<br />Deaths: 6361","County: Monroe<br />Deaths: 2074","County: Montgomery<br />Deaths: 199","County: Nassau<br />Deaths: 5023","County: Niagara<br />Deaths: 402","County: Non-NYS<br />Deaths: 0","County: Oneida<br />Deaths: 877","County: Onondaga<br />Deaths: 1412","County: Ontario<br />Deaths: 261","County: Orange<br />Deaths: 1115","County: Orleans<br />Deaths: 59","County: Oswego<br />Deaths: 127","County: Otsego<br />Deaths: 160","County: Putnam<br />Deaths: 117","County: Queens<br />Deaths: 7014","County: Rensselaer<br />Deaths: 245","County: Richmond<br />Deaths: 1470","County: Rockland<br />Deaths: 908","County: Saratoga<br />Deaths: 275","County: Schenectady<br />Deaths: 323","County: Schoharie<br />Deaths: 16","County: Schuyler<br />Deaths: 8","County: Seneca<br />Deaths: 38","County: St. Lawrence<br />Deaths: 193","County: Steuben<br />Deaths: 212","County: Suffolk<br />Deaths: 4691","County: Sullivan<br />Deaths: 103","County: Tioga<br />Deaths: 42","County: Tompkins<br />Deaths: 105","County: Ulster<br />Deaths: 215","County: Warren<br />Deaths: 242","County: Washington<br />Deaths: 42","County: Wayne<br />Deaths: 114","County: Westchester<br />Deaths: 3156","County: Wyoming<br />Deaths: 72","County: Yates<br />Deaths: 26"],"type":"bar","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>From the plot created of the cumulative distribution of people who
-have died from COVID-19 by 11/14/2022, the highest ranking counties are
-also all located in three major regions of New York State: New York
-City, Long Island, and Hudson Valley, along with Erie and Monroe
-counties from Western NY and Finger Lakes. Again, this is expected as
-these are some of the most populous counties in New York State.</p>
 </div>
 <div id="statistical-analysis" class="section level2">
 <h2>Statistical Analysis</h2>
@@ -1580,8 +1598,206 @@ distributed with no extreme skewness. Scale-location shows possibility
 of homoscedasticity violation and residual vs. leverage, shows that
 points #3 and #31 are influential observations; combined with model 1 to
 model 4, this indicates that points 3 and 31 should be identified and
-tested to determine whetehr they should be kept or removed from our
+tested to determine whether they should be kept or removed from our
 dataset.</p>
+</div>
+<div id="additional-statistical-analysis" class="section level2">
+<h2>Additional Statistical Analysis</h2>
+<p style="color: red">
+<strong><em>Question 3: Are county percentages of smokers, obesity,
+physical inactivity, and excessive alcohol drinking associated with
+receiving at least the first dose of any COVID-19 vaccine?</em></strong>
+</p>
+<p>The health behaviors ranking was a significant predictor of having
+increases in the amount of people who have had at least their first dose
+of the COVID-19 vaccine. The health behaviors ranking encompasses a
+broad array of sub-variables. Of particular interest to explore are well
+known factors such as smoking, obesity, exercise, and alcohol
+consumption. All these factors are well established predictors of many
+existing health conditions such as CVD, diabetes, cancer, etc.
+Therefore, we are now interested in seeing if these factor’s affect the
+attainment of getting at least the first dose of the COVID vaccine.</p>
+<p>Note: Again, since the distribution of vaccines for COVID began in
+2021 and the complete data for 2022 is not yet available, we will focus
+our model on data from the 2021 year.</p>
+<p><strong>Model 1</strong> ADD MODEL PICTURE HERE</p>
+<pre class="r"><code>subm1 =
+  new_comb %&gt;%
+  filter(year == &#39;2021&#39;) %&gt;%
+  lm(vax_dose1 ~ percent_smokers + percent_obese + percent_physically_inactive + percent_excessive_drinking, data = .)
+
+subm1 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+2292873.03
+</td>
+<td style="text-align:right;">
+0.007
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_smokers
+</td>
+<td style="text-align:right;">
+-76643.87
+</td>
+<td style="text-align:right;">
+0.009
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_obese
+</td>
+<td style="text-align:right;">
+-36671.94
+</td>
+<td style="text-align:right;">
+0.028
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_physically_inactive
+</td>
+<td style="text-align:right;">
+49265.75
+</td>
+<td style="text-align:right;">
+0.015
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_excessive_drinking
+</td>
+<td style="text-align:right;">
+-26836.39
+</td>
+<td style="text-align:right;">
+0.410
+</td>
+</tr>
+</tbody>
+</table>
+<p>From the results, we can see that every predictor has a significant
+p-value of less than 0.05, except for the variable
+<code>percent_excessive_drinking</code>. The negative estimates for
+smokers and obesity suggests that for each percent increase in the
+adults with obesity or smoking, the amount of people in that county who
+have at least the first dose of a COVID vaccine decreases. However, for
+the variables for physical inactivity, the estimate is positive. The
+estimates in this model are not completely reliable as we have
+previously established that our COVID outcomes (cases, deaths, and first
+dose of vaccine) is dependent on geospacial factors. Our data is by
+county and not individuals which have an influence on the results.
+Further analysis is necessary on the group level to get more precise
+estimates. However, from these results, public health professional can
+focus resources and interventions on smokers and those with obesity to
+increase vaccination numbers.</p>
+<p style="color: red">
+<strong><em>Question 4: Adjusting for median age, is unemployment
+associated with receiving at least the first dose of any COVID-19
+vaccine?</em></strong>
+</p>
+<p>Unemployment can be a predictor for a variety of outcomes. Often
+times, people cannot prioritize their health as a result of a lack of
+money due. It is worth seeing if unemployment is associated with getting
+the first dose of a COVID vaccine.</p>
+<p><strong>Model 2</strong> ADD MODEL PICTURE HERE</p>
+<pre class="r"><code>subm2 =
+  new_comb %&gt;%
+  filter(year == &#39;2021&#39;) %&gt;%
+  lm(vax_dose1 ~ medage + percent_unemployed, data = .)
+
+subm2 %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate, p.value) %&gt;% 
+  knitr::kable(digits = 3) </code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+3142966.29
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+medage
+</td>
+<td style="text-align:right;">
+-50421.47
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_unemployed
+</td>
+<td style="text-align:right;">
+-200310.36
+</td>
+<td style="text-align:right;">
+0.014
+</td>
+</tr>
+</tbody>
+</table>
+<p>From the results, we can see that after adjusting for median age, the
+p-value for unemployment is significant. As stated before, since the
+outcomes are geospacially correlated, the estimate values are not
+accurate. But the direction states that for each percent increase in
+unemployment in a county, the number of people who have had at least one
+dose of a COVID vaccine decreases. This information can help public
+health professionals direct resources and attention towards people who
+are currently unemployed. People who are unemployment may not have
+gotten the vaccine because they think that it may be an extra expense
+that they cannot afford to have. This is where it is important to reach
+out to this group to make sure they are informed that the vaccine is
+free for everyone and encourage them to get vaccinated.</p>
 </div>
 <div id="spatial-analysis" class="section level1">
 <h1>Spatial Analysis</h1>
@@ -1612,7 +1828,7 @@ for(i in 1:4){
 }
 
 do.call(grid.arrange,p)</code></pre>
-<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-16-1.png" width="90%" />
+<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-18-1.png" width="90%" />
 The above 4 chloroplast maps are a summary</p>
 </div>
 <div id="autoregression" class="section level1">
@@ -1631,7 +1847,7 @@ ggplot(sub_df, aes(x=test_date, y=new_positives)) +
   scale_x_date(date_labels = &quot;%m-%Y&quot;) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   labs(title = &quot;New positives per month in NYC&quot;)</code></pre>
-<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-17-1.png" width="90%" />
+<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-19-1.png" width="90%" />
 The above plot is a scatter plot of the daily positive cases in New York
 City from March 2020 up-till now. We can see the wave like trend,
 especially from hill shaped curves at the start of the 2020, start of
@@ -1675,7 +1891,7 @@ p2 &lt;- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
   geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;,fill=&quot;lightblue&quot;)  
 
 grid.arrange(p1,p2)</code></pre>
-<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-18-1.png" width="90%" />
+<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-20-1.png" width="90%" />
 Both the ACF and PACF start with a lag of 0, which is the correlation of
 the time series with itself and therefore results in a correlation of 1.
 However after a lag of 1, ACF gives us values of auto-correlation of any
@@ -1697,7 +1913,7 @@ summary(reg1)</code></pre>
 ## s.e.  0.0283   0.0421  0.0425  0.0425   0.0424  0.0424  0.0420   0.0282
 ##       intercept
 ##        2924.354
-## s.e.   1117.515
+## s.e.   1117.690
 ## 
 ## sigma^2 estimated as 1259656:  log likelihood = -8351.82,  aic = 16723.63
 ## 
@@ -1745,7 +1961,7 @@ ggplot(sub_df, aes(x=test_date, y=new_positives)) +
   geom_line(aes(y=ar,color = &quot;ARIMA trend line&quot;)) +  
   scale_color_manual(values = c(&quot;ARIMA trend line&quot; = &quot;black&quot;),
                                           labels = &quot;Fitted Arima Model&quot;)</code></pre>
-<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-20-1.png" width="90%" /></p>
+<p><img src="Final-Report-Main_files/figure-html/unnamed-chunk-22-1.png" width="90%" /></p>
 </div>
 
 
