@@ -77,7 +77,7 @@ nys_df = nys_df %>%
 
 ## NY County Land Area
 ```{r}
-area = read_excel('grace/pop_density.xlsx') %>% 
+area = read_excel('data/pop_density.xlsx') %>% 
   janitor::clean_names() %>% 
   rename(area = value)
 ```
@@ -362,29 +362,12 @@ new_comb = left_join(covid_hr, nys_df, by = 'county')
 <p style="color: red">***Question: Are county percentages of smokers, obesity, physical inactivity, and excessive alcohol drinking associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
 
 
-The health behaviors ranking was a significant predictor of having increases in the amount of people who have had at least their first dose of the COVID-19 vaccine. The health behaviors ranking encompasses a broad array of sub-variables. Of particular interest to explore are well known factors such as smoking, obesity, exercise, and alcohol consumptions. All these factors are well established predictors of many existing health conditions such as CVD, diabetes, cancer, etc. Therefore, We are now interested in seeing if these factor's affect the attainment of getting at least the first dose of the COVID vaccine. 
+The health behaviors ranking was a significant predictor of having increases in the amount of people who have had at least their first dose of the COVID-19 vaccine. The health behaviors ranking encompasses a broad array of sub-variables. Of particular interest to explore are well known factors such as smoking, obesity, exercise, and alcohol consumption. All these factors are well established predictors of many existing health conditions such as CVD, diabetes, cancer, etc. Therefore, we are now interested in seeing if these factor's affect the attainment of getting at least the first dose of the COVID vaccine. 
+
+Note: Again, since the distribution of vaccines for COVID began in 2021 and the complete data for 2022 is not yet available, we will focus our model on data from the 2021 year.
 
 **Model 1**
-<img src="./Ashwini/Ash_mod1.jpg" style="width:100%">
-
-
-
-```{r}
-
-testmod_small = 
-  new_comb %>%
-  filter(year == '2021') %>%
-  mutate(county_size = if_else(tpop < 100000, "Small",
-                       if_else(100000 <= tpop & tpop < 1000000, "Medium",
-                       if_else(1000000 <= tpop, "Large", NA_character_)))) %>%
-  mutate(county_size = fct_relevel(county_size, "Small")) %>%
-  
-  lm(n_cases ~ )
-
-
-```
-
-
+<img src="./mod1.jpg" style="width:100%">
 
 
 ```{r}
@@ -403,9 +386,17 @@ subm1 %>%
 ```
 
 
+From the results, we can see that every predictor has a significant p-value of less than 0.05, except for the variable `percent_excessive_drinking`. The negative estimates for smokers and obesity suggests that for each percent increase in the adults with obesity or smoking, the amount of people in that county who have at least the first dose of a COVID vaccine decreases. However, for the variables for physical inactivity, the estimate is positive. The estimates in this model are not completely reliable as we have previously established that our COVID outcomes (cases, deaths, and first dose of vaccine) is dependent on geospacial factors. Our data is by county and not individuals which have an influence on the results. Further analysis is necessary on the group level to get more precise estimates. However, from these results, public health professional can focus resources and interventions on smokers and those with obesity to increase vaccination numbers. 
+
+
+<p style="color: red">***Question: Adjusting for median age, is unemployment associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
+
+
+Unemployment can be a predictor for a variety of outcomes. Often times, people cannot prioritize their health as a result of a lack of money due. It is worth seeing if unemployment is associated with getting the first dose of a COVID vaccine. 
+
 
 **Model 2**
-<img src="./Ashwini/Ash_mod2.jpg" style="width:100%">
+<img src="./mod2.jpg" style="width:100%">
 
 ```{r}
 
@@ -420,5 +411,15 @@ subm2 %>%
   knitr::kable(digits = 3) 
 
 ```
+
+
+From the results, we can see that after adjusting for median age, the p-value for unemployment is significant. As stated before, since the outcomes are geospacially correlated, the estimate values are not accurate. But the direction states that for each percent increase in unemployment in a county, the number of people who have had at least one dose of a COVID vaccine decreases. This information can help public health professionals direct resources and attention towards people who are currently unemployed. People who are unemployment may not have gotten the vaccine because they think that it may be an extra expense that they cannot afford to have. This is where it is important to reach out to this group to make sure they are informed that the vaccine is free for everyone and enourage them to get vaccinated. 
+
+
+
+
+
+
+
 
 
