@@ -8,13 +8,13 @@ navbar:
       href: data.html
   right:
     - text: "Exploratory Analysis"
-      href: data.html
+      href: EDA.html
     - test: "Shiny App"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
       href: data.htm
     - text: "Autogressive Analysis"
-      href: data.html
+      href: Autoregression.html
     - text: "Screencast"
       href: data.html
     - icon: fa-envelope fa-lg
