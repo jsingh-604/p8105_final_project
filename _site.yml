@@ -1,32 +1,31 @@
 name: "Spatio-temporal Association of Health and SES Measures with COVID-19 Risk in NY"
 output_dir: "."
 navbar:
-  title: "Project Overview"
-  href: index.html
+  title: "Overview"
   left: 
     - text: "Final Report"
       href: Final-Report-Main.html
   right:
     - text: "Exploratory Analysis"
       menu:
-      - text: "EDA 1"
-      - href: sf
-      - text: "EDA 2"
-      - href: k
-      - text: "EDA 3"
-      - href: km
+      - text: "Bubble Plot"
+        href:  bubble.html
+      - text: "Spatial Analysis"
+        href: chorepleth.htlml
+      - text: "Health and SES"
+        href: health_factor_eda.html
     - text: "Shiny Spatial"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
       menu:
       - text: "Statistical Analysis 1"
-      - href : web_analysis_1.html
+        href : web_analysis_1.html
       - text: "Statistical Analysis 2"
-      - href: web_analysis_2.html
+        href: web_analysis_2.html
     - text: "Autoregressive Analysis"
       href: Autoregression.html
     - text: "Screencast"
-      href: data.html
+      href: screencast.html
     - icon: fa-envelope fa-lg
       href: mailto:<js5958@cumc.columbia.edu>
     - icon: fa-github fa-lg

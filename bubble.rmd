@@ -1,0 +1,72 @@
+---
+title: "Health Factor and SES"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Bubble Plot
+
+```{r, message=FALSE, warning=FALSE, results=FALSE,echo=FALSE}
+source("code/data_cleaning.R")
+library(plotly)
+
+library(gridExtra)
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+
+bubble_df = comb %>% 
+  select(year, county, health_beh_r, ses_r, tpop) %>% 
+  filter(year == '2021')
+
+data = bubble_df %>%
+  mutate(county = as.factor(county),
+         health_beh_r = as.numeric(health_beh_r),
+         ses_r = as.numeric(ses_r)) %>%
+  janitor::clean_names()
+
+
+total <- merge(bubble_df,NY_df,by="county")
+
+
+data = bubble_df %>%
+  mutate(county = as.factor(county),
+         health_beh_r = as.numeric(health_beh_r),
+         ses_r = as.numeric(ses_r)) %>%
+  janitor::clean_names()
+
+
+total <- merge(bubble_df,NY_df,by="county")
+```
+
+```{r}
+fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county, 
+               type = 'scatter',
+               mode = 'markers', size = ~tpop.y, 
+               color = ~county, colors = 'Paired',
+               marker = list(opacity = 0.5, sizemode = 'diameter'))
+
+fig <- fig %>% layout(title = 'Bubble Plot (Bubble Size = County Population)',
+                      xaxis = list(title = 'Health Score'),
+                      yaxis = list(title = 'Socio-economic Score'),
+                      showlegend = FALSE)
+
+fig
+```
+
+From the plot we can see that New York, Queens and Kings have the highest socio economic score, but have the lowest health factors ranks. The size of the bubble signifies total population of the county. Nassau, Suffolk, Westcher have low health and socio-ecnomic scores. 
