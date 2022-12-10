@@ -4,23 +4,19 @@ navbar:
   title: "Project Overview"
   href: index.html
   left: 
-    - text: "Screencast"
-      href: video.html
-  right:
-    - text: "Data"
+    - text: "Final Report"
       href: data.html
-    - text: "Shiny App"
+  right:
+    - text: "Exploratory Analysis"
+      href: data.html
+    - test: "Shiny App"
       href: https://jagjit-singh.shinyapps.io/spatial/
-    - text: "Analysis"
-      menu:
-        - text: "Trends over time"
-          href: 
-        - text: "Health Factor & SES "
-          href: 
-        - text: "Autoregressive Trends"
-          href: 
-        - text: "Spatial Trends"
-          href: spatial_maps.html
+    - text: "Statistical Analysis"
+      href: data.htm
+    - text: "Autogressive Analysis"
+      href: data.html
+    - text: "Screencast"
+      href: data.html
     - icon: fa-envelope fa-lg
       href: mailto:<js5958@cumc.columbia.edu>
     - icon: fa-github fa-lg

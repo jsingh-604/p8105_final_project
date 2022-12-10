@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Autoregression</title>
+
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Project Overview</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="video.html">Screencast</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="data.html">Data</a>
+</li>
+<li>
+  <a href="https://jagjit-singh.shinyapps.io/spatial/">Shiny App</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Trends over time</li>
+    <li class="dropdown-header">Health Factor &amp; SES </li>
+    <li class="dropdown-header">Autoregressive Trends</li>
+    <li>
+      <a href="spatial_maps.html">Spatial Trends</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="mailto:&lt;js5958@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/jsingh-604/p8105_final_project/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Autoregression</h1>
+
+</div>
+
+
+<p>We performed a detailed auto-regression analysis for the New York
+City. New York City had the highest covid cases and would make most of
+the cases in the New York city due to the very high population city.
+Below is a times series plot of the daily covid cases in New York.</p>
+<div id="time-series-plot" class="section level3">
+<h3>Time Series Plot</h3>
+<pre class="r"><code>ny_covid = read.csv(&#39;data/covid_testing.csv&#39;)  %&gt;%
+  janitor::clean_names()
+
+######################################################
+ny_covid$test_date = lubridate::mdy(ny_covid$test_date)
+sub_df = ny_covid[ny_covid$county == &#39;New York City&#39;, ]
+sub_df&lt;- sub_df[seq(dim(sub_df)[1],1),]
+
+# basic scatterplot
+ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
+  geom_point(alpha = 10/100, colour = &quot;red&quot;) + 
+  scale_x_date(date_labels = &quot;%m-%Y&quot;) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = &quot;New positives per month in NYC&quot;)</code></pre>
+<p><img src="Autoregression_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+The above plot is a scatter plot of the daily positive cases in New York
+City from March 2020 up-till now. We can see the wave like trend,
+especially from hill shaped curves at the start of the 2020, start of
+2021, start of 2022 when it peaked around mid 2022. This implies the
+existence of auto regressive behavior which we were interested to
+investigate. To better understand the auto-regressive trend we built a
+Autocorrelation Function (ACF) plot and Partial Autocorrelation Function
+(PACF) plot. The ACF and PACF plots are used to figure out the order of
+AR, MA, and ARMA models. Autocorrelation is the correlation between a
+time series with a lagged version. The partial autocorrelation at lag k
+is the autocorrelation between X_t_t and X_(t-k) that is not accounted
+for by lags 1 through 𝑘−1.</p>
+</div>
+<div id="autocorrelations" class="section level3">
+<h3>Autocorrelations</h3>
+<pre class="r"><code>library(forecast)
+library(ggplot2)
+
+conf.level &lt;- 0.95
+ciline &lt;- qnorm((1 - conf.level)/2)/sqrt(length(sub_df$new_positives))
+
+############# ACF ####################
+bacf &lt;- acf(sub_df$new_positives, plot = FALSE)
+bacfdf &lt;- with(bacf, data.frame(lag, acf))
+
+p1 &lt;- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
+       geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;)
+
+
+########### PACF ###################
+bacf &lt;- pacf(sub_df$new_positives, plot = FALSE)
+bacfdf &lt;- with(bacf, data.frame(lag, acf))
+
+
+p2 &lt;- ggplot(data=bacfdf, mapping=aes(x=lag, y=acf)) +
+  geom_bar(stat = &quot;identity&quot;, position = &quot;identity&quot;,fill=&quot;lightblue&quot;)  
+
+grid.arrange(p1,p2)</code></pre>
+<p><img src="Autoregression_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+Both the ACF and PACF start with a lag of 0, which is the correlation of
+the time series with itself and therefore results in a correlation of 1.
+However after a lag of 1, ACF gives us values of auto-correlation of any
+series with its lagged values whereas PACF finds correlation of the
+residuals that remains after removing the effects which are already
+explained by the earlier lag(s). Thus PACF might be a better indicator
+of how many lag terms to keep. In our case we decided to move with the 8
+lag terms since they seem to have significant partial autcorrelation
+with value at lag = 0 (present value).</p>
+</div>
+<div id="arima" class="section level3">
+<h3>ARIMA</h3>
+<p>The coefficients for an AR(8) model represent the weights that are
+applied to the past 8 values of the time series (i.e. <span
+class="math inline">\(y_{t-1}\)</span>, <span
+class="math inline">\(y_{t-2}\)</span>, <span
+class="math inline">\(y_{t-3}\)</span>, <span
+class="math inline">\(y_{t-4}\)</span>, <span
+class="math inline">\(y_{t-5}\)</span>, <span
+class="math inline">\(y_{t-6}\)</span>, <span
+class="math inline">\(y_{t-7}\)</span>, <span
+class="math inline">\(y_{t-8}\)</span>) in order to predict the next
+value of the time series (<span
+class="math inline">\(\hat{y}_t\)</span>). In this case, the
+coefficients are as follows:</p>
+<p>These coefficients can be used to write the ARIMA (8,0,0) equation as
+follows:</p>
+<p><span class="math inline">\(\hat{y}t = \alpha_1 y{t-1} + \alpha_2
+y_{t-2} + \alpha_3 y_{t-3} + \alpha_4 y_{t-4} + \alpha_5 y_{t-5} +
+\alpha_6 y_{t-6} + \alpha_7 y_{t-7} + \alpha_8 y_{t-8} +
+\beta_0\)</span></p>
+<p><span class="math inline">\(\begin{aligned} \hat{y}t &amp;= 1.0562
+\cdot y_{t-1} - 0.2312 \cdot y_{t-2} + 0.0948 \cdot y_{t-3} + 0.0779
+\cdot y_{t-4} - 0.1035 \cdot y_{t-5} + 0.1343 \cdot y_{t-6} + 0.3918
+\cdot y_{t-7} - 0.4517 \cdot y_{t-8} + 2924.354
+\end{aligned}\)</span></p>
+<p>This equation can be used to predict the next value of the time
+series, <span class="math inline">\(\hat{y}_t\)</span>, based on the
+past 8 values of the time series. The coefficients in the equation
+represent the relative importance of each of the past values in
+predicting the next value.</p>
+<pre class="r"><code>reg1 = arima(sub_df$new_positives, order = c(8,0,0))
+ar = fitted(reg1)
+ggplot(sub_df, aes(x=test_date, y=new_positives)) + 
+  geom_point(alpha = 20/100, color = &quot;red&quot;) + 
+  scale_x_date(date_labels = &quot;%m-%Y&quot;,date_breaks = &quot;1 month&quot;) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = &quot;Scatter Plot of Daily Postive Cases in New York City from 2020-2022
+       with ARIMA trend line&quot;, x= &quot;Test Date&quot;,
+       y = &#39;Positive Cases Detected&#39;) +
+  geom_line(aes(y=ar,color = &quot;ARIMA trend line&quot;)) +  
+  scale_color_manual(values = c(&quot;ARIMA trend line&quot; = &quot;black&quot;),
+                                          labels = &quot;Fitted Arima Model&quot;)</code></pre>
+<p><img src="Autoregression_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
