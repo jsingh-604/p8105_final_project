@@ -442,6 +442,8 @@ eda1 = comb %>%
 
 In order to have a better understanding of the existing socioeconomic and health factor status of the counties we conducted some exploratory data analysis mainly through visualization. We first tried to see which counties have the highest socio-economic and heath factor scores
 
+
+### Bubble Plot
 ```{r}
 library(plotly)
 data = bubble_df %>%
@@ -456,9 +458,10 @@ total <- merge(bubble_df,NY_df,by="county")
 fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county, type = 'scatter',
                mode = 'markers', size = ~tpop.y, color = ~county, colors = 'Paired',
                marker = list(opacity = 0.5, sizemode = 'diameter'))
-fig <- fig %>% layout(title = 'health-socio',
-                      xaxis = list(showgrid = FALSE),
-                      yaxis = list(showgrid = FALSE),
+
+fig <- fig %>% layout(title = 'Bubble Plot (Bubble Size = County Population)',
+                      xaxis = list(title = 'Health Score'),
+                      yaxis = list(title = 'Socio-economic Score'),
                       showlegend = FALSE)
 
 fig
@@ -468,7 +471,9 @@ write.csv(total,"./data/eda_bubble.csv")
 
 From the plot we can see that New York, Queens and Kings have the highest socio economic score, but have the lowest health factors ranks. The size of the bubble signifies total population of the county. Nassau, Suffolk, Westcher have low health and socio-ecnomic scores. 
 
-Below is a colorpleth map to good understanding on the above in a spatial context,: 
+### Chloropleth Map
+
+Below is a chloropleth map to good understanding on the above in a spatial context,: 
 
 ```{r}
 #library(sf)
@@ -492,6 +497,8 @@ grid.arrange(p[[1]], p[[2]], nrow = 1)
 ```
 
 On the left we can see a chloropleth mao of medage per county in new york on the right is a chloropleth map of health factor rank per county.
+
+### Barplots
 
 Before testing association between county health factors (HR) and COVID, we wanted to see rather there are any observable patterns between COVID cases & HR, COVID vaccination & HR, and COVID deaths & HR.
 ```{r, message = FALSE, warning = FALSE}
@@ -526,7 +533,7 @@ Note: Though we initially planned to adjust for racial diversity in our model, t
 <p style="color: red">***Question 1: Are county health factors associated with COVID-19 risk?***</p>
 Health factors--health behaviors, clinical care, physical environment, and socioeconomic factors--are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases, deaths, and vaccination. To do so, we ran multiple linear regression test.
 
-#### NYS County Health Factors and Covid Cases
+### NYS County Health Factors and Covid Cases
 
 $N_{Covid\_Cases} \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Median\_Age + \beta_{6} Population\_Density + \epsilon$
 
@@ -560,7 +567,7 @@ plot(m1)
 
 Test for linearity (residual vs. fitted values) does not show strong pattern; however, the points are not perfectly, randomly scattered around residual = 0. Test for influential observations (residual vs. leverage) shows that there is one influential point (#31), which should be tested to see whether it should be removed or kept. Test for homoscedasticity (scale-location) indicates potential heteroscedasticity. Lastly, test for normality of residuals (normal Q-Q plot) confirms that there is no extreme skewness in our data with  majority of the points falling along the line. Some deviations at the lowest and highest quantiles suggest that random fluctuation may be seen at extreme ends. Combined, the plots indicate that our model, though sufficient, can be improved (i.e., add interaction terms, adjust for more variables).
 
-#### NYS County Health Factors and Covid Fatalities
+### NYS County Health Factors and Covid Fatalities
 
 $N_{Deaths} \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Population\_Density + \beta_{6} Median\_Age + \epsilon$
 ```{r, message = FALSE, warning = FALSE}
@@ -588,7 +595,7 @@ plot(m2)
 
 Results of regression assumption tests are also similar to that of model 1's, indicating that there is more to be explored in the association between health factor and COVID-19 fatalities. Once again, point 31 shows up as an outlier that needs to be tested further.
 
-#### NYS County Health Factors and Vaccination (Dose 1)
+### NYS County Health Factors and Vaccination (Dose 1)
 
 $Vaccine\_Dose1 \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} SES\_Factors + \beta_{4} Physical\_Environment + \beta_{5} Population\_Density + \epsilon$
 
@@ -618,7 +625,7 @@ Regression assumption tests, once again, show room for improvement in our model 
 
 <p style="color: red">***Question 2: Can race/ethnicity or socioeconomic status in counties help determine COVID-19 severity?***</p>
 
-#### Socioeconomic Factors, Race/Ethnicity and Vaccination Rate
+### Socioeconomic Factors, Race/Ethnicity and Vaccination Rate
 
 $Vaccination \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Median\_Income + \beta_{3} Percent\_Minority + \beta_{4} Population\_Density + \epsilon$
 
@@ -653,14 +660,15 @@ plot(m4)
 
 we did see the need to adjust our model; however, with the lack of 2022 data and demographics information, further analysis and modifications could not be completed. The residual vs. fitted plot did not give us much information as the outcome variable of our model is binary. The normal Q-Q plot showed that our data is not skewed, though there are deviations at extreme quantiles. Furthermore, there appears to be potential heteroscedasticity per scale-location plot and one outlier (point #3 falls outside Cook's distance). 
 
-#### Socioeconomic factors, Race/Ethnicity and COVID Fatalities
+### Socioeconomic factors, Race/Ethnicity and COVID Fatalities
 
 $N_{Deaths} \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Percent\_Minority + \beta_{3} Median\_Income + \beta_{4} Median\_Age + \beta_{5} Population\_Density + \epsilon$
 
 ```{r, message = FALSE, warning = FALSE}
 m5 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_deaths ~ segregation_score + p_minority + median_income + medage + pop_d, data = .)
+  lm(n_deaths ~ segregation_score + p_minority + median_income + medage + pop_d,
+     data = .)
 
 m5 %>% 
   broom::tidy() %>%
@@ -751,11 +759,6 @@ total <- merge(ny_covid,NY_df,by="county")
 
 
 ```{r}
-df_list[[1]]
-```
-
-
-```{r}
 
 mon = seq(as.Date("2021-01-01"), as.Date("2022-01-01"), by = "3 months")
 df_list = list()
@@ -763,7 +766,8 @@ df_list = list()
 for (i in 1:4) {
   sub_df = total[total$test_date >= mon[[i]] & total$test_date <= mon[[i+1]], ]
   group_df =  sub_df %>% group_by(county)  %>%
-    summarise(total_covid = sum(new_positives))
+    summarise(total_covid = sum(new_positives),
+              pop = sum(tpop)/as.numeric(mon[i+1]-mon[i]))
   df = dplyr :: left_join(group_df, NY_df, by = 'county')
   df_list[[i]] = df
 }
@@ -772,15 +776,17 @@ for (i in 1:4) {
 p <- list()
 for(i in 1:4){
   p[[i]] <- df_list[[i]] %>%
-    ggplot() +geom_sf(aes(fill = total_covid, geometry = geometry)) + 
-    scale_fill_viridis_c(option = "viridis")  +
-    ggtitle()
+    ggplot() +geom_sf(aes(fill = total_covid/pop, geometry = geometry)) + 
+    scale_fill_viridis_c(option = "magma", name = "Incidence",
+                         direction = -1) +
+    ggtitle(paste(mon[[i]],"to", mon[[i+1]]))
 }
 
 do.call(grid.arrange,p)
 
 ```
-The above 4 chloroplast maps are a summary 
+
+The above 4 chloroplast maps are a quarterly summary of the positive covid cases at a **log10** scale. Although there are minor difference between some counties from quarter to quarter, the relative standing of the county, 
 
 ## Autoregression
 

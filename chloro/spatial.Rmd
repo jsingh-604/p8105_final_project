@@ -4,6 +4,9 @@ output:
   flexdashboard::flex_dashboard:
     orientation: rows
     vertical_layout: fill
+    theme: 
+     version: 4
+     bootswatch: lumen
 runtime: shiny
 ---
 ```{r}
@@ -15,6 +18,7 @@ library(tidyverse)
 library(shiny)
 library(plotly)
 ```
+
 
 
 ```{r import_data, results = FALSE, message = FALSE, warning = FALSE}
@@ -49,8 +53,9 @@ ny_covid = read.csv('./www/shiny.csv')  %>%
 ```
 
 Column {.sidebar}
------------------------------------------------------------------------
-This `flexdashboard` made with Shiny contains interactive chloropleth maps of the New York state. The top chart shows new postie cases per county between any two time points from 2020 to 2022. The bottom chart contains reflects the total number of tests performed per county between any two time points from 2020 to 2022
+--------------------------------------------------------------------------------
+
+This `flexdashboard` made with Shiny contains interactive chloropleth maps of the New York state. The top chart shows new postie cases per county between any two time points from 2020 to 2022. The bottom chart contains reflects the total number of tests performed per county between any two time points from 2020 to 2022. 
 
 ```{r}
 ###############################
@@ -68,9 +73,9 @@ sliderInput("month_year",
 ```
 
 Row
------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
-### Positive Cases
+### Positive Cases Per County in NY
 ```{r}
 
 renderPlot({
@@ -84,19 +89,19 @@ renderPlot({
   df %>%
     ggplot() +
     geom_sf(aes(fill = total_covid, geometry = geometry)) + 
-    scale_fill_viridis_c(option = "mako", direction = -1) +
+    scale_fill_viridis_c(option = "magma", direction = -1, name = "Positive Cases") +
     ggtitle(paste("Positive Cases Between", input$month_year[[1]], "and",
                   input$month_year[[2]])) +
     theme(plot.title = element_text(face="bold", size=18))
 
 })
-
-
 ```
 
 Row {.tabset .tabset-fade }
------------------------------------------------------------------------
-### Covid Tests Performed
+--------------------------------------------------------------------------------
+
+### Covid Incidence Per County in NY
+
 ```{r}
 
 renderPlot({
@@ -105,13 +110,14 @@ renderPlot({
       test_date %in% input$month_year[[1]]:input$month_year[[2]]
     )
   group_df =  sub_df %>% group_by(county)  %>%
-    summarise(total_covid = sum(total_number_of_tests_performed))
+    summarise(total_covid = sum(new_positives),
+              pop = sum(tpop)/as.numeric(input$month_year[[2]]-input$month_year[[1]]))
   df = dplyr :: left_join(group_df, NY_df, by = 'county')
   df %>%
     ggplot() +
-    geom_sf(aes(fill = total_covid, geometry = geometry)) + 
-    scale_fill_viridis_c(option = "mako", direction = -1) +
-    ggtitle(paste("Covid Teste Peformed Between", input$month_year[[1]], "and",
+    geom_sf(aes(fill = total_covid/pop, geometry = geometry)) + 
+    scale_fill_viridis_c(option = "magma", direction = -1, name = "Incidence") +
+    ggtitle(paste("Covid Incidence", input$month_year[[1]], "and",
                   input$month_year[[2]])) +
     theme(plot.title = element_text(face="bold", size=18))
 })
