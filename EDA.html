@@ -16,7 +16,7 @@
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -36,13 +36,6 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
-<script src="site_libs/plotly-binding-4.10.0.9001/plotly.js"></script>
-<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
-<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
-<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
-<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -339,33 +332,24 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="video.html">Screencast</a>
+  <a href="Final-Report-Main.html">Final Report</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="data.html">Data</a>
+  <a href="EDA.html">Exploratory Analysis</a>
 </li>
 <li>
   <a href="https://jagjit-singh.shinyapps.io/spatial/">Shiny App</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Analysis
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Trends over time</li>
-    <li>
-      <a href="EDA.html">EDA</a>
-    </li>
-    <li class="dropdown-header">Health Factor &amp; SES </li>
-    <li class="dropdown-header">Autoregressive Trends</li>
-    <li>
-      <a href="spatial_maps.html">Spatial Trends</a>
-    </li>
-  </ul>
+<li>
+  <a href="data.html">Statistical Analysis</a>
+</li>
+<li>
+  <a href="Autoregression.html">Autoregressive Analysis</a>
+</li>
+<li>
+  <a href="data.html">Screencast</a>
 </li>
 <li>
   <a href="mailto:&lt;js5958@cumc.columbia.edu&gt;">
@@ -401,69 +385,375 @@ div.tocify {
 </div>
 
 
-<pre class="r"><code>ny_vax =
-  read_csv(&quot;./data/ny_covidvax.csv&quot;) %&gt;% 
+<pre class="r"><code>census_api_key(&quot;aa512886c5449a582d837da8d3a07af66a043fe5&quot;)
+
+census_data &lt;- load_variables(2020, &quot;acs5&quot;, cache=T)
+fwrite(census_data, &quot;census_variables.csv&quot;)
+
+vars &lt;- c(tpop = &#39;P001001&#39;,
+          medage = &#39;P013001&#39;,
+          wpop = &#39;P003002&#39;,
+          bpop = &#39;P003003&#39;,
+          apop = &#39;P003005&#39;,
+          hpop = &#39;P004003&#39;)
+
+nys_df &lt;- get_decennial(state = &quot;ny&quot;, 
+                       geography = &quot;county&quot;,
+                       variables = vars,
+                       geometry = T,
+                       output = &quot;wide&quot;)
+
+NY_df &lt;- get_decennial(state = &quot;ny&quot;, 
+                       geography = &quot;county&quot;,
+                       variables = vars,
+                       geometry = T,
+                       output = &quot;wide&quot;)
+
+NY_df = NY_df %&gt;%
+  mutate(
+    county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
+
+nys_df = nys_df %&gt;%
+  mutate(
+    county = gsub(&quot; County, New York&quot;,&quot;&quot;,NAME))
+
+nys_df$race_div &lt;- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
+                          (nys_df$bpop*(nys_df$bpop-1))+
+                          (nys_df$hpop*(nys_df$hpop-1))+
+                          (nys_df$apop*(nys_df$apop-1)))/
+                         (nys_df$tpop*(nys_df$tpop-1)))
+
+nys_df = nys_df %&gt;% 
+  select(tpop, medage, county, race_div)
+
+
+area = read_excel(&#39;data/pop_density.xlsx&#39;) %&gt;% 
   janitor::clean_names() %&gt;% 
-  select(-region, -series_complete) %&gt;% 
-  rename(date = report_as_of) %&gt;% 
-  mutate(date = lubridate::mdy(date))
+  rename(area = value)
+
+nys_df = left_join(nys_df, area, by = &#39;county&#39;) %&gt;% 
+  mutate(pop_d = tpop/area)
 
 
-vax_plotly =
-  ny_vax %&gt;%
-  filter(date == &quot;2022-11-14&quot;) %&gt;%
-  mutate(county = fct_reorder(county, first_dose, .desc = TRUE)) %&gt;%
-  mutate(text_label = str_c(&quot;County: &quot;, county, &quot;\nVaccinations: &quot;, first_dose)) %&gt;% 
-  plot_ly(x = ~county, 
-          y = ~first_dose, 
-          type = &quot;bar&quot;, 
-          text = ~text_label) |&gt;
-          layout(xaxis = list(title = &quot;County in New York State&quot;), 
-                 yaxis = list(title = &quot;Cumulative Number of People with at least one dose&quot;),          
-                 title = &quot;Cumulative people with atleast one dose of a COVID-19 vaccine by county by 11/14/2022&quot;)
+# 2019 HR Data
+
+hr2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2019 = read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;household_income&#39;,
+         &#39;percent_hispanic&#39;,
+         &#39;percent_african_american&#39;) %&gt;% 
+  rename(median_income = household_income,
+         segregation_score = segregation_index_2,
+         p_hispanic = percent_hispanic,
+         p_black = percent_african_american) %&gt;%
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+sub_var19 =
+  read_excel(&#39;data/ny_hr19.xls&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
+  
+
+list_2019 =
+  list(hr2019, demo2019, sub_var19)
+
+total2019 = 
+  list_2019 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2019)
+
+# 2020 HR Data
+hr2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2020 = read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+sub_var20 =
+  read_excel(&#39;data/ny_hr20.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+  
+
+list_2020 =
+  list(hr2020, demo2020, sub_var20)
+
+total2020 = 
+  list_2020 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2020)
+
+# 2021 HR Data
+hr2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2021 = read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index_2&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index_2,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_black + p_hispanic)
+
+sub_var21 =
+  read_excel(&#39;data/ny_hr21.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+list_2021 =
+  list(hr2021, demo2021, sub_var21)
+
+total2021 = 
+  list_2021 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2021)
+
+# 2022 HR Data
+hr2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, 
+                    sheet = &#39;Outcomes &amp; Factors SubRankings&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+  select(-starts_with(&quot;z&quot;), -fips, -state) %&gt;% 
+  rename(longevity_r = rank_5,
+         qol_r = rank_7,
+         health_beh_r = rank_9,
+         clinical_care_r = rank_11,
+         ses_r = rank_13,
+         env_r = rank_15)
+
+demo2022 = read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Additional Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;% 
+    select(&#39;county&#39;, 
+         &#39;median_household_income&#39;, 
+         &#39;segregation_index&#39;,
+         &#39;percent_black&#39;,
+         &#39;percent_hispanic&#39;) %&gt;% 
+  rename(median_income = median_household_income, 
+         segregation_score = segregation_index,
+         p_black = percent_black,
+         p_hispanic = percent_hispanic) %&gt;% 
+    mutate(segregation = case_when(segregation_score &lt; 30 ~ 0,
+                                 segregation_score &gt;= 30 ~ 1),
+           p_minority = p_hispanic + p_black)
+
+sub_var22 =
+  read_excel(&#39;data/ny_hr22.xlsx&#39;, sheet = &#39;Ranked Measure Data&#39;, skip = 1) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  slice(-c(1)) %&gt;%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %&gt;%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+list_2022 =
+  list(hr2022, demo2022, sub_var22)
+
+total2022 = 
+  list_2022 %&gt;%
+  reduce(full_join, by = &quot;county&quot;) %&gt;%
+  mutate(year = 2022)
+
+# Merge
+hr_all = rbind(total2019, total2020, total2021, total2022)
 
 
-vax_plotly</code></pre>
-<div id="htmlwidget-f97d9c5babc613373c8b" style="width:100%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f97d9c5babc613373c8b">{"x":{"visdat":{"52a854c33ed9":["function () ","plotlyVisDat"]},"cur_data":"52a854c33ed9","attrs":{"52a854c33ed9":{"x":{},"y":{},"text":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"County in New York State","type":"category","categoryorder":"array","categoryarray":["Queens","Kings","New York","Nassau","Suffolk","Bronx","Westchester","Erie","Monroe","Richmond","Onondaga","Orange","Albany","Rockland","Dutchess","Saratoga","Oneida","Niagara","Ulster","Schenectady","Broome","Rensselaer","Tompkins","Ontario","Putnam","Chautauqua","Oswego","Jefferson","St. Lawrence","Wayne","Clinton","Steuben","Madison","Warren","Sullivan","Cayuga","Chemung","Columbia","Cattaraugus","Washington","Otsego","Livingston","Genesee","Herkimer","Montgomery","Greene","Chenango","Franklin","Fulton","Cortland","Essex","Delaware","Tioga","Orleans","Allegany","Wyoming","Seneca","Schoharie","Yates","Lewis","Schuyler","Hamilton"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Cumulative Number of People with at least one dose"},"title":"Cumulative people with atleast one dose of a COVID-19 vaccine by county by 11/14/2022","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["Albany","Allegany","Bronx","Broome","Cattaraugus","Cayuga","Chautauqua","Chemung","Chenango","Clinton","Columbia","Cortland","Delaware","Dutchess","Erie","Essex","Franklin","Fulton","Genesee","Greene","Hamilton","Herkimer","Jefferson","Kings","Lewis","Livingston","Madison","Monroe","Montgomery","Nassau","New York","Niagara","Oneida","Onondaga","Ontario","Orange","Orleans","Oswego","Otsego","Putnam","Queens","Rensselaer","Richmond","Rockland","Saratoga","Schenectady","Schoharie","Schuyler","Seneca","St. Lawrence","Steuben","Suffolk","Sullivan","Tioga","Tompkins","Ulster","Warren","Washington","Wayne","Westchester","Wyoming","Yates"],"y":[254761,23629,1225792,135771,44136,49997,82083,49607,31489,59422,46096,29855,26715,231477,718286,27955,31342,30288,37942,32436,3547,37058,75922,2097178,14516,40559,54641,587605,35501,1253189,1629986,151127,156578,369703,85604,265080,24480,79684,40618,83285,2208011,119572,392365,233540,188572,136540,19460,11283,19687,74400,56286,1240762,51306,25724,88660,148372,52448,41926,65797,884223,23493,14735],"text":["County: Albany<br />Vaccinations: 254761","County: Allegany<br />Vaccinations: 23629","County: Bronx<br />Vaccinations: 1225792","County: Broome<br />Vaccinations: 135771","County: Cattaraugus<br />Vaccinations: 44136","County: Cayuga<br />Vaccinations: 49997","County: Chautauqua<br />Vaccinations: 82083","County: Chemung<br />Vaccinations: 49607","County: Chenango<br />Vaccinations: 31489","County: Clinton<br />Vaccinations: 59422","County: Columbia<br />Vaccinations: 46096","County: Cortland<br />Vaccinations: 29855","County: Delaware<br />Vaccinations: 26715","County: Dutchess<br />Vaccinations: 231477","County: Erie<br />Vaccinations: 718286","County: Essex<br />Vaccinations: 27955","County: Franklin<br />Vaccinations: 31342","County: Fulton<br />Vaccinations: 30288","County: Genesee<br />Vaccinations: 37942","County: Greene<br />Vaccinations: 32436","County: Hamilton<br />Vaccinations: 3547","County: Herkimer<br />Vaccinations: 37058","County: Jefferson<br />Vaccinations: 75922","County: Kings<br />Vaccinations: 2097178","County: Lewis<br />Vaccinations: 14516","County: Livingston<br />Vaccinations: 40559","County: Madison<br />Vaccinations: 54641","County: Monroe<br />Vaccinations: 587605","County: Montgomery<br />Vaccinations: 35501","County: Nassau<br />Vaccinations: 1253189","County: New York<br />Vaccinations: 1629986","County: Niagara<br />Vaccinations: 151127","County: Oneida<br />Vaccinations: 156578","County: Onondaga<br />Vaccinations: 369703","County: Ontario<br />Vaccinations: 85604","County: Orange<br />Vaccinations: 265080","County: Orleans<br />Vaccinations: 24480","County: Oswego<br />Vaccinations: 79684","County: Otsego<br />Vaccinations: 40618","County: Putnam<br />Vaccinations: 83285","County: Queens<br />Vaccinations: 2208011","County: Rensselaer<br />Vaccinations: 119572","County: Richmond<br />Vaccinations: 392365","County: Rockland<br />Vaccinations: 233540","County: Saratoga<br />Vaccinations: 188572","County: Schenectady<br />Vaccinations: 136540","County: Schoharie<br />Vaccinations: 19460","County: Schuyler<br />Vaccinations: 11283","County: Seneca<br />Vaccinations: 19687","County: St. Lawrence<br />Vaccinations: 74400","County: Steuben<br />Vaccinations: 56286","County: Suffolk<br />Vaccinations: 1240762","County: Sullivan<br />Vaccinations: 51306","County: Tioga<br />Vaccinations: 25724","County: Tompkins<br />Vaccinations: 88660","County: Ulster<br />Vaccinations: 148372","County: Warren<br />Vaccinations: 52448","County: Washington<br />Vaccinations: 41926","County: Wayne<br />Vaccinations: 65797","County: Westchester<br />Vaccinations: 884223","County: Wyoming<br />Vaccinations: 23493","County: Yates<br />Vaccinations: 14735"],"type":"bar","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>From the plot created of the cumulative distribution of people who
-have at-least the first dose of any COVID-19 vaccine by 11/14/2022, the
-highest ranking counties are all located in three major regions of New
-York State: New York City, Long Island, and Hudson Valley. Erie and
-Monroe counties also have high counts and they are from Western NY and
-Finger Lakes. This is expected as these are some of the most populous
-counties in New York State.</p>
-<pre class="r"><code>ny_death =
-  read_csv(&quot;./data/ny_coviddeaths.csv&quot;) %&gt;% 
-  janitor::clean_names() %&gt;%
-  rename(date = report_date, n_fatality = place_of_fatality) %&gt;% 
-  mutate(date = lubridate::mdy(date)) %&gt;%
-  select(-deaths_by_county_of_residence) %&gt;%
-  filter(county != &quot;Statewide Total&quot;)
+ny_test = read_csv(&#39;data/ny_covidtest.csv&#39;) %&gt;% 
+janitor::clean_names() %&gt;% 
+filter(geography == &#39;COUNTY&#39;) %&gt;% 
+select(-geography) %&gt;% 
+rename(date = test_date) %&gt;% 
+mutate(date = lubridate::mdy(date))  
+
+ny_death = read_csv(&quot;data/ny_coviddeaths.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_date, n_fatality = place_of_fatality) %&gt;%
+select(-deaths_by_county_of_residence) %&gt;% 
+mutate(date = lubridate::mdy(date), county = replace(county, county == &#39;Manhattan&#39;, &#39;New York&#39;))
+
+ny_vax = read_csv(&quot;data/ny_covidvax.csv&quot;) %&gt;% 
+janitor::clean_names() %&gt;% 
+rename(date = report_as_of) %&gt;% 
+select(-region, -series_complete) %&gt;% 
+mutate(date = lubridate::mdy(date))
+
+ny_covid_v1 = left_join(ny_test, ny_death, by = c(&quot;date&quot;, &quot;county&quot;))
+
+covid_df_v1 = left_join(ny_covid_v1, ny_vax, by = c(&quot;date&quot;, &quot;county&quot;)) %&gt;% 
+  separate(date, c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), sep = &quot;-&quot;) %&gt;% 
+  mutate(year = as.numeric(year), month = as.numeric(month), day = as.numeric(day))
+
+covid_df = covid_df_v1 %&gt;% 
+  group_by(year, county) %&gt;% 
+  summarise(n_cases = sum(new_positives),
+            vax_dose1 = max(first_dose),
+            n_deaths = max(n_fatality, na.rm = TRUE))
 
 
-deaths_plotly =
-  ny_death %&gt;%
-  filter(date == &quot;2022-11-14&quot;) %&gt;%
-  mutate(county = fct_reorder(county, n_fatality, .desc = TRUE)) %&gt;% 
-  mutate(text_label = str_c(&quot;County: &quot;, county, &quot;\nDeaths: &quot;, n_fatality)) %&gt;% 
-  plot_ly(x = ~county, 
-          y = ~n_fatality, 
-          type = &quot;bar&quot;, 
-          text = ~text_label) |&gt;
-          layout(xaxis = list(title = &quot;County in New York State&quot;), 
-                 yaxis = list(title = &quot;Cumulative Number of Fatalities&quot;),          
-                 title = &quot;Cumulative COVID-19 deaths by county by 11/14/2022&quot;)
+covid_hr = left_join(covid_df, hr_all, by = c(&quot;county&quot;, &quot;year&quot;)) 
+comb = left_join(covid_hr, nys_df, by = &#39;county&#39;) %&gt;% 
+  mutate(tpop_50 = tpop/2,
+         vax_maj = case_when(vax_dose1 &gt;= .83*(tpop) ~ 1,
+                             vax_dose1 &lt; .83*(tpop) ~ 0))</code></pre>
+<p>For our exploratory data analysis, we wanted to see if there is a
+pattern to being of a certain rank in each of the four rankings (health
+behaviors, clinical care, SES, and physical environment) and the number
+of COVID cases, deaths, and vaccinations. For each health factor
+ranking, we made quartiles to group the rankings, with Quartile 1 having
+the lowest (best) rankings and Quartile 4 having the highest (worst)
+rankings.</p>
+<p>To graph each plot, we had to create a new dataframe, from the
+<code>comb</code> final dataset, and used <code>pivot_longer</code> to
+separate the ranking variables into 2 different variables: the rank name
+and the rank number; we also renamed the ranking variable. We also
+created a new <code>quartile</code> variable for each ranking that
+assigns each observation to one of four quartiles based on the following
+cutoffs:</p>
+<ul>
+<li>Q1 if rank is less than 17</li>
+<li>Q2 if rank is 17 or greater but less than 32</li>
+<li>Q3 if rank is 32 or greater but less than 46</li>
+<li>Q4 if rank is 46 or up to 62</li>
+</ul>
+<p>Again, we filtered out only 2021 values for each county as there is
+only complete vaccination information available for the year 2021.</p>
+<pre class="r"><code>eda1 = 
+  comb %&gt;% 
+  rename(&quot;Clinical Care&quot; = clinical_care_r,
+         &quot;Physical Environment&quot; = env_r,
+         &quot;Health Behaviors&quot; = health_beh_r,
+         &quot;Social and Economic Factors&quot; = ses_r) %&gt;% 
+  pivot_longer(&quot;Health Behaviors&quot;:&quot;Physical Environment&quot;,
+               names_to = &quot;rank_var&quot;,
+               values_to = &quot;rank&quot;) %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  mutate(Quartile = case_when(rank &lt; 17 ~ &#39;Quartile 1&#39;,
+                              rank &lt; 32 ~ &#39;Quartile 2&#39;,
+                              rank &lt; 46 ~ &#39;Quartile 3&#39;,
+                              rank &lt; 63 ~ &#39;Quartile 4&#39;)) %&gt;% 
+  mutate(Quartile = as.factor(Quartile)) </code></pre>
+<div id="number-of-covid-deaths-and-county-health-factors-by-quartile"
+class="section level2">
+<h2>Number of COVID Deaths and County Health Factors by Quartile</h2>
+<pre class="r"><code>p1 = 
+  ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=Quartile)) +
+  geom_bar(stat=&quot;identity&quot;, position=position_dodge())+
+  scale_fill_brewer(palette=&quot;Reds&quot;) + 
+  theme_minimal() +
+  labs(title=&quot;Number of COVID Deaths and County Health Factors by Quartile&quot;,
+        x =&quot;County Health Factors&quot;, y = &quot;Number of Deaths&quot;)
 
-deaths_plotly</code></pre>
-<div id="htmlwidget-78ca9a3cd84c75baa382" style="width:100%;height:576px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-78ca9a3cd84c75baa382">{"x":{"visdat":{"52a838f55409":["function () ","plotlyVisDat"]},"cur_data":"52a838f55409","attrs":{"52a838f55409":{"x":{},"y":{},"text":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"County in New York State","type":"category","categoryorder":"array","categoryarray":["Kings","Queens","Manhattan","Nassau","Bronx","Suffolk","Westchester","Erie","Monroe","Richmond","Onondaga","Orange","Albany","Rockland","Oneida","Dutchess","Broome","Niagara","Chemung","Schenectady","Chautauqua","Saratoga","Ontario","Cattaraugus","Rensselaer","Warren","Ulster","Steuben","Montgomery","St. Lawrence","Columbia","Genesee","Otsego","Clinton","Cayuga","Jefferson","Madison","Oswego","Putnam","Wayne","Cortland","Fulton","Tompkins","Sullivan","Allegany","Livingston","Chenango","Herkimer","Wyoming","Orleans","Tioga","Washington","Essex","Seneca","Greene","Franklin","Delaware","Yates","Lewis","Schoharie","Schuyler","Hamilton","Non-NYS"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Cumulative Number of Fatalities"},"title":"Cumulative COVID-19 deaths by county by 11/14/2022","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["Albany","Allegany","Bronx","Broome","Cattaraugus","Cayuga","Chautauqua","Chemung","Chenango","Clinton","Columbia","Cortland","Delaware","Dutchess","Erie","Essex","Franklin","Fulton","Genesee","Greene","Hamilton","Herkimer","Jefferson","Kings","Lewis","Livingston","Madison","Manhattan","Monroe","Montgomery","Nassau","Niagara","Non-NYS","Oneida","Onondaga","Ontario","Orange","Orleans","Oswego","Otsego","Putnam","Queens","Rensselaer","Richmond","Rockland","Saratoga","Schenectady","Schoharie","Schuyler","Seneca","St. Lawrence","Steuben","Suffolk","Sullivan","Tioga","Tompkins","Ulster","Warren","Washington","Wayne","Westchester","Wyoming","Yates"],"y":[1031,95,4937,677,249,129,315,323,76,158,174,110,28,758,3146,40,34,107,173,37,0,73,127,8408,21,88,127,6361,2074,199,5023,402,0,877,1412,261,1115,59,127,160,117,7014,245,1470,908,275,323,16,8,38,193,212,4691,103,42,105,215,242,42,114,3156,72,26],"text":["County: Albany<br />Deaths: 1031","County: Allegany<br />Deaths: 95","County: Bronx<br />Deaths: 4937","County: Broome<br />Deaths: 677","County: Cattaraugus<br />Deaths: 249","County: Cayuga<br />Deaths: 129","County: Chautauqua<br />Deaths: 315","County: Chemung<br />Deaths: 323","County: Chenango<br />Deaths: 76","County: Clinton<br />Deaths: 158","County: Columbia<br />Deaths: 174","County: Cortland<br />Deaths: 110","County: Delaware<br />Deaths: 28","County: Dutchess<br />Deaths: 758","County: Erie<br />Deaths: 3146","County: Essex<br />Deaths: 40","County: Franklin<br />Deaths: 34","County: Fulton<br />Deaths: 107","County: Genesee<br />Deaths: 173","County: Greene<br />Deaths: 37","County: Hamilton<br />Deaths: 0","County: Herkimer<br />Deaths: 73","County: Jefferson<br />Deaths: 127","County: Kings<br />Deaths: 8408","County: Lewis<br />Deaths: 21","County: Livingston<br />Deaths: 88","County: Madison<br />Deaths: 127","County: Manhattan<br />Deaths: 6361","County: Monroe<br />Deaths: 2074","County: Montgomery<br />Deaths: 199","County: Nassau<br />Deaths: 5023","County: Niagara<br />Deaths: 402","County: Non-NYS<br />Deaths: 0","County: Oneida<br />Deaths: 877","County: Onondaga<br />Deaths: 1412","County: Ontario<br />Deaths: 261","County: Orange<br />Deaths: 1115","County: Orleans<br />Deaths: 59","County: Oswego<br />Deaths: 127","County: Otsego<br />Deaths: 160","County: Putnam<br />Deaths: 117","County: Queens<br />Deaths: 7014","County: Rensselaer<br />Deaths: 245","County: Richmond<br />Deaths: 1470","County: Rockland<br />Deaths: 908","County: Saratoga<br />Deaths: 275","County: Schenectady<br />Deaths: 323","County: Schoharie<br />Deaths: 16","County: Schuyler<br />Deaths: 8","County: Seneca<br />Deaths: 38","County: St. Lawrence<br />Deaths: 193","County: Steuben<br />Deaths: 212","County: Suffolk<br />Deaths: 4691","County: Sullivan<br />Deaths: 103","County: Tioga<br />Deaths: 42","County: Tompkins<br />Deaths: 105","County: Ulster<br />Deaths: 215","County: Warren<br />Deaths: 242","County: Washington<br />Deaths: 42","County: Wayne<br />Deaths: 114","County: Westchester<br />Deaths: 3156","County: Wyoming<br />Deaths: 72","County: Yates<br />Deaths: 26"],"type":"bar","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>From the plot created of the cumulative distribution of people who
-have died from COVID-19 by 11/14/2022, the highest ranking counties are
-also all located in three major regions of New York State: New York
-City, Long Island, and Hudson Valley, along with Erie and Monroe
-counties from Western NY and Finger Lakes. Again, this is expected as
-these are some of the most populous counties in New York State.</p>
+p1</code></pre>
+<p><img src="EDA_files/figure-html/unnamed-chunk-2-1.png" width="100%" /></p>
+<p>The Clinical Care, Physical Environment, and Social and Economic
+Factors rankings all have Quartile 4 (the counties with the worst
+rankings) as the quartile with the highest number of deaths. However, it
+is the Health Behaviors ranking which has Quartile 1 (counties with the
+best ranks) that have the highest number of deaths.</p>
+</div>
+<div id="number-of-covid-cases-and-county-health-factors-by-quartile"
+class="section level2">
+<h2>Number of COVID Cases and County Health Factors by Quartile</h2>
+<pre class="r"><code>p2 = 
+  ggplot(data=eda1, aes(x=rank_var, y=n_cases, fill=Quartile)) +
+  geom_bar(stat=&quot;identity&quot;, position=position_dodge())+
+  scale_fill_brewer(palette=&quot;Oranges&quot;) + 
+  theme_minimal() +
+  labs(title=&quot;Number of COVID Cases and County Health Factors by Quartile&quot;,
+        x =&quot;County Health Factors&quot;, y = &quot;Number of Cases&quot;)
+
+p2</code></pre>
+<p><img src="EDA_files/figure-html/unnamed-chunk-3-1.png" width="100%" /></p>
+<p>Here, we also see that Clinical Care, Physical Environment, and
+Social and Economic Factors rankings all have Quartile 4 (the counties
+with the worst rankings) as the quartile with the highest number of
+cases And again, it is the Health Behaviors ranking which has Quartile 1
+(counties with the best ranks) that have the highest number of
+cases.</p>
+</div>
+<div id="covid-vaccination-dose-1-and-county-health-factors-by-quartile"
+class="section level2">
+<h2>Covid Vaccination (Dose 1) and County Health Factors by
+Quartile</h2>
+<pre class="r"><code>p3 = 
+  ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=Quartile)) +
+  geom_bar(stat=&quot;identity&quot;, position=position_dodge())+
+  scale_fill_brewer(palette=&quot;Greens&quot;) + 
+  theme_minimal() +
+  labs(title=&quot;Covid Vaccination (Dose 1) and County Health Factors by Quartile&quot;,
+        x =&quot;County Health Factors&quot;, y = &quot;Number of People Vaccinated&quot;)
+
+p3</code></pre>
+<p><img src="EDA_files/figure-html/unnamed-chunk-4-1.png" width="100%" /></p>
+<p>For the number of people with at least one dose of the COVID vaccine,
+the Health Behaviors ranking has Quartile 1 as the highest bar. This is
+expected as people who have positive health behaviors are more likely to
+also get a vaccine. For the other rankings, the results were not as
+expected. The Quartiles that have the worst rankings (Quartiles 3 and 4)
+have a majority of the number of people who got vaccinated.</p>
+</div>
 
 
 
