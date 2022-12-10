@@ -12,7 +12,7 @@ navbar:
         href:  bubble.html
       - text: "Spatial Analysis"
         href: chorepleth.htlml
-      - text: "Health and SES 3"
+      - text: "Health and SES"
         href: health_factor_eda.html
     - text: "Shiny Spatial"
       href: https://jagjit-singh.shinyapps.io/spatial/
