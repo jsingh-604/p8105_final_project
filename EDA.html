@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>EDA</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0.9001/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Project Overview</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="video.html">Screencast</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="data.html">Data</a>
+</li>
+<li>
+  <a href="https://jagjit-singh.shinyapps.io/spatial/">Shiny App</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Trends over time</li>
+    <li>
+      <a href="EDA.html">EDA</a>
+    </li>
+    <li class="dropdown-header">Health Factor &amp; SES </li>
+    <li class="dropdown-header">Autoregressive Trends</li>
+    <li>
+      <a href="spatial_maps.html">Spatial Trends</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="mailto:&lt;js5958@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/jsingh-604/p8105_final_project/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">EDA</h1>
+
+</div>
+
+
+<pre class="r"><code>ny_vax =
+  read_csv(&quot;./data/ny_covidvax.csv&quot;) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  select(-region, -series_complete) %&gt;% 
+  rename(date = report_as_of) %&gt;% 
+  mutate(date = lubridate::mdy(date))
+
+
+vax_plotly =
+  ny_vax %&gt;%
+  filter(date == &quot;2022-11-14&quot;) %&gt;%
+  mutate(county = fct_reorder(county, first_dose, .desc = TRUE)) %&gt;%
+  mutate(text_label = str_c(&quot;County: &quot;, county, &quot;\nVaccinations: &quot;, first_dose)) %&gt;% 
+  plot_ly(x = ~county, 
+          y = ~first_dose, 
+          type = &quot;bar&quot;, 
+          text = ~text_label) |&gt;
+          layout(xaxis = list(title = &quot;County in New York State&quot;), 
+                 yaxis = list(title = &quot;Cumulative Number of People with at least one dose&quot;),          
+                 title = &quot;Cumulative people with atleast one dose of a COVID-19 vaccine by county by 11/14/2022&quot;)
+
+
+vax_plotly</code></pre>
+<div id="htmlwidget-f97d9c5babc613373c8b" style="width:100%;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f97d9c5babc613373c8b">{"x":{"visdat":{"52a854c33ed9":["function () ","plotlyVisDat"]},"cur_data":"52a854c33ed9","attrs":{"52a854c33ed9":{"x":{},"y":{},"text":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"County in New York State","type":"category","categoryorder":"array","categoryarray":["Queens","Kings","New York","Nassau","Suffolk","Bronx","Westchester","Erie","Monroe","Richmond","Onondaga","Orange","Albany","Rockland","Dutchess","Saratoga","Oneida","Niagara","Ulster","Schenectady","Broome","Rensselaer","Tompkins","Ontario","Putnam","Chautauqua","Oswego","Jefferson","St. Lawrence","Wayne","Clinton","Steuben","Madison","Warren","Sullivan","Cayuga","Chemung","Columbia","Cattaraugus","Washington","Otsego","Livingston","Genesee","Herkimer","Montgomery","Greene","Chenango","Franklin","Fulton","Cortland","Essex","Delaware","Tioga","Orleans","Allegany","Wyoming","Seneca","Schoharie","Yates","Lewis","Schuyler","Hamilton"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Cumulative Number of People with at least one dose"},"title":"Cumulative people with atleast one dose of a COVID-19 vaccine by county by 11/14/2022","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["Albany","Allegany","Bronx","Broome","Cattaraugus","Cayuga","Chautauqua","Chemung","Chenango","Clinton","Columbia","Cortland","Delaware","Dutchess","Erie","Essex","Franklin","Fulton","Genesee","Greene","Hamilton","Herkimer","Jefferson","Kings","Lewis","Livingston","Madison","Monroe","Montgomery","Nassau","New York","Niagara","Oneida","Onondaga","Ontario","Orange","Orleans","Oswego","Otsego","Putnam","Queens","Rensselaer","Richmond","Rockland","Saratoga","Schenectady","Schoharie","Schuyler","Seneca","St. Lawrence","Steuben","Suffolk","Sullivan","Tioga","Tompkins","Ulster","Warren","Washington","Wayne","Westchester","Wyoming","Yates"],"y":[254761,23629,1225792,135771,44136,49997,82083,49607,31489,59422,46096,29855,26715,231477,718286,27955,31342,30288,37942,32436,3547,37058,75922,2097178,14516,40559,54641,587605,35501,1253189,1629986,151127,156578,369703,85604,265080,24480,79684,40618,83285,2208011,119572,392365,233540,188572,136540,19460,11283,19687,74400,56286,1240762,51306,25724,88660,148372,52448,41926,65797,884223,23493,14735],"text":["County: Albany<br />Vaccinations: 254761","County: Allegany<br />Vaccinations: 23629","County: Bronx<br />Vaccinations: 1225792","County: Broome<br />Vaccinations: 135771","County: Cattaraugus<br />Vaccinations: 44136","County: Cayuga<br />Vaccinations: 49997","County: Chautauqua<br />Vaccinations: 82083","County: Chemung<br />Vaccinations: 49607","County: Chenango<br />Vaccinations: 31489","County: Clinton<br />Vaccinations: 59422","County: Columbia<br />Vaccinations: 46096","County: Cortland<br />Vaccinations: 29855","County: Delaware<br />Vaccinations: 26715","County: Dutchess<br />Vaccinations: 231477","County: Erie<br />Vaccinations: 718286","County: Essex<br />Vaccinations: 27955","County: Franklin<br />Vaccinations: 31342","County: Fulton<br />Vaccinations: 30288","County: Genesee<br />Vaccinations: 37942","County: Greene<br />Vaccinations: 32436","County: Hamilton<br />Vaccinations: 3547","County: Herkimer<br />Vaccinations: 37058","County: Jefferson<br />Vaccinations: 75922","County: Kings<br />Vaccinations: 2097178","County: Lewis<br />Vaccinations: 14516","County: Livingston<br />Vaccinations: 40559","County: Madison<br />Vaccinations: 54641","County: Monroe<br />Vaccinations: 587605","County: Montgomery<br />Vaccinations: 35501","County: Nassau<br />Vaccinations: 1253189","County: New York<br />Vaccinations: 1629986","County: Niagara<br />Vaccinations: 151127","County: Oneida<br />Vaccinations: 156578","County: Onondaga<br />Vaccinations: 369703","County: Ontario<br />Vaccinations: 85604","County: Orange<br />Vaccinations: 265080","County: Orleans<br />Vaccinations: 24480","County: Oswego<br />Vaccinations: 79684","County: Otsego<br />Vaccinations: 40618","County: Putnam<br />Vaccinations: 83285","County: Queens<br />Vaccinations: 2208011","County: Rensselaer<br />Vaccinations: 119572","County: Richmond<br />Vaccinations: 392365","County: Rockland<br />Vaccinations: 233540","County: Saratoga<br />Vaccinations: 188572","County: Schenectady<br />Vaccinations: 136540","County: Schoharie<br />Vaccinations: 19460","County: Schuyler<br />Vaccinations: 11283","County: Seneca<br />Vaccinations: 19687","County: St. Lawrence<br />Vaccinations: 74400","County: Steuben<br />Vaccinations: 56286","County: Suffolk<br />Vaccinations: 1240762","County: Sullivan<br />Vaccinations: 51306","County: Tioga<br />Vaccinations: 25724","County: Tompkins<br />Vaccinations: 88660","County: Ulster<br />Vaccinations: 148372","County: Warren<br />Vaccinations: 52448","County: Washington<br />Vaccinations: 41926","County: Wayne<br />Vaccinations: 65797","County: Westchester<br />Vaccinations: 884223","County: Wyoming<br />Vaccinations: 23493","County: Yates<br />Vaccinations: 14735"],"type":"bar","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>From the plot created of the cumulative distribution of people who
+have at-least the first dose of any COVID-19 vaccine by 11/14/2022, the
+highest ranking counties are all located in three major regions of New
+York State: New York City, Long Island, and Hudson Valley. Erie and
+Monroe counties also have high counts and they are from Western NY and
+Finger Lakes. This is expected as these are some of the most populous
+counties in New York State.</p>
+<pre class="r"><code>ny_death =
+  read_csv(&quot;./data/ny_coviddeaths.csv&quot;) %&gt;% 
+  janitor::clean_names() %&gt;%
+  rename(date = report_date, n_fatality = place_of_fatality) %&gt;% 
+  mutate(date = lubridate::mdy(date)) %&gt;%
+  select(-deaths_by_county_of_residence) %&gt;%
+  filter(county != &quot;Statewide Total&quot;)
+
+
+deaths_plotly =
+  ny_death %&gt;%
+  filter(date == &quot;2022-11-14&quot;) %&gt;%
+  mutate(county = fct_reorder(county, n_fatality, .desc = TRUE)) %&gt;% 
+  mutate(text_label = str_c(&quot;County: &quot;, county, &quot;\nDeaths: &quot;, n_fatality)) %&gt;% 
+  plot_ly(x = ~county, 
+          y = ~n_fatality, 
+          type = &quot;bar&quot;, 
+          text = ~text_label) |&gt;
+          layout(xaxis = list(title = &quot;County in New York State&quot;), 
+                 yaxis = list(title = &quot;Cumulative Number of Fatalities&quot;),          
+                 title = &quot;Cumulative COVID-19 deaths by county by 11/14/2022&quot;)
+
+deaths_plotly</code></pre>
+<div id="htmlwidget-78ca9a3cd84c75baa382" style="width:100%;height:576px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-78ca9a3cd84c75baa382">{"x":{"visdat":{"52a838f55409":["function () ","plotlyVisDat"]},"cur_data":"52a838f55409","attrs":{"52a838f55409":{"x":{},"y":{},"text":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"bar"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"County in New York State","type":"category","categoryorder":"array","categoryarray":["Kings","Queens","Manhattan","Nassau","Bronx","Suffolk","Westchester","Erie","Monroe","Richmond","Onondaga","Orange","Albany","Rockland","Oneida","Dutchess","Broome","Niagara","Chemung","Schenectady","Chautauqua","Saratoga","Ontario","Cattaraugus","Rensselaer","Warren","Ulster","Steuben","Montgomery","St. Lawrence","Columbia","Genesee","Otsego","Clinton","Cayuga","Jefferson","Madison","Oswego","Putnam","Wayne","Cortland","Fulton","Tompkins","Sullivan","Allegany","Livingston","Chenango","Herkimer","Wyoming","Orleans","Tioga","Washington","Essex","Seneca","Greene","Franklin","Delaware","Yates","Lewis","Schoharie","Schuyler","Hamilton","Non-NYS"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Cumulative Number of Fatalities"},"title":"Cumulative COVID-19 deaths by county by 11/14/2022","hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":["Albany","Allegany","Bronx","Broome","Cattaraugus","Cayuga","Chautauqua","Chemung","Chenango","Clinton","Columbia","Cortland","Delaware","Dutchess","Erie","Essex","Franklin","Fulton","Genesee","Greene","Hamilton","Herkimer","Jefferson","Kings","Lewis","Livingston","Madison","Manhattan","Monroe","Montgomery","Nassau","Niagara","Non-NYS","Oneida","Onondaga","Ontario","Orange","Orleans","Oswego","Otsego","Putnam","Queens","Rensselaer","Richmond","Rockland","Saratoga","Schenectady","Schoharie","Schuyler","Seneca","St. Lawrence","Steuben","Suffolk","Sullivan","Tioga","Tompkins","Ulster","Warren","Washington","Wayne","Westchester","Wyoming","Yates"],"y":[1031,95,4937,677,249,129,315,323,76,158,174,110,28,758,3146,40,34,107,173,37,0,73,127,8408,21,88,127,6361,2074,199,5023,402,0,877,1412,261,1115,59,127,160,117,7014,245,1470,908,275,323,16,8,38,193,212,4691,103,42,105,215,242,42,114,3156,72,26],"text":["County: Albany<br />Deaths: 1031","County: Allegany<br />Deaths: 95","County: Bronx<br />Deaths: 4937","County: Broome<br />Deaths: 677","County: Cattaraugus<br />Deaths: 249","County: Cayuga<br />Deaths: 129","County: Chautauqua<br />Deaths: 315","County: Chemung<br />Deaths: 323","County: Chenango<br />Deaths: 76","County: Clinton<br />Deaths: 158","County: Columbia<br />Deaths: 174","County: Cortland<br />Deaths: 110","County: Delaware<br />Deaths: 28","County: Dutchess<br />Deaths: 758","County: Erie<br />Deaths: 3146","County: Essex<br />Deaths: 40","County: Franklin<br />Deaths: 34","County: Fulton<br />Deaths: 107","County: Genesee<br />Deaths: 173","County: Greene<br />Deaths: 37","County: Hamilton<br />Deaths: 0","County: Herkimer<br />Deaths: 73","County: Jefferson<br />Deaths: 127","County: Kings<br />Deaths: 8408","County: Lewis<br />Deaths: 21","County: Livingston<br />Deaths: 88","County: Madison<br />Deaths: 127","County: Manhattan<br />Deaths: 6361","County: Monroe<br />Deaths: 2074","County: Montgomery<br />Deaths: 199","County: Nassau<br />Deaths: 5023","County: Niagara<br />Deaths: 402","County: Non-NYS<br />Deaths: 0","County: Oneida<br />Deaths: 877","County: Onondaga<br />Deaths: 1412","County: Ontario<br />Deaths: 261","County: Orange<br />Deaths: 1115","County: Orleans<br />Deaths: 59","County: Oswego<br />Deaths: 127","County: Otsego<br />Deaths: 160","County: Putnam<br />Deaths: 117","County: Queens<br />Deaths: 7014","County: Rensselaer<br />Deaths: 245","County: Richmond<br />Deaths: 1470","County: Rockland<br />Deaths: 908","County: Saratoga<br />Deaths: 275","County: Schenectady<br />Deaths: 323","County: Schoharie<br />Deaths: 16","County: Schuyler<br />Deaths: 8","County: Seneca<br />Deaths: 38","County: St. Lawrence<br />Deaths: 193","County: Steuben<br />Deaths: 212","County: Suffolk<br />Deaths: 4691","County: Sullivan<br />Deaths: 103","County: Tioga<br />Deaths: 42","County: Tompkins<br />Deaths: 105","County: Ulster<br />Deaths: 215","County: Warren<br />Deaths: 242","County: Washington<br />Deaths: 42","County: Wayne<br />Deaths: 114","County: Westchester<br />Deaths: 3156","County: Wyoming<br />Deaths: 72","County: Yates<br />Deaths: 26"],"type":"bar","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>From the plot created of the cumulative distribution of people who
+have died from COVID-19 by 11/14/2022, the highest ranking counties are
+also all located in three major regions of New York State: New York
+City, Long Island, and Hudson Valley, along with Erie and Monroe
+counties from Western NY and Finger Lakes. Again, this is expected as
+these are some of the most populous counties in New York State.</p>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
