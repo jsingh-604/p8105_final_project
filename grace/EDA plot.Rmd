@@ -12,6 +12,7 @@ library(plotly)
 ```
 
 ```{r}
+plot_df = comb 
 ## Cases
 
 #health
