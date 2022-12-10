@@ -80,7 +80,7 @@ nys_df = left_join(nys_df, area, by = 'county') %>%
 
 ## 2019-2022 Health Ranking (HR) Data: Load & Clean
 
-### 2019 HR Data
+# 2019 HR Data
 
 hr2019 = read_excel('data/ny_hr19.xls', 
                     sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
@@ -111,12 +111,22 @@ demo2019 = read_excel('data/ny_hr19.xls',
                                  segregation_score >= 30 ~ 1),
          p_minority = p_black + p_hispanic)
 
-total2019 <- merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>% 
+sub_var19 =
+  read_excel('data/ny_hr19.xls', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_obese, food_environment_index, percent_physically_inactive, percent_with_access, percent_excessive_drinking, percent_alcohol_impaired, number_chlamydia_cases, teen_birth_rate, percent_unemployed)
+
+
+list_2019 =
+  list(hr2019, demo2019, sub_var19)
+
+total2019 = 
+  list_2019 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2019)
 
-### 2020 HR Data
-
-
+# 2020 HR Data
 hr2020 = read_excel('data/ny_hr20.xlsx', 
                     sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
@@ -146,12 +156,23 @@ demo2020 = read_excel('data/ny_hr20.xlsx',
                                  segregation_score >= 30 ~ 1),
          p_minority = p_black + p_hispanic)
 
-total2020 <- merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>% 
+sub_var20 =
+  read_excel('data/ny_hr20.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+
+list_2020 =
+  list(hr2020, demo2020, sub_var20)
+
+total2020 = 
+  list_2020 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2020)
-
-
-### 2021 HR Data
-
 
 # 2021 HR Data
 hr2021 = read_excel('data/ny_hr21.xlsx', 
@@ -183,12 +204,24 @@ demo2021 = read_excel('data/ny_hr21.xlsx',
                                  segregation_score >= 30 ~ 1),
          p_minority = p_black + p_hispanic)
 
-total2021 <- merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
+sub_var21 =
+  read_excel('data/ny_hr21.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+
+list_2021 =
+  list(hr2021, demo2021, sub_var21)
+
+total2021 = 
+  list_2021 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2021)
 
-
-### 2022 HR Data:
-
+# 2022 HR Data
 hr2022 = read_excel('data/ny_hr22.xlsx', 
                     sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
@@ -218,13 +251,24 @@ demo2022 = read_excel('data/ny_hr22.xlsx',
                                  segregation_score >= 30 ~ 1),
          p_minority = p_hispanic + p_black)
 
+sub_var22 =
+  read_excel('data/ny_hr22.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
+  janitor::clean_names() %>% 
+  slice(-c(1)) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  rename(percent_obese = percent_adults_with_obesity,
+         percent_with_access = percent_with_access_to_exercise_opportunities,
+         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
 
-total2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
+list_2022 =
+  list(hr2022, demo2022, sub_var22)
+
+total2022 = 
+  list_2022 %>%
+  reduce(full_join, by = "county") %>%
   mutate(year = 2022)
 
-
-# Combine 2019-2022
-
+# Merge
 hr_all = rbind(total2019, total2020, total2021, total2022)
 
 
@@ -270,3 +314,12 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
                              vax_dose1 < .83*(tpop) ~ 0))
+
+## Dataset for Addn Analysis
+sub_var_data =
+  hr_all %>%
+  select(-ends_with("_r"))
+
+covid_hr <- left_join(covid_df, sub_var_data, by = c("county", "year")) 
+
+new_comb <- left_join(covid_hr, nys_df, by = 'county')

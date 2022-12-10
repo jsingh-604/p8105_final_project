@@ -11,7 +11,7 @@
 
 
 
-<title>County Health Factors Ranking &amp; COVID-19 Analysis</title>
+<title>Socieconomic Factors, Race/Ethnicity and COVID Outbreak</title>
 
 <script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,7 +29,11 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
@@ -220,7 +224,73 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
 
 
 
@@ -230,6 +300,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -285,45 +365,194 @@ $(document).ready(function () {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
-<h1 class="title toc-ignore">County Health Factors Ranking &amp;
-COVID-19 Analysis</h1>
+
+<h1 class="title toc-ignore">Socieconomic Factors, Race/Ethnicity and
+COVID Outbreak</h1>
 
 </div>
 
 
-<div id="county-health-factors-and-covid-19" class="section level3">
-<h3>County Health Factors and COVID-19</h3>
-<p>In the data visualization for HF and COVID-19, we observe patterns
-across all three COVID-19 variables: fatalities, cases, and vaccination
-for only health behaviors. Therefore, we decided to explore this further
-and test whether this holds true even after adjusting for population
-density and median age, which were often shown to be strongly correlated
-and/or associated with COVID-19.</p>
-<div id="county-health-factors-and-number-of-covid-cases"
-class="section level4">
-<h4>County Health Factors and Number of COVID Cases</h4>
-<p>First, we tested for association among HF (health behavior, clinical
-care, physical environment, and socioeconomic factors) crankings (health
-b) and COVID-19 cases after adjusting for median age and population
-density in each county.</p>
-<pre class="r"><code>m1 = comb %&gt;% 
-  filter(year == &#39;2021&#39;) %&gt;% 
-  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + 
-       pop_d, data = .)
+<div id="socioeconomic-factors-raceethnicity-and-covid"
+class="section level2">
+<h2>Socioeconomic Factors, Race/Ethnicity and Covid</h2>
+<div id="covid-vaccination-rate" class="section level3">
+<h3>COVID Vaccination Rate</h3>
+<pre class="r"><code>m4 = comb %&gt;% 
+  filter(year == &#39;2022&#39;) %&gt;% 
+  glm(vax_maj ~ segregation_score + median_income + p_minority 
+      + pop_d, data = .)
 
-m1 %&gt;% 
+m4 %&gt;% 
+  broom::tidy() %&gt;% 
+  mutate(OR = exp(estimate),
+         OR_CI_lower = exp(estimate - 1.96*(std.error)),
+         OR_CI_upper = exp(estimate + 1.96*(std.error))) %&gt;% 
+  select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Socioeconomic Factors &amp; COVID Vaccination&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;OR&quot;, &quot;OR CI, low&quot;, &quot;OR CI, high&quot;, &quot;p-value&quot;)
+    , digits = 5) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Socioeconomic Factors &amp; COVID Vaccination
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+OR
+</th>
+<th style="text-align:right;">
+OR CI, low
+</th>
+<th style="text-align:right;">
+OR CI, high
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+-0.78801
+</td>
+<td style="text-align:right;">
+0.45475
+</td>
+<td style="text-align:right;">
+0.31070
+</td>
+<td style="text-align:right;">
+0.66558
+</td>
+<td style="text-align:right;">
+0.00015
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+segregation_score
+</td>
+<td style="text-align:right;">
+0.00076
+</td>
+<td style="text-align:right;">
+1.00076
+</td>
+<td style="text-align:right;">
+0.99404
+</td>
+<td style="text-align:right;">
+1.00753
+</td>
+<td style="text-align:right;">
+0.82598
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+median_income
+</td>
+<td style="text-align:right;">
+0.00001
+</td>
+<td style="text-align:right;">
+1.00001
+</td>
+<td style="text-align:right;">
+1.00001
+</td>
+<td style="text-align:right;">
+1.00002
+</td>
+<td style="text-align:right;">
+0.00000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+p_minority
+</td>
+<td style="text-align:right;">
+0.00837
+</td>
+<td style="text-align:right;">
+1.00841
+</td>
+<td style="text-align:right;">
+1.00178
+</td>
+<td style="text-align:right;">
+1.01508
+</td>
+<td style="text-align:right;">
+0.01578
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pop_d
+</td>
+<td style="text-align:right;">
+0.00001
+</td>
+<td style="text-align:right;">
+1.00001
+</td>
+<td style="text-align:right;">
+1.00000
+</td>
+<td style="text-align:right;">
+1.00002
+</td>
+<td style="text-align:right;">
+0.04477
+</td>
+</tr>
+</tbody>
+</table>
+<p>After adjusting for population density, among the socioeconomic
+factors in the model, median income and % minority (Black and Hispanic)
+are statistically significant (p &lt; .05).</p>
+</div>
+<div id="covid-fatalities" class="section level3">
+<h3>COVID Fatalities</h3>
+<pre class="r"><code>m5 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_deaths ~ segregation + p_minority + median_income + medage 
+     + pop_d, data = .)
+
+m5 %&gt;% 
   broom::tidy() %&gt;%
   select(term, estimate, p.value) %&gt;% 
   kbl(
-    caption = &quot;Health Factor Ranking &amp; COVID Outbreak&quot;
+    caption = &quot;Socioeconomic Factors &amp; COVID Deaths&quot;
     , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
     , digits = 3) %&gt;% 
   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
 <table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
-Health Factor Ranking &amp; COVID Outbreak
+Socioeconomic Factors &amp; COVID Deaths
 </caption>
 <thead>
 <tr>
@@ -344,18 +573,29 @@ p-value
 (Intercept)
 </td>
 <td style="text-align:right;">
-190698.492
+-1340.390
 </td>
 <td style="text-align:right;">
-0.025
+0.445
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-health_beh_r
+segregation
 </td>
 <td style="text-align:right;">
--2399.531
+128.727
+</td>
+<td style="text-align:right;">
+0.629
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+p_minority
+</td>
+<td style="text-align:right;">
+48.101
 </td>
 <td style="text-align:right;">
 0.000
@@ -363,35 +603,13 @@ health_beh_r
 </tr>
 <tr>
 <td style="text-align:left;">
-clinical_care_r
+median_income
 </td>
 <td style="text-align:right;">
-844.353
+0.016
 </td>
 <td style="text-align:right;">
-0.056
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-env_r
-</td>
-<td style="text-align:right;">
-304.032
-</td>
-<td style="text-align:right;">
-0.409
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ses_r
-</td>
-<td style="text-align:right;">
-798.434
-</td>
-<td style="text-align:right;">
-0.127
+0.026
 </td>
 </tr>
 <tr>
@@ -399,10 +617,10 @@ ses_r
 medage
 </td>
 <td style="text-align:right;">
--3583.385
+3.591
 </td>
 <td style="text-align:right;">
-0.074
+0.931
 </td>
 </tr>
 <tr>
@@ -410,7 +628,7 @@ medage
 pop_d
 </td>
 <td style="text-align:right;">
-3.042
+0.063
 </td>
 <td style="text-align:right;">
 0.000
@@ -418,131 +636,16 @@ pop_d
 </tr>
 </tbody>
 </table>
-<p>Among the 4 factors, only health behaviors ranking’s p-value is &lt;
-.05, indicating that health behaviors ranking is significantly
-associated with the number of COVID cases.</p>
-</div>
-<div id="county-health-factors-and-number-of-covid-deaths"
-class="section level4">
-<h4>County Health Factors and Number of COVID Deaths</h4>
-<pre class="r"><code>m2 = comb %&gt;% 
-  filter(year == &#39;2021&#39;) %&gt;% 
-  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + pop_d + medage, data = .)
-
-m2 %&gt;% 
-broom::tidy() %&gt;%
-  select(term, estimate, p.value) %&gt;% 
-  kbl(
-    caption = &quot;Health Factor Ranking &amp; COVID Deaths&quot;
-    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
-    , digits = 3) %&gt;% 
-  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
-<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Health Factor Ranking &amp; COVID Deaths
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;">
-Predictor
-</th>
-<th style="text-align:right;">
-Estimate
-</th>
-<th style="text-align:right;">
-p-value
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-(Intercept)
-</td>
-<td style="text-align:right;">
-3346.642
-</td>
-<td style="text-align:right;">
-0.037
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-health_beh_r
-</td>
-<td style="text-align:right;">
--43.684
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-clinical_care_r
-</td>
-<td style="text-align:right;">
-12.660
-</td>
-<td style="text-align:right;">
-0.127
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-env_r
-</td>
-<td style="text-align:right;">
-6.440
-</td>
-<td style="text-align:right;">
-0.355
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ses_r
-</td>
-<td style="text-align:right;">
-16.106
-</td>
-<td style="text-align:right;">
-0.104
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-pop_d
-</td>
-<td style="text-align:right;">
-0.075
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-medage
-</td>
-<td style="text-align:right;">
--62.656
-</td>
-<td style="text-align:right;">
-0.098
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="county-health-factors-and-number-of-covid-vaccination"
-class="section level4">
-<h4>County Health Factors and Number of COVID Vaccination</h4>
+<p>Adjusting for median age and population density, only median income
+and % minority (Black and Hispanic) are significantly associated with
+the number of COVID deaths (p &lt; .05).</p>
 </div>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -574,7 +677,41 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
