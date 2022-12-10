@@ -12,7 +12,16 @@ library(plotly)
 ```
 
 ```{r}
+<<<<<<< HEAD
 plot_df = comb 
+=======
+plot_df = comb %>% 
+  pivot_longer(health_beh_r:env_r,
+               names_to = "rank_var",
+               values_to = "rank") %>% 
+  filter(year == "2021")
+
+>>>>>>> e7217c88c34f44a9ac8dcb87accd555ccec30275
 ## Cases
 
 #health
