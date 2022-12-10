@@ -241,7 +241,8 @@ ny_death = read_csv("data/ny_coviddeaths.csv") %>%
   janitor::clean_names() %>% 
   rename(date = report_date, n_fatality = place_of_fatality) %>%
   select(-deaths_by_county_of_residence) %>% 
-  mutate(date = lubridate::mdy(date))
+  mutate(date = lubridate::mdy(date), 
+         county = replace(county, county == 'Manhattan', 'New York'))
 
 ny_vax = read_csv("data/ny_covidvax.csv") %>% 
   janitor::clean_names() %>% 

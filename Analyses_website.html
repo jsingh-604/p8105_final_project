@@ -293,16 +293,17 @@ COVID-19 Analysis</h1>
 </div>
 
 
-<div id="county-health-factors-hf-and-covid-19" class="section level3">
-<h3>County Health Factors (HF) and COVID-19</h3>
+<div id="county-health-factors-and-covid-19" class="section level3">
+<h3>County Health Factors and COVID-19</h3>
 <p>In the data visualization for HF and COVID-19, we observe patterns
 across all three COVID-19 variables: fatalities, cases, and vaccination
 for only health behaviors. Therefore, we decided to explore this further
 and test whether this holds true even after adjusting for population
 density and median age, which were often shown to be strongly correlated
 and/or associated with COVID-19.</p>
-<div id="hf-and-covid" class="section level4">
-<h4>HF and COVID</h4>
+<div id="county-health-factors-and-number-of-covid-cases"
+class="section level4">
+<h4>County Health Factors and Number of COVID Cases</h4>
 <p>First, we tested for association among HF (health behavior, clinical
 care, physical environment, and socioeconomic factors) crankings (health
 b) and COVID-19 cases after adjusting for median age and population
@@ -418,15 +419,125 @@ pop_d
 </tbody>
 </table>
 <p>Among the 4 factors, only health behaviors ranking’s p-value is &lt;
-.05 and show that health behaviors ranking is significantly associated
-with the number of COVID cases.</p>
-<p>Based on data visualization plots, we saw that the effects of each
-health county factors – clinical care, socioeconomic factors, physical
-environment, and health behaviors – have varying impact on the number of
-COVID cases in each county. Therefore, we decided to explore the
-association between COVID-19 and county health factors after adjusting
-for age and population density, which were shown often shown to be
-strongly correlated with COVID-19 cases (Iderus, 2022).</p>
+.05, indicating that health behaviors ranking is significantly
+associated with the number of COVID cases.</p>
+</div>
+<div id="county-health-factors-and-number-of-covid-deaths"
+class="section level4">
+<h4>County Health Factors and Number of COVID Deaths</h4>
+<pre class="r"><code>m2 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + pop_d + medage, data = .)
+
+m2 %&gt;% 
+broom::tidy() %&gt;%
+  select(term, estimate, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Health Factor Ranking &amp; COVID Deaths&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
+    , digits = 3) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Health Factor Ranking &amp; COVID Deaths
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+3346.642
+</td>
+<td style="text-align:right;">
+0.037
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+health_beh_r
+</td>
+<td style="text-align:right;">
+-43.684
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+clinical_care_r
+</td>
+<td style="text-align:right;">
+12.660
+</td>
+<td style="text-align:right;">
+0.127
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+env_r
+</td>
+<td style="text-align:right;">
+6.440
+</td>
+<td style="text-align:right;">
+0.355
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ses_r
+</td>
+<td style="text-align:right;">
+16.106
+</td>
+<td style="text-align:right;">
+0.104
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pop_d
+</td>
+<td style="text-align:right;">
+0.075
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+medage
+</td>
+<td style="text-align:right;">
+-62.656
+</td>
+<td style="text-align:right;">
+0.098
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="county-health-factors-and-number-of-covid-vaccination"
+class="section level4">
+<h4>County Health Factors and Number of COVID Vaccination</h4>
 </div>
 </div>
 
