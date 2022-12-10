@@ -14,6 +14,7 @@ library(modelr)
 library(mgcv)
 library(readxl)
 library(plotly)
+library(kableExtra)
 
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -67,13 +68,22 @@ nys_df$race_div <- 1 - (((nys_df$wpop*(nys_df$wpop-1))+
 nys_df <- nys_df %>% 
   select(tpop, medage, county, race_div)
 
+## Pop_d
+
+area = read_excel('data/pop_density.xlsx') %>% 
+  janitor::clean_names() %>% 
+  rename(area = value)
+
+nys_df = left_join(nys_df, area, by = 'county') %>% 
+  mutate(pop_d = tpop/area)
+
 
 ## 2019-2022 Health Ranking (HR) Data: Load & Clean
 
 ### 2019 HR Data
 
-
-hr2019 <- read_excel('data/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2019 = read_excel('data/ny_hr19.xls', 
+                    sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -84,7 +94,8 @@ hr2019 <- read_excel('data/ny_hr19.xls', sheet = 'Outcomes & Factors SubRankings
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2019 <- read_excel('data/ny_hr19.xls', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2019 = read_excel('data/ny_hr19.xls', 
+                      sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -103,11 +114,11 @@ demo2019 <- read_excel('data/ny_hr19.xls', sheet = 'Additional Measure Data', sk
 total2019 <- merge(x = hr2019, y = demo2019, by = "county", all.x = TRUE) %>% 
   mutate(year = 2019)
 
-
 ### 2020 HR Data
 
 
-hr2020 <- read_excel('data/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2020 = read_excel('data/ny_hr20.xlsx', 
+                    sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -118,7 +129,8 @@ hr2020 <- read_excel('data/ny_hr20.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2020 <- read_excel('data/ny_hr20.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2020 = read_excel('data/ny_hr20.xlsx', 
+                      sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -141,7 +153,9 @@ total2020 <- merge(x = hr2020, y = demo2020, by = "county", all.x = TRUE) %>%
 ### 2021 HR Data
 
 
-hr2021 <- read_excel('data/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+# 2021 HR Data
+hr2021 = read_excel('data/ny_hr21.xlsx', 
+                    sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -152,7 +166,8 @@ hr2021 <- read_excel('data/ny_hr21.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2021 <- read_excel('data/ny_hr21.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2021 = read_excel('data/ny_hr21.xlsx', 
+                      sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -174,7 +189,8 @@ total2021 <- merge(x = hr2021, y = demo2021, by = "county", all.x = TRUE) %>%
 
 ### 2022 HR Data:
 
-hr2022 <- read_excel('data/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
+hr2022 = read_excel('data/ny_hr22.xlsx', 
+                    sheet = 'Outcomes & Factors SubRankings', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select(-starts_with("z"), -fips, -state) %>% 
@@ -185,7 +201,8 @@ hr2022 <- read_excel('data/ny_hr22.xlsx', sheet = 'Outcomes & Factors SubRanking
          ses_r = rank_13,
          env_r = rank_15)
 
-demo2022 <- read_excel('data/ny_hr22.xlsx', sheet = 'Additional Measure Data', skip = 1) %>% 
+demo2022 = read_excel('data/ny_hr22.xlsx', 
+                      sheet = 'Additional Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>% 
   select('county', 
@@ -200,6 +217,7 @@ demo2022 <- read_excel('data/ny_hr22.xlsx', sheet = 'Additional Measure Data', s
   mutate(segregation = case_when(segregation_score < 30 ~ 0,
                                  segregation_score >= 30 ~ 1),
          p_minority = p_hispanic + p_black)
+
 
 total2022 = merge(x = hr2022, y = demo2022, by = "county", all.x = TRUE) %>% 
   mutate(year = 2022)
@@ -243,11 +261,11 @@ covid_df = covid_df_v1 %>%
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))
 
-## Merge Data for Analysis
 
+## Merge Data for Analysis
 
 covid_hr = left_join(covid_df, hr_all, by = c("county", "year"))
 comb = left_join(covid_hr, nys_df, by = 'county') %>% 
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
-                             vax_dose1 < .83*(tpop) ~ 0))`
+                             vax_dose1 < .83*(tpop) ~ 0))

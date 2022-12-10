@@ -218,13 +218,6 @@ hr_all = rbind(total2019, total2020, total2021, total2022)
 
 ## Load 2020 to November 2022 NY COVID-19 Data
 
-Decided to look at variables related to covid testing (i.e., # positive cases, # tests performed), covid vaccination rate, and covid-related fatalities  
-1. Import 3 separate csv files (ny_covidtest, ny_coviddeaths, ny_covidvax)
-3. Select variables of interest
-4. Merge 3 data frames into one by `date` and `county`
-5. Convert `date` data type from char to date
-6. Separate date into day, month, & year for analysis
-
 ```{r, message = FALSE}
 ny_test = read_csv('data/ny_covidtest.csv') %>% 
 janitor::clean_names() %>% 

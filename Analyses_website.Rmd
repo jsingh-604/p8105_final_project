@@ -1,5 +1,5 @@
 ---
-title: "Statistical Analyses"
+title: "County Health Factors Ranking & COVID-19 Analysis"
 output: html_document
 html_document:
   code_folding: hide
@@ -12,12 +12,42 @@ html_document:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggplot2)
+library(kableExtra)
+
+source("code/data_cleaning.R")
 ```
 
-### Linear Regression - Health Factors and COVID-19 Outbreak
+### County Health Factors (HF) and COVID-19
 
-Based on the bubble plot, which shows that the relaionship between socioeconomic factors (education, employment, income, etc.) and health behaviors (tobacco use, diet/exercise, etc.) show no clear pattern
+In the data visualization for HF and COVID-19, we observe patterns across all three COVID-19 variables: fatalities, cases, and vaccination for only health behaviors. Therefore, we decided to explore this further and test whether this holds true even after adjusting for population density and median age, which were often shown to be strongly correlated and/or associated with COVID-19.
 
-From the bubble plot, we see that the relationship between socioeconomic factors and health behaviors -- two of the subfactors for health factors -- show no correlation
+#### HF and COVID
+
+First, we tested for association among HF (health behavior, clinical care, physical environment, and socioeconomic factors) crankings (health b) and COVID-19 cases after adjusting for median age and population density in each county. 
+
+```{r, message = FALSE, warning = FALSE}
+m1 = comb %>% 
+  filter(year == '2021') %>% 
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + 
+       pop_d, data = .)
+
+m1 %>% 
+  broom::tidy() %>%
+  select(term, estimate, p.value) %>% 
+  kbl(
+    caption = "Health Factor Ranking & COVID Outbreak"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+Among the 4 factors, only health behaviors ranking's p-value is < .05 and show that health behaviors ranking is significantly associated with the number of COVID cases.
+
+
+Based on data visualization plots, we saw that the effects of each health county factors -- clinical care, socioeconomic factors, physical environment, and health behaviors -- have varying impact on the number of COVID cases in each county. Therefore, we decided to explore the association between COVID-19 and county health factors after adjusting for age and population density, which were shown often shown to be strongly correlated with COVID-19 cases (Iderus, 2022).
+
+
+
+
 
 

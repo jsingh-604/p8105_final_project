@@ -518,7 +518,7 @@ p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=quartile)) +
   scale_fill_brewer(palette="Greens") + 
   theme_minimal() +
   labs(title="Covid Vaccination (Dose 1) and County Health Factors by Quartile",
-        x ="County Health Factors", y = "Number of Cases")
+        x ="County Health Factors", y = "Number of People Vaccinated")
 
 p3
 ```
