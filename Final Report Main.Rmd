@@ -449,13 +449,15 @@ p = list()
 p[[1]] = total %>%
   ggplot() +
   geom_sf(aes(fill = medage, geometry = geometry)) + 
-  scale_fill_viridis_c(option = "viridis") 
+  scale_fill_viridis_c(option = "viridis") +
+  ggtitle("Median Age Per County New York State")
 
 
 p[[2]] = total %>%
   ggplot() +
   geom_sf(aes(fill = health_beh_r, geometry = geometry)) + 
-  scale_fill_viridis_c(option = "viridis") 
+  scale_fill_viridis_c(option = "viridis") +
+  ggtitle("Heath Rank Per County New York State")
 
 grid.arrange(p[[1]], p[[2]], nrow = 1)
 

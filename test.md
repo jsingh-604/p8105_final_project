@@ -9,8 +9,6 @@ author: "Jagjit Singh, Grace Jang, Ashwini Varghese"
 ### Motivation
 
 
-<p class="text-center">
-
 In 2020, the world entered into a pandemic and now two years later as we recover and try to move on with life, everything is different. The pandemic brought with it a new lens that showed disparities based on SES, geographical location, etc. that always existed but were never taken seriously. 
 
 Below are some articles that explore these ideas and have inspired our project:
@@ -24,11 +22,7 @@ Our goal with this project was two fold: First we aimed to use the spacial analy
 
 Please watch our accompanying [screencast](ADD SCREENCAST LINK) to further understand our project.
 
-</p>
-
 ###  Data
-
-<p class="text-center">
 
 To conduct our analysis, we considered three publically available data sources:
 
@@ -43,7 +37,6 @@ We obtained data from the [County Health Rankings & Roadmaps](https://www.county
 3. NY.gov: COVID-19 cases in New York from 2020-2022 <br>
 The official website for the State of New York contains a COVID-19 information page which also includes publically available [data on COVID-19 testing, cases, vaccinations, etc.](https://coronavirus.health.ny.gov/covid-19-data-new-york) We chose datasets that includes information on COVID-19 test, cases, and vaccinations that by county to be able to explore the distributions of these variables across NY counties. 
 
-</p>
 
 ###  Research questions
 
