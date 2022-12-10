@@ -14,7 +14,7 @@
 
 <title>Spatio-temporal Association of Health and SES Measures with COVID-19 Risk in NY</title>
 
-<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -181,8 +181,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "\e259";
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -190,9 +190,16 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "\e258";
-  font-family: 'Glyphicons Halflings';
+  content: "&#xe258;";
   border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -294,8 +301,7 @@ SES Measures with COVID-19 Risk in NY</h1>
 
 
 <p><img src="cover.gif"
-style="float:right; padding-left:20px; padding-bottom:20px"
-style="width:40.0%;height:40.0%" />.</p>
+style="float:right; padding-left:20px; padding-bottom:20px;width:40.0%;height:40.0%" />.</p>
 <div id="motivation" class="section level3">
 <h3>Motivation</h3>
 <p class="text-center">
@@ -368,10 +374,29 @@ NY counties.</p></li>
 </div>
 <div id="main-results" class="section level3">
 <h3>Main results</h3>
+<p>Ashwini’s results:</p>
+<ul>
+<li>Smoking, obesity, and physical inactivity are all associated with
+receiving at least the first dose of any COVID-19 vaccine.<br />
+</li>
+<li>After adjusting for median age, unemployment is associated with
+receiving at least the first dose of any COVID-19 vaccine.</li>
+</ul>
 </div>
 <div id="discussion" class="section level3">
 <h3>Discussion</h3>
-<p>TEXT</p>
+<p>Ashwini’s analysis addition to discussion:</p>
+<p>Limitations: The estimates generated from the models are not accurate
+because we have established that COVID-19 outcomes (cases, deaths, and
+first dose of vaccine) must be geospacially considered. Since our data
+is based on the county level and not individual level, it is hard to
+adjust geographically in a model, which is why we have a separate
+geospacial analysis.</p>
+<p>Regardless, the models showed that the predictors smoking, obesity,
+physical inactivity, and unemployment are all associated with having
+received the first dose of a COVID vaccine. Using this information,
+public health professional can target resources and interventions to
+people who fit these predictors.</p>
 </div>
 
 
