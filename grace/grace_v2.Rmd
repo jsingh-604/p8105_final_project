@@ -85,7 +85,7 @@ nys_df = nys_df %>%
 
 ## NY County Land Area
 ```{r}
-area = read_excel('grace/pop_density.xlsx') %>% 
+area = read_excel('./data/pop_density.xlsx') %>% 
   janitor::clean_names() %>% 
   rename(area = value)
 ```
@@ -366,7 +366,15 @@ plot(m3)
 ```
 
 ### Models 4 to 6 -- SES, Race/Ethnicity & COVID
-Model 4
+
+Chi-Square Test -- Segregation Index and Covid Vaccination Rate
+
+We predicted that 
+
+```{r}
+
+```
+
 ```{r}
 m4 = comb %>% 
   filter(year == '2022') %>% 
@@ -389,11 +397,14 @@ m4 %>%
   kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
 ```
 
+## Chi-Square Test -- Vacc
+
+
 Model 5
 ```{r}
 m5 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_deaths ~ segregation_score + p_minority + median_income + medage + pop_d, data = .)
+  lm(n_deaths ~ segregation + p_minority + median_income + medage + pop_d, data = .)
 
 plot(m5)
 

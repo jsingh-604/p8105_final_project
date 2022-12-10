@@ -318,7 +318,6 @@ covid_df = covid_df_v1 %>%
             vax_dose1 = max(first_dose),
             n_deaths = max(n_fatality, na.rm = TRUE))
 ```
-
 4. **Dataset for Analysis**  
 For regression tests, demographics dataset, HR dataset, and COVID dataset were merged into one dataset called "comb." At the end, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine. The cutoff value used was 79% as it was reported that nearly ~79% of the US population had completed at least one dose of vaccine by the end of 2022. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states/state/new-york)  
 
@@ -328,6 +327,15 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
   mutate(tpop_50 = tpop/2,
          vax_maj = case_when(vax_dose1 >= .83*(tpop) ~ 1,
                              vax_dose1 < .83*(tpop) ~ 0))
+```
+
+5. **Bubble Plot**
+We were interested in seeing whether there is a correlation between SES factors ranking and health behaviors and how it varies by the total number of residents in each county.
+
+```{r}
+bubble_df = comb %>% 
+  select(year, county, health_beh_r, ses_r, tpop) %>% 
+  filter(year == '2021')
 ```
 
 ## Exploratory Data Analysis
