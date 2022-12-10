@@ -8,11 +8,12 @@ data <- gapminder %>% filter(year=="2007") %>% dplyr::select(-year) %>%
 
 getwd()
 
-library(rsconnect)
-rsconnect::deployApp('./Jug/spatial.Rmd')
+library(rsconnect) 
+rsconnect::deployApp('/Users/jag/Desktop/Fall\ 2022/P8105/p8105_final_project/chloro/spatial.Rmd')
 
 
-NY_df <- get_decennial(state = "ny", 
+
+YNY_df <- get_decennial(state = "ny", 
                        geography = "county",
                        variables = vars,
                        geometry = T,
@@ -60,6 +61,7 @@ p1 = NY_df  %>%
   scale_fill_viridis_c(option = "magma") 
 p1
 
+total$
 
 
 
