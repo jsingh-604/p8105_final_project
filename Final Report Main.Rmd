@@ -502,16 +502,12 @@ p1 = ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=quartile)) +
   labs(title="Number of COVID Deaths and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of Deaths")
 
-p1
-
 p2 = ggplot(data=eda1, aes(x=rank_var, y=n_cases, fill=quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_brewer(palette="Oranges") + 
   theme_minimal() +
   labs(title="Number of COVID Cases and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of Cases")
-
-p2
 
 p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=quartile)) +
   geom_bar(stat="identity", position=position_dodge())+
@@ -520,7 +516,7 @@ p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=quartile)) +
   labs(title="Covid Vaccination (Dose 1) and County Health Factors by Quartile",
         x ="County Health Factors", y = "Number of People Vaccinated")
 
-p3
+grid.arrange(p1, p2, p3, ncol = 1)
 ```
 
 ## Statistical Analysis
@@ -779,7 +775,6 @@ do.call(grid.arrange,p)
 
 ```
 The above 4 chloroplast maps are a summary 
-
 
 ## Autoregression
 
