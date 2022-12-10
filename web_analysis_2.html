@@ -13,7 +13,7 @@
 
 <title>Socieconomic Factors, Race/Ethnicity and COVID Outbreak</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -186,8 +186,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -195,16 +195,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -397,6 +390,8 @@ class="section level2">
 Segregation\_Score + \beta_{2} Median\_Income + \beta_{3}
 Percent\_Minority + \beta_{4} Population\_Density +
 \epsilon\)</span></p>
+<p>where vax_maj = 1, then more than 83% received dose 1 of the vaccine,
+vax_maj = 2, then less than 83% received dose 1 of the vaccine</p>
 <pre class="r"><code>m4 = comb %&gt;% 
   filter(year == &#39;2022&#39;) %&gt;% 
   glm(vax_maj ~ segregation_score + median_income + p_minority 
@@ -554,7 +549,7 @@ Median\_Income + \beta_{4} Median\_Age + \beta_{5} Population\_Density +
 \epsilon\)</span></p>
 <pre class="r"><code>m5 = comb %&gt;% 
   filter(year == &#39;2021&#39;) %&gt;% 
-  lm(n_deaths ~ segregation + p_minority + median_income + medage 
+  lm(n_deaths ~ segregation_score + p_minority + median_income + medage 
      + pop_d, data = .)
 
 m5 %&gt;% 
@@ -588,21 +583,21 @@ p-value
 (Intercept)
 </td>
 <td style="text-align:right;">
--1340.390
+-2152.475
 </td>
 <td style="text-align:right;">
-0.445
+0.212
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-segregation
+segregation_score
 </td>
 <td style="text-align:right;">
-128.727
+17.565
 </td>
 <td style="text-align:right;">
-0.629
+0.050
 </td>
 </tr>
 <tr>
@@ -610,7 +605,7 @@ segregation
 p_minority
 </td>
 <td style="text-align:right;">
-48.101
+44.441
 </td>
 <td style="text-align:right;">
 0.000
@@ -624,7 +619,7 @@ median_income
 0.016
 </td>
 <td style="text-align:right;">
-0.026
+0.022
 </td>
 </tr>
 <tr>
@@ -632,10 +627,10 @@ median_income
 medage
 </td>
 <td style="text-align:right;">
-3.591
+10.912
 </td>
 <td style="text-align:right;">
-0.931
+0.784
 </td>
 </tr>
 <tr>
@@ -643,7 +638,7 @@ medage
 pop_d
 </td>
 <td style="text-align:right;">
-0.063
+0.064
 </td>
 <td style="text-align:right;">
 0.000
@@ -651,9 +646,9 @@ pop_d
 </tr>
 </tbody>
 </table>
-<p>Adjusting for median age and population density, only median income
-and % minority (Black and Hispanic) are significantly associated with
-the number of COVID deaths (p &lt; .05).</p>
+<p>Adjusting for median age and population density, segregation score,
+median income and % minority (Black and Hispanic) are significantly
+associated with the number of COVID deaths (p &lt;= .05).</p>
 </div>
 </div>
 

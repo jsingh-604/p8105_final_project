@@ -13,7 +13,7 @@
 
 <title>County Health Factors Ranking &amp; COVID-19 Analysis</title>
 
-<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -186,8 +186,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -195,16 +195,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -748,11 +741,11 @@ pop_d
 significantly associated with the number of individuals who received the
 first dose of the vaccine by 2022 (p &lt; .05).</p>
 </div>
-<div id="subfactor-analyses" class="section level3">
-<h3>Subfactor Analyses</h3>
+<div id="subanalysis" class="section level3">
+<h3>Subanalysis</h3>
 <p><strong>Health Behavior Subfactors &amp; Covid Vaccination (Dose
 1)</strong></p>
-<p><span class="math inline">\(vax_dose_1 = \beta_{0} + \beta_{1}
+<p><span class="math inline">\(Vaccine\_Dose1 \sim \beta_{0} + \beta_{1}
 percent\_smokers + \beta_{2} percent\_obese + \beta_{3}
 percent\_physically\_inactive + \beta_{4}
 percent\_excessive\_drinking\)</span></p>
@@ -848,7 +841,7 @@ percent_excessive_drinking
 <p>The regression test showed that % smokers, obese, and physically
 inactive are significantly associated with the number of individuals who
 have received the first dose of COVID vaccine by 2022 (p &lt; .05).
-Meanwhile, % excessiver drinkers was not statistically significant (p =
+Meanwhile, % excessive drinkers was not statistically significant (p =
 .41).</p>
 </div>
 </div>

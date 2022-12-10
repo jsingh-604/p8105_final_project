@@ -58,7 +58,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 In 2020, the world entered into a pandemic and now two years later as we recover and try to move on with life, things are different. The pandemic brought with it a new lens that showed disparities based on SES, geographical location, etc. that always existed but were never taken seriously. Research has shown that people of color and those from a low SES are at higher risk to contracting COVID-19; as such, public health professionals should be aware of such gaps and make it an effort to especially focus on these groups at higher risk (Khanijahani et al., 2021).
 
-## Analysis and Relevance:
+## Analysis and Relevance
 
 Our project looks at the change in COVID-19 trends in New York State for each county, specifically how COVID-19 is spatially autocorrelated across the different counties and the extent auto-correlation within New York City, the most populated county. We also looked at whether health behaviors and socioeconomic (SES) factors are associated with this change in trends by county. These analyses can be helpful to public health officials in the following ways:
   
@@ -239,10 +239,16 @@ sub_var20 =
   read_excel('data/ny_hr20.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, 
+         food_environment_index, percent_physically_inactive, 
+         percent_with_access_to_exercise_opportunities, 
+         percent_excessive_drinking, 
+         percent_driving_deaths_with_alcohol_involvement, 
+         number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
-         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+         percent_alcohol_impaired = 
+           percent_driving_deaths_with_alcohol_involvement)
   
 
 list_2020 =
@@ -289,10 +295,16 @@ sub_var21 =
   read_excel('data/ny_hr21.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, 
+         food_environment_index, percent_physically_inactive, 
+         percent_with_access_to_exercise_opportunities, 
+         percent_excessive_drinking, 
+         percent_driving_deaths_with_alcohol_involvement, 
+         number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
-         percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
+         percent_alcohol_impaired = 
+           percent_driving_deaths_with_alcohol_involvement)
 
 list_2021 =
   list(hr2021, demo2021, sub_var21)
@@ -338,7 +350,12 @@ sub_var22 =
   read_excel('data/ny_hr22.xlsx', sheet = 'Ranked Measure Data', skip = 1) %>% 
   janitor::clean_names() %>% 
   slice(-c(1)) %>%
-  select(county, percent_smokers, percent_adults_with_obesity, food_environment_index, percent_physically_inactive, percent_with_access_to_exercise_opportunities, percent_excessive_drinking, percent_driving_deaths_with_alcohol_involvement, number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
+  select(county, percent_smokers, percent_adults_with_obesity, 
+         food_environment_index, percent_physically_inactive, 
+         percent_with_access_to_exercise_opportunities, 
+         percent_excessive_drinking, 
+         percent_driving_deaths_with_alcohol_involvement, 
+         number_chlamydia_cases, teen_birth_rate, percent_unemployed) %>%
   rename(percent_obese = percent_adults_with_obesity,
          percent_with_access = percent_with_access_to_exercise_opportunities,
          percent_alcohol_impaired = percent_driving_deaths_with_alcohol_involvement)
@@ -429,7 +446,7 @@ bubble_df = comb %>%
 ```
 
 6. **Bar Graphs for EDA**  
-County health factors ranking (HR) was categorized into 4 quartiles quartile 1 = ranks 1 to 16; quartile 2 = ranks 17 to 31; quartile 3 = ranks 32 to 46, quartile 4 = ranks 47 to 62).[(source)](https://www.countyhealthrankings.org/reports/state-reports/2022-new-york-state-report) To observe any patterns between HR and COVID.
+County health factors ranking (HR) was categorized into 4 quartiles based on ranking with quartile 1 = highest ranks quartile and quartile 4 = lowest ranks.[(source)](https://www.countyhealthrankings.org/reports/state-reports/2022-new-york-state-report)
 
 ```{r}
 eda1 = comb %>% 
@@ -466,8 +483,10 @@ data = bubble_df %>%
 
 total <- merge(bubble_df,NY_df,by="county")
 
-fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county, type = 'scatter',
-               mode = 'markers', size = ~tpop.y, color = ~county, colors = 'Paired',
+fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county, 
+               type = 'scatter',
+               mode = 'markers', size = ~tpop.y, 
+               color = ~county, colors = 'Paired',
                marker = list(opacity = 0.5, sizemode = 'diameter'))
 
 fig <- fig %>% layout(title = 'Bubble Plot (Bubble Size = County Population)',
@@ -539,7 +558,7 @@ grid.arrange(p1, p2, p3, ncol = 1)
 
 ## Statistical Analysis
 
-Note: Though we initially planned to adjust for racial diversity in our model, the variable was removed because racial diversity index did not vary much among counties. Also, tpop (total population) was replaced with pop_d (population density) as it was shown that COVID-19 incidence is strongly correlated with population density (Iderus, 2022). For the models, only data from 2021 or 2022 were used as there is no information on vaccination for 2020.
+Note: Though we initially planned to adjust for racial diversity in our model, the variable was removed because racial diversity index did not vary much among counties. Also, tpop (total population) was replaced with pop_d (population density) as it was shown that COVID-19 incidence is strongly correlated with population density (Iderus et al., 2022). For the models, only data from 2021 or 2022 were used as there is no information on vaccination for 2020.
 
 <p style="color: red">***Question 1: Are county health factors associated with COVID-19 risk?***</p>
 Health factors--health behaviors, clinical care, physical environment, and socioeconomic factors--are community conditions that can be modified and improved through public health interventions or health policies. Therefore, we were interested in seeing which factor(s) is significantly associated with the number of COVID-19 cases, deaths, and vaccination. To do so, we ran multiple linear regression test.
@@ -561,13 +580,12 @@ m1 %>%
     caption = "Health Factor Ranking & COVID Outbreak"
     , col.names = c("Predictor", "Estimate", "p-value")
     , digits = 3) %>% 
-  kable_styling(bootstrap_options = c("striped", "condensed"), 
-                full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
 
 After adjusting for median age and population density, only health behaviors ranking was shown to be significantly associated with the number of COVID-19 cases (p < .05). The estimate for health behavior ranking was -2399.531, indicating that counties with higher health behavior ranking had lower number of COVID cases.  
 
-<br>Health behaviors score is based on community residents' tobacco use, diet & exercise, alcohol & drug use, and sexual activity (i.e., number of STI, teen pregnancy). These subfactors are often viewed as drivers of health inequity. Rate of teen pregnancy is higher in majority-minority district; alcohol and drug abuse are more common among minorities; and residential segregation limits minorities access to healthy food. Therefore, the results warrant further exploration of interaction between the health behaviors ranking, its subfactors, and race/ethnicity.
+Health behaviors score is based on community residents' tobacco use, diet & exercise, alcohol & drug use, and sexual activity (i.e., number of STI, teen pregnancy). These subfactors are often viewed as drivers of health inequity. Rate of teen pregnancy is higher in majority-minority district; alcohol and drug abuse are more common among minorities; and residential segregation limits minorities access to healthy food. Therefore, the results warrant further exploration of interaction between the health behaviors ranking, its subfactors, and race/ethnicity.
 
 To test the validity of our results, we checked regression assumptions.
 
@@ -594,7 +612,7 @@ broom::tidy() %>%
     caption = "Health Factor Ranking & COVID Deaths"
     , col.names = c("Predictor", "Estimate", "p-value")
     , digits = 3) %>% 
-  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
 
 As seen with model 1, model 2 shows that only health behaviors ranking is significantly associated with the number of COVID deaths in each county (p < .05). The estimate is -43.684, meaning that counties with better health behaviors ranking had less number of COVID deaths. The finding suggests that public health professionals should aim to mitigate disparities in COVID-19 by first starting short-term community-based interventions that encourage residents to build healthier lifestyles and make healthier life choices.
@@ -604,7 +622,7 @@ par(mfrow = c(2,2))
 plot(m2)
 ```
 
-Results of regression assumption tests are also similar to that of model 1's, indicating that there is more to be explored in the association between health factor and COVID-19 fatalities. Once again, point 31 shows up as an outlier that needs to be tested further.
+Results of regression assumption tests are similar to that of model 1's, indicating that there is more to be explored in the association between health factor and COVID-19 fatalities. Once again, point 31 is observed to be an outlier and needs to be tested further.
 
 ### NYS County Health Factors and Vaccination (Dose 1)
 
@@ -622,10 +640,10 @@ m3 %>%
     caption = "Health Factor Ranking & COVID Vaccination (Dose # 1)"
     , col.names = c("Predictor", "Estimate", "p-value")
     , digits = 3) %>% 
-  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
 
-In this model, we did not adjust for median age since COVID-19 vaccination rate did not vary significantly for 18+ by 2022. As seen in models 1 and 2, model 3 once again showed that county's health behaviors rank is significantly associated with the number of individuals who received the first dose of the vaccine (p < .05). Once again, the estimate is negative (-11691). This implies that individuals who take care of their health holistically may be more likely to choose to receive the vaccine.
+In this model, we did not adjust for median age since COVID-19 vaccination rate did not vary significantly for 18+ by 2022. As seen in models 1 and 2, model 3 once again showed that county's health behaviors rank is significantly associated with the number of individuals who received the first dose of the vaccine (p < .05). Once again, the estimate is negative (-11691). This implies that individuals who take care of their health holistically are more likely to receive the vaccine.
 
 ```{r m3_check, message = FALSE, warning = FALSE}
 par(mfrow = c(2,2))
@@ -646,8 +664,6 @@ m4 = comb %>%
   filter(year == '2022') %>% 
   glm(vax_maj ~ segregation_score + median_income + p_minority + pop_d, data = .)
 
-summary(m4)
-
 m4 %>% 
   broom::tidy() %>% 
   mutate(OR = exp(estimate),
@@ -658,8 +674,9 @@ m4 %>%
     caption = "SES Factors & COVID Vaccination"
     , col.names = c("Predictor", "Estimate", "OR", "OR CI, low", "OR CI, high", "p-value")
     , digits = 3) %>% 
-  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
+
 Based on the the results, median_income and p_minority are significantly associated with higher chance of majority of the county's resident being vaccinated (p < .05). However, despite being statistically significant, because the estimates aare ~0 and ORs are also ~1, the significance is not meaningful. Therefore, though SES factors may contribute, their effects, perhaps, are not as pronounced unless combined with geographical proximity to locations with COVID-19 outbreak. The findings in model 3 could also have happened because COVID vaccine was available at locations such pharmacies (CVS, Walgreen, etc.) and community health centers, removing the barrier to healthcare access and increasing equal access to the vaccine.
 
 Upon checking our model,
@@ -688,10 +705,10 @@ m5 %>%
     caption = "SES Factors & COVID Deaths"
     , col.names = c("Predictor", "Estimate", "p-value")
     , digits = 3) %>% 
-  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
 
-This model shows the number of COVID-19 fatalities in each county is significantly associated with segregation score, % minority (black and Hispanic), and median income (p <= .05) after adjusting for population density. Segregation score had a positive estimate of 17.565, indicating that residential segregation of white vs. non-white could have played a role in exacerbating the COVID-19 disparity. Positive estimate for % minority (estimate = 44.441) reinforces this notion. As for median income, because the estimate is ~0, despite statistical significance, meaningful interepration is lacking. These findings demonstrate that unlike vaccination, racial/ethnic minorities, specifically Hispanic and Black, had a higher risk of dying from COVID compared to White/Asian.
+This model shows that the number of COVID-19 fatalities in each county is significantly associated with segregation score, % minority (black and Hispanic), and median income (p <= .05) after adjusting for population density. Segregation score had a positive estimate of 17.565, indicating that residential segregation of white vs. non-white could have played a role in exacerbating the COVID-19 disparity. Positive estimate for % minority (estimate = 44.441) reinforces this notion. As for median income, because the estimate is ~0, despite statistical significance, meaningful interepration is lacking. These findings demonstrate that unlike vaccination, racial/ethnic minorities, specifically Hispanic and Black, had a higher risk of dying from COVID compared to White/Asian.
 
 ```{r m5_check, message = FALSE, warning = FALSE}
 par(mfrow = c(2,2))
@@ -700,14 +717,15 @@ plot(m5)
 
 For regression test plots, the conclusions are very similar to that of model 4's. The residual vs. fitted plot does not show clear patterns; however, the points are also not equally, randomly distributed along residual = 0 line. The Q-Q plot confirms our data is normally distributed with no extreme skewness. Scale-location shows possibility of homoscedasticity violation and residual vs. leverage, shows that points #3 and #31 are influential observations; combined with model 1 to model 4, this indicates that points 3 and 31 should be identified and tested to determine whether they should be kept or removed from our dataset.
 
-### Model 6
+### Subanalysis: Health Behavior Subfactors & COVID Vaccination (Dose 1)
+
 <p style="color: red">***Question 3: Are county percentages of smokers, obesity, physical inactivity, and excessive alcohol drinking associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
 
 The health behaviors ranking was a significant predictor of having increases in the amount of people who have had at least their first dose of the COVID-19 vaccine. The health behaviors ranking encompasses a broad array of sub-variables. Of particular interest to explore are well known factors such as smoking, obesity, exercise, and alcohol consumption. All these factors are well established predictors of many existing health conditions such as CVD, diabetes, cancer, etc. Therefore, we are now interested in seeing if these factor's affect the attainment of getting at least the first dose of the COVID vaccine. 
 
 Note: Again, since the distribution of vaccines for COVID began in 2021 and the complete data for 2022 is not yet available, we will focus our model on data from the 2021 year.
 
-$vax_dose_1 = \beta_{0} + \beta_{1} percent\_smokers + \beta_{2} percent\_obese + \beta_{3} percent\_physically\_inactive + \beta_{4} percent\_excessive\_drinking$
+$Vaccine\_Dose1 \sim \beta_{0} + \beta_{1} percent\_smokers + \beta_{2} percent\_obese + \beta_{3} percent\_physically\_inactive + \beta_{4} percent\_excessive\_drinking$
 
 ```{r}
 
@@ -719,40 +737,15 @@ subm1 =
 subm1 %>% 
   broom::tidy() %>% 
   select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
-
-
+  kbl(
+    caption = "Health Factor Ranking & COVID Vaccination (Dose # 1)"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
-
 
 From the results, we can see that every predictor has a significant p-value of less than 0.05, except for the variable `percent_excessive_drinking`. The negative estimates for smokers and obesity suggests that for each percent increase in the adults with obesity or smoking, the amount of people in that county who have at least the first dose of a COVID vaccine decreases. However, for the variables for physical inactivity, the estimate is positive. The estimates in this model are not completely reliable as we have previously established that our COVID outcomes (cases, deaths, and first dose of vaccine) is dependent on geospacial factors. Our data is by county and not individuals which have an influence on the results. Further analysis is necessary on the group level to get more precise estimates. However, from these results, public health professional can focus resources and interventions on smokers and those with obesity to increase vaccination numbers. 
 
-
-### Model 7
-
-<p style="color: red">***Question 4: Adjusting for median age, is unemployment associated with receiving at least the first dose of any COVID-19 vaccine?***</p>
-
-
-Unemployment can be a predictor for a variety of outcomes. Often times, people cannot prioritize their health as a result of a lack of money due. It is worth seeing if unemployment is associated with getting the first dose of a COVID vaccine. 
-
-
-$vax_dose_1 = \beta_{0} + \beta_{1} medage + \beta_{2} percent\_unemployed$
-
-```{r}
-
-subm2 =
-  new_comb %>%
-  filter(year == '2021') %>%
-  lm(vax_dose1 ~ medage + percent_unemployed, data = .)
-
-subm2 %>% 
-  broom::tidy() %>% 
-  select(term, estimate, p.value) %>% 
-  knitr::kable(digits = 3) 
-
-```
-
-From the results, we can see that after adjusting for median age, the p-value for unemployment is significant. As stated before, since the outcomes are geospacially correlated, the estimate values are not accurate. But the direction states that for each percent increase in unemployment in a county, the number of people who have had at least one dose of a COVID vaccine decreases. This information can help public health professionals direct resources and attention towards people who are currently unemployed. People who are unemployment may not have gotten the vaccine because they think that it may be an extra expense that they cannot afford to have. This is where it is important to reach out to this group to make sure they are informed that the vaccine is free for everyone and encourage them to get vaccinated.
 
 ## Spatial Analysis
 

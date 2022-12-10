@@ -90,11 +90,11 @@ m3 %>%
 
 The results indicate that only health behaviors ranking is significantly associated with the number of individuals who received the first dose of the vaccine by 2022 (p < .05).
 
-### Subfactor Analyses
+### Subanalysis
 
 **Health Behavior Subfactors & Covid Vaccination (Dose 1)**
 
-$vax_dose_1 = \beta_{0} + \beta_{1} percent\_smokers + \beta_{2} percent\_obese + \beta_{3} percent\_physically\_inactive + \beta_{4} percent\_excessive\_drinking$
+$Vaccine\_Dose1 \sim \beta_{0} + \beta_{1} percent\_smokers + \beta_{2} percent\_obese + \beta_{3} percent\_physically\_inactive + \beta_{4} percent\_excessive\_drinking$
 
 ```{r}
 subm1 =
@@ -113,4 +113,4 @@ subm1 %>%
   kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
 
-The regression test showed that % smokers, obese, and physically inactive are significantly associated with the number of individuals who have received the first dose of COVID vaccine by 2022 (p < .05). Meanwhile, % excessiver drinkers was not statistically significant (p = .41).
+The regression test showed that % smokers, obese, and physically inactive are significantly associated with the number of individuals who have received the first dose of COVID vaccine by 2022 (p < .05). Meanwhile, % excessive drinkers was not statistically significant (p = .41).

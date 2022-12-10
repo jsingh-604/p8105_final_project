@@ -24,6 +24,8 @@ source("code/data_cleaning.R")
 
 $Vaccination \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Median\_Income + \beta_{3} Percent\_Minority + \beta_{4} Population\_Density + \epsilon$
 
+where vax_maj = 1, then more than 83% received dose 1 of the vaccine, vax_maj = 2, then less than 83% received dose 1 of the vaccine
+
 ```{r}
 m4 = comb %>% 
   filter(year == '2022') %>% 
@@ -52,7 +54,7 @@ $N_{Deaths} \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Percent\_M
 ```{r}
 m5 = comb %>% 
   filter(year == '2021') %>% 
-  lm(n_deaths ~ segregation + p_minority + median_income + medage 
+  lm(n_deaths ~ segregation_score + p_minority + median_income + medage 
      + pop_d, data = .)
 
 m5 %>% 
@@ -65,4 +67,4 @@ m5 %>%
   kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
 
-Adjusting for median age and population density, only median income and % minority (Black and Hispanic) are significantly associated with the number of COVID deaths (p < .05).
+Adjusting for median age and population density, segregation score, median income and % minority (Black and Hispanic) are significantly associated with the number of COVID deaths (p <= .05).
