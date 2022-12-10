@@ -13,7 +13,7 @@ navbar:
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
       href: data.htm
-    - text: "Autogressive Analysis"
+    - text: "Autoregressive Analysis"
       href: Autoregression.html
     - text: "Screencast"
       href: data.html
