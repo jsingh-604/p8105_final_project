@@ -424,9 +424,6 @@ plot_df = comb %>%
                names_to = "rank_var",
                values_to = "rank") %>% 
   filter(year == "2021")
-               
-               
-## Deaths
 
 #health
 d_beh = plot_df %>% 
@@ -436,27 +433,46 @@ d_beh %>%
   mutate(text_label = str_c("Name: ", dba, "\nZip Code: ", zipcode)) %>% 
   plot_ly(x = ~grade, y = ~score, color = ~boro, text = ~text_label, alpha = .5, 
           type = "scatter", mode = "markers", colors = "plasma")
-#env
-#cc
-#ses
-final_df %>%
-  mutate(text_label = str_c("Name: ", dba, "\nZip Code: ", zipcode)) %>% 
-  plot_ly(x = ~grade, y = ~score, color = ~boro, text = ~text_label, alpha = .5, 
-          type = "scatter", mode = "markers", colors = "plasma")
+```
 
-fat_beh %>% 
-  mutate(text_label = str_c("County: ", county, "\nRank", rank)) %>% # \n = create new line
-  plot_ly(x = ~lat, y = ~long, color = ~price, text = ~text_label, 
-          alpha = .5, type = "scatter", mode = "markers")
+```{r EDA PLOT}
+eda2 = comb %>% 
+  pivot_longer(health_beh_r:env_r,
+               names_to = "rank_var",
+               values_to = "rank") %>% 
+  filter(year == '2021') %>% 
+  mutate(quartile = case_when(rank < 17 ~ 'q1',
+                              rank < 32 ~ 'q2',
+                              rank < 46 ~ 'q3',
+                              rank < 63 ~ 'q4')) %>% 
+  mutate(quartile = as.factor(quartile))
 
-fat_beh %>% 
-  mutate(text_label = str_c("County: ", county, "\nRank", rank)) %>% 
-  plot_ly(x = ~rank, y = ~n_deaths, color = ~county, text = ~text_label, 
-          alpha = .5, type = "scatter", mode = "markers")
+p1 = ggplot(data=eda2, aes(x=rank_var, y=n_deaths, fill=quartile)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_brewer(palette="Reds") + 
+  theme_minimal() +
+  labs(title="Number of COVID Deaths and County Health Factors by Quartile",
+        x ="County Health Factors", y = "Number of Deaths")
 
+p1
 
-# Cases
-# Vaccination
+p2 = ggplot(data=eda2, aes(x=rank_var, y=n_cases, fill=quartile)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_brewer(palette="Greens") + 
+  theme_minimal() +
+  labs(title="Number of COVID Cases and County Health Factors by Quartile",
+        x ="County Health Factors", y = "Number of Cases")
+
+p2
+
+p3 = ggplot(data=eda2, aes(x=rank_var, y=vax_dose1, fill=quartile)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_brewer(palette="Oranges") + 
+  theme_minimal() +
+  labs(title="Covid Vaccination (Dose 1) and County Health Factors by Quartile",
+        x ="County Health Factors", y = "Number of Cases")
+
+p3
 ```
 
 
