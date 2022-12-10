@@ -47,28 +47,13 @@ The official website for the State of New York contains a COVID-19 information p
 
 ###  Research questions
 
-
-
-
+1) How ar
 
 
 ### Main results
 
-Ashwini's results:
-
-* Smoking, obesity, and physical inactivity are all associated with receiving at least the first dose of any COVID-19 vaccine.  
-* After adjusting for median age, unemployment is associated with receiving at least the first dose of any COVID-19 vaccine.
 
 
 ### Discussion
 
-
-Ashwini's analysis addition to discussion:
-
-
-Limitations: 
-The estimates generated from the models are not accurate because we have established that COVID-19 outcomes (cases, deaths, and first dose of vaccine) must be geospacially considered. Since our data is based on the county level and not individual level, it is hard to adjust geographically in a model, which is why we have a separate geospacial analysis. 
-
-Regardless, the models showed that the predictors smoking, obesity, physical inactivity, and unemployment are all associated with having received the first dose of a COVID vaccine. Using this information, public health professional can target resources and interventions to people who fit these predictors.
-
-
+TEXT

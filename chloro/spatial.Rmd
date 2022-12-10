@@ -25,7 +25,7 @@ library(plotly)
 
 census_api_key("aa512886c5449a582d837da8d3a07af66a043fe5")
 
-census_data <- load_variables(2018, "acs5", cache=T)
+census_data <- load_variables(2020, "acs5", cache=T)
 fwrite(census_data, "census_variables.csv")
 
 vars <- c(tpop = 'P001001',
@@ -55,7 +55,7 @@ ny_covid = read.csv('./www/shiny.csv')  %>%
 Column {.sidebar}
 --------------------------------------------------------------------------------
 
-This `flexdashboard` made with Shiny contains interactive chloropleth maps of the New York state. The top chart shows new postie cases per county between any two time points from 2020 to 2022. The bottom chart contains reflects the total number of tests performed per county between any two time points from 2020 to 2022. 
+This Shiny app contains interactive choropleth maps of the New York state showing covid cases and incidence. The top map shows positive cases per county between the selected date range. The bottom map reflects Covid incidence per county in the selected date range. Incidence = New Cases / Total Population.
 
 ```{r}
 ###############################
