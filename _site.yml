@@ -1,0 +1,25 @@
+name: "Spatio-temporal Association of Health and SES Measures with COVID-19 Risk in NY"
+output_dir: "."
+navbar:
+  title: "Overview"
+  left: 
+    - text: "Final Report"
+      href: Final-Report-Main.html
+  right:
+    - text: "Exploratory Analysis"
+      href: eda_main.html
+    - text: "Shiny Spatial"
+      href: https://jagjit-singh.shinyapps.io/spatial/
+    - text: "Statistical Analysis"
+      href: stat_analysis.html
+    - text: "Autoregressive Analysis"
+      href: Autoregression.html
+    - text: "Screencast"
+      href: screencast.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<js5958@cumc.columbia.edu>
+    - icon: fa-github fa-lg
+      href: https://github.com/jsingh-604/p8105_final_project/
+output:
+  html_document:
+    theme: lumen
