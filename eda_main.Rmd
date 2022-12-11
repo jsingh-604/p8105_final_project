@@ -1,0 +1,190 @@
+---
+title: "Exploratory Data Analysis"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+
+## Bubble Plot
+
+```{r, message=FALSE, warning=FALSE, results=FALSE,echo=FALSE}
+source("code/data_cleaning.R")
+library(plotly)
+
+library(gridExtra)
+
+NY_df <- get_decennial(state = "ny", 
+                       geography = "county",
+                       variables = vars,
+                       geometry = T,
+                       output = "wide")
+
+NY_df = NY_df %>%
+  mutate(
+    county = gsub(" County, New York","",NAME))
+
+bubble_df = comb %>% 
+  select(year, county, health_beh_r, ses_r, tpop) %>% 
+  filter(year == '2021')
+
+data = bubble_df %>%
+  mutate(county = as.factor(county),
+         health_beh_r = as.numeric(health_beh_r),
+         ses_r = as.numeric(ses_r)) %>%
+  janitor::clean_names()
+
+
+total <- merge(bubble_df,NY_df,by="county")
+
+
+data = bubble_df %>%
+  mutate(county = as.factor(county),
+         health_beh_r = as.numeric(health_beh_r),
+         ses_r = as.numeric(ses_r)) %>%
+  janitor::clean_names()
+
+
+total <- merge(bubble_df,NY_df,by="county")
+```
+
+```{r}
+fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county, 
+               type = 'scatter',
+               mode = 'markers', size = ~tpop.y, 
+               color = ~county, colors = 'Paired',
+               marker = list(opacity = 0.5, sizemode = 'diameter'))
+
+fig <- fig %>% layout(title = 'Bubble Plot (Bubble Size = County Population)',
+                      xaxis = list(title = 'Health Score'),
+                      yaxis = list(title = 'Socio-economic Score'),
+                      showlegend = FALSE)
+
+fig
+```
+
+From the plot we can see that New York, Queens and Kings have the highest socio economic score, but have the lowest health factors ranks. The size of the bubble signifies total population of the county. Nassau, Suffolk, Westcher have low health and socio-ecnomic scores. 
+
+## Choropleth Map
+
+Below is a chloropleth map to good understanding on the above in a spatial context: 
+
+
+```{r}
+p = list()
+p[[1]] = total %>%
+  ggplot() +
+  geom_sf(aes(fill = medage, geometry = geometry)) + 
+  scale_fill_viridis_c(option = "viridis", name = "Median Age") +
+  ggtitle("Median Age Per County in New York State")
+
+
+p[[2]] = total %>%
+  ggplot() +
+  geom_sf(aes(fill = health_beh_r, geometry = geometry)) + 
+  scale_fill_viridis_c(option = "viridis",name = "Health Factor Score") +
+  ggtitle("Heath Rank Per County in New York State")
+
+grid.arrange(p[[1]], p[[2]], nrow = 1)
+
+```
+
+```{r setup, include=FALSE, echo=FALSE,warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidytext)  
+library(httr)
+library(rvest)
+library(lubridate)
+library(plotly)
+library(patchwork)
+library(lmtest)
+library(dplyr)
+library(tidycensus)
+require(data.table)
+library(gridExtra)
+library(ggplot2)
+library(data.table)
+library(tidycensus)
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+library(viridis)
+library(modelr)
+library(mgcv)
+library(readxl)
+library(plotly)
+library(kableExtra)
+library(Hmisc)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "100%")
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis")
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+source("code/data_cleaning.R")
+```
+
+For our exploratory data analysis, we wanted to see if there is a pattern between health county rankings (health behaviors, clinical care, socioeconomic (SE) factors, and physical environment) and the number of COVID cases, deaths, and vaccinations. We divided the county health rankings into 4 quartiles based on ranks with quartile 1 having the best rankings and quartile 4 having the worst rankings.
+
+```{r}
+eda1 = 
+  comb %>% 
+  rename("Clinical Care" = clinical_care_r,
+         "Physical Environment" = env_r,
+         "Health Behaviors" = health_beh_r,
+         "Social and Economic Factors" = ses_r) %>% 
+  pivot_longer("Health Behaviors":"Physical Environment",
+               names_to = "rank_var",
+               values_to = "rank") %>% 
+  filter(year == '2021') %>% 
+  mutate(Quartile = case_when(rank < 17 ~ 'Quartile 4',
+                              rank < 32 ~ 'Quartile 3',
+                              rank < 46 ~ 'Quartile 2',
+                              rank < 63 ~ 'Quartile 1')) %>% 
+  mutate(Quartile = as.factor(Quartile)) 
+```
+
+## COVID Deaths, Cases, and Vaccination
+
+```{r}
+p1 = ggplot(data=eda1, aes(x=rank_var, y=n_deaths, fill=Quartile)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_brewer(palette="Reds") + 
+  theme_minimal() +
+  labs(title="Number of COVID Deaths and County Health Factors by Quartile",
+        x ="County Health Factors", y = "Number of Deaths")
+
+p2 = ggplot(data=eda1, aes(x=rank_var, y=n_cases, fill=Quartile)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_brewer(palette="Oranges") + 
+  theme_minimal() +
+  labs(title="Number of COVID Cases and County Health Factors by Quartile",
+        x ="County Health Factors", y = "Number of Cases")
+
+p3 = ggplot(data=eda1, aes(x=rank_var, y=vax_dose1, fill=Quartile)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  scale_fill_brewer(palette="Greens") + 
+  theme_minimal() +
+  labs(title="Covid Vaccination (Dose 1) and County Health Factors by Quartile",
+        x ="County Health Factors", y = "Number of People Vaccinated")
+
+grid.arrange(p1, p2, p3, ncol = 1)
+```
+
+From the results of the plots, we can see that there is a general pattern across all the COVID-19 outcomes (cases, deaths, and first dose of a vaccine) for the Health Behaviors Rankings. Counties with higher (worse) ranks show a higher number of cases, deaths, and first dose of vaccines. We will explore the variables that contribute to this pattern in our statistical analysis.
