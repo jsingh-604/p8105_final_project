@@ -52,13 +52,14 @@ This website contains [land area for each New York County](https://www.health.ny
 
 ###  Research questions
 
-1) How ar
-
+1) How to gain a better understanding of the change in COVID-19 incidence and risk for each county in New York State?
+2) Which modifiable health factors (i.e., quality of clinical care, healthy behaviors, etc.) are also risk factors of COVID-19?
+3) What social determinants of health variables are also associated with higher risk of COVID-19 infection and fatality?
 
 ### Main results
 
+The linear regression test showed that health behaviors (combination of tobacco use, diet & exercise, alcohol & drug use, and sexual activity) are significantly and positively correlated with COVID risk. Higher health behaviors ranking is associated with lower COVID risk: lower number of cases and fatalities but higher rate of vaccination. Among the sub-factors of health behaviors, smoking, obesity, and physical inactivity were statistically significant. Furthermore, generalized linear regression and linear regression tests indicated that higher number of COVID fatalities and lower rate of COVID vaccination can be seen in counties with higher percentage of minorities (Black and Hispanic), lower median income, and high segregation score (Black vs. Non-White). Lastly, we were able to build predictive for estimating the number of COVID cases in New York City in the short term. 
 
+### Discussions
 
-### Discussion
-
-TEXT
+The health behaviors that were found to be significantly associated with COVID risk are also known to be drivers of health disparities. In part, such disparities exist as a result of deep-rooted residential segregation. High-minority, lower-income neighborhoods are often found to have more fast food restaurants, smoke shops, and liquor shops while having less number of gyms and grocery markets with healthy, fresh produce. Therefore, it would be interesting the test how the association varies when interaction terms are included in our models. Since temperature and population density have been shown to influence COVID transmission, further testing on how COVID cases vary after adjusting for distance to NYC (epicenter of the COVID outbreak in NYS) and temperature (temperature in Northern counties of NYS are lower than that of others) could provide further information. Lastly, the Shiny app is a powerful tool for visualizing variations in COVID incidence and risk for each county in NY State. Therefore, to minimize COVID impact in high-minority, low SES neighborhoods, public health officials should design community-based programs that incorporate information from the Shiny app.
