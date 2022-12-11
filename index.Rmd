@@ -1,5 +1,5 @@
 ---
-title: "Spatio-temporal Association of Health and SES Measures with COVID-19 Risk
+title: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk
   in NY"
 author: "Jagjit Singh, Grace Jang, Ashwini Varghese"
 ---
@@ -31,18 +31,22 @@ Please watch our accompanying [screencast](ADD SCREENCAST LINK) to further under
 
 <p class="text-center">
 
-To conduct our analysis, we considered three publically available data sources:
+To conduct our analysis, we considered four available data sources:
 
 1. US Census Bureau: Demographics<br>
-The [US Census Bureau](https://www.census.gov/data.html) contains information gather population and housing information from all residents in the country every 10 years. We used demographic data from NY in our analysis.
+The [US Census Bureau](https://www.census.gov/data.html) contains information on population and housing. We used demographics data from NY in our analysis.
 
 
 2. University of Wisconsin, Population Health Institute: New York State Health Ranking <br>
-We obtained data from the [County Health Rankings & Roadmaps](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources) (CHR&R) program of the University of Wisconsin Population Health Institute. This data allows us to explore the county rankings in the State based on sub-factors of health as well as health measures as variables of interest for analysis. 
+We obtained the data from [County Health Rankings & Roadmaps](https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources) (CHR&R) program of the University of Wisconsin Population Health Institute. This data allows us to explore the county health factor ranking in the State of New York. 
 
 
 3. NY.gov: COVID-19 cases in New York from 2020-2022 <br>
-The official website for the State of New York contains a COVID-19 information page which also includes publically available [data on COVID-19 testing, cases, vaccinations, etc.](https://coronavirus.health.ny.gov/covid-19-data-new-york) We chose datasets that includes information on COVID-19 test, cases, and vaccinations that by county to be able to explore the distributions of these variables across NY counties. 
+The official website for the State of New York contains a publically available, COVID-19 information page [data on COVID-19 testing, cases, vaccinations, etc.](https://coronavirus.health.ny.gov/covid-19-data-new-york) 
+
+
+4. Health.ny.gov: Land Area for each New York State County <br>
+This website contains [land area for each New York County](https://www.health.ny.gov/statistics/vital_statistics/2010/table02.htm) as of 2010 [data on New York County Land
 
 </p>
 

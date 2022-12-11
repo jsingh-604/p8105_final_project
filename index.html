@@ -12,7 +12,7 @@
 <meta name="author" content="Jagjit Singh, Grace Jang, Ashwini Varghese" />
 
 
-<title>Spatio-temporal Association of Health and SES Measures with COVID-19 Risk in NY</title>
+<title>Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk in NY</title>
 
 <script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -261,10 +261,10 @@ $(document).ready(function () {
       <a href="bubble.html">Bubble Plot</a>
     </li>
     <li>
-      <a href="chorepleth.htlml">Spatial Analysis</a>
+      <a href="chorepleth.html">Spatial Analysis</a>
     </li>
     <li>
-      <a href="health_factor_eda.html">Health and SES 3</a>
+      <a href="health_factor_eda.html">Health Factors and COVID</a>
     </li>
   </ul>
 </li>
@@ -279,10 +279,10 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="web_analysis_1.html">Statistical Analysis 1</a>
+      <a href="web_analysis_1.html">County Health Ranking and COVID</a>
     </li>
     <li>
-      <a href="web_analysis_2.html">Statistical Analysis 2</a>
+      <a href="web_analysis_2.html">Socioeconomic Factors, Race/Ethnicity, and COVID</a>
     </li>
   </ul>
 </li>
@@ -314,7 +314,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Spatio-temporal Association of Health and
-SES Measures with COVID-19 Risk in NY</h1>
+Socioeconomic Measures with COVID-19 Risk in NY</h1>
 <h4 class="author">Jagjit Singh, Grace Jang, Ashwini Varghese</h4>
 
 </div>
@@ -364,29 +364,29 @@ project.</p>
 <div id="data" class="section level3">
 <h3>Data</h3>
 <p class="text-center">
-<p>To conduct our analysis, we considered three publically available
-data sources:</p>
+<p>To conduct our analysis, we considered four available data
+sources:</p>
 <ol style="list-style-type: decimal">
 <li><p>US Census Bureau: Demographics<br> The <a
 href="https://www.census.gov/data.html">US Census Bureau</a> contains
-information gather population and housing information from all residents
-in the country every 10 years. We used demographic data from NY in our
-analysis.</p></li>
+information on population and housing. We used demographics data from NY
+in our analysis.</p></li>
 <li><p>University of Wisconsin, Population Health Institute: New York
-State Health Ranking <br> We obtained data from the <a
+State Health Ranking <br> We obtained the data from <a
 href="https://www.countyhealthrankings.org/explore-health-rankings/new-york/data-and-resources">County
 Health Rankings &amp; Roadmaps</a> (CHR&amp;R) program of the University
 of Wisconsin Population Health Institute. This data allows us to explore
-the county rankings in the State based on sub-factors of health as well
-as health measures as variables of interest for analysis.</p></li>
+the county health factor ranking in the State of New York.</p></li>
 <li><p>NY.gov: COVID-19 cases in New York from 2020-2022 <br> The
-official website for the State of New York contains a COVID-19
-information page which also includes publically available <a
+official website for the State of New York contains a publically
+available, COVID-19 information page <a
 href="https://coronavirus.health.ny.gov/covid-19-data-new-york">data on
-COVID-19 testing, cases, vaccinations, etc.</a> We chose datasets that
-includes information on COVID-19 test, cases, and vaccinations that by
-county to be able to explore the distributions of these variables across
-NY counties.</p></li>
+COVID-19 testing, cases, vaccinations, etc.</a></p></li>
+<li><p>Health.ny.gov: Land Area for each New York State County <br> This
+website contains <a
+href="https://www.health.ny.gov/statistics/vital_statistics/2010/table02.htm">land
+area for each New York County</a> as of 2010 [data on New York County
+Land</p></li>
 </ol>
 </p>
 </div>

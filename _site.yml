@@ -11,16 +11,16 @@ navbar:
       - text: "Bubble Plot"
         href:  bubble.html
       - text: "Spatial Analysis"
-        href: chorepleth.htlml
-      - text: "Health and SES"
+        href: chorepleth.html
+      - text: "Health Factors and COVID"
         href: health_factor_eda.html
     - text: "Shiny Spatial"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
       menu:
-      - text: "Statistical Analysis 1"
+      - text: "County Health Ranking and COVID"
         href : web_analysis_1.html
-      - text: "Statistical Analysis 2"
+      - text: "Socioeconomic Factors, Race/Ethnicity, and COVID"
         href: web_analysis_2.html
     - text: "Autoregressive Analysis"
       href: Autoregression.html

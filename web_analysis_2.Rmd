@@ -1,5 +1,5 @@
 ---
-title: "Socieconomic Factors, Race/Ethnicity and COVID Outbreak"
+title: "Socieconomic Factors, Race/Ethnicity and COVID"
 output: 
   html_document:
     code_folding: hide
