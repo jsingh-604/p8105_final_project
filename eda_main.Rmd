@@ -11,7 +11,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Bubble Plot
+## Interactive Bubble Plot
 
 ```{r, message=FALSE, warning=FALSE, results=FALSE,echo=FALSE}
 source("code/data_cleaning.R")
@@ -68,13 +68,11 @@ fig <- fig %>% layout(title = 'Bubble Plot (Bubble Size = County Population)',
 fig
 ```
 
-From the plot we can see that New York, Queens and Kings have the highest socio economic score, but have the lowest health factors ranks. The size of the bubble signifies total population of the county. Nassau, Suffolk, Westcher have low health and socio-ecnomic scores. 
+From the plot we can see that New York, Queens and Kings have the highest socio-economic ranks, but have the lowest health ranks. The size of the bubble signifies total population of the county. Nassau, Suffolk, Westcher have low health and socio-ecnomic ranks. 
 
 ## Choropleth Map
 
-Below is a chloropleth map to good understanding on the above in a spatial context: 
-
-
+Below are choropleth maps of Median Age Per County in New York State and Heath Rank Per County in New York State. 
 ```{r}
 p = list()
 p[[1]] = total %>%
