@@ -1,5 +1,5 @@
 ---
-title: "County Health Ranking & COVID-19"
+title: "Statistical Analyses"
 output: 
   html_document:
     code_folding: hide
@@ -17,12 +17,14 @@ library(kableExtra)
 
 source("code/data_cleaning.R")
 ```
+<br>
 
-## County Health Factors and COVID-19
+# Health Ranking & COVID-19
 
 In the data visualization for HF and COVID-19, we observe patterns across all three COVID-19 variables: fatalities, cases, and vaccination for only health behaviors. Therefore, we decided to explore this further and test whether this holds true even after adjusting for population density and median age, which were often shown to be strongly correlated and/or associated with COVID-19.
+<br>
 
-### COVID Cases
+## Health Ranking and COVID Cases
 
 First, we tested for association among HF (health behavior, clinical care, physical environment, and socioeconomic factors) and COVID-19 cases after adjusting for median age and population density in each county. 
 
@@ -46,7 +48,7 @@ m1 %>%
 
 Among the 4 factors, only health behaviors ranking's p-value is < .05, indicating that health behaviors ranking is significantly associated with the number of COVID cases.
 
-### COVID Deaths
+## Health Ranking & COVID Deaths
 
 $N_{Deaths} \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Population\_Density + \beta_{6} Median\_Age + \epsilon$
 
@@ -68,7 +70,7 @@ broom::tidy() %>%
 
 For COVID fatalities, once again, only the p-value for health behaviors ranking is statistically significant (p < .05).
 
-### COVID Vaccination
+## Health Ranking & Vaccination
 
 $Vaccine\_Dose1 \sim \beta_{0} + \beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} SES\_Factors + \beta_{4} Physical\_Environment + \beta_{5} Population\_Density + \epsilon$
 
@@ -90,9 +92,7 @@ m3 %>%
 
 The results indicate that only health behaviors ranking is significantly associated with the number of individuals who received the first dose of the vaccine by 2022 (p < .05).
 
-### Subanalysis
-
-**Health Behavior Subfactors & Covid Vaccination (Dose 1)**
+## Subanalysis: Health Behavior Subfactors
 
 $Vaccine\_Dose1 \sim \beta_{0} + \beta_{1} percent\_smokers + \beta_{2} percent\_obese + \beta_{3} percent\_physically\_inactive + \beta_{4} percent\_excessive\_drinking$
 
@@ -114,3 +114,55 @@ subm1 %>%
 ```
 
 The regression test showed that % smokers, obese, and physically inactive are significantly associated with the number of individuals who have received the first dose of COVID vaccine by 2022 (p < .05). Meanwhile, % excessive drinkers was not statistically significant (p = .41).
+<br>
+
+# SE Factors, Race/Ethnicity and COVID
+
+## SE factors, Race/Ethnicity and Vaccination
+
+$Vaccination \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Median\_Income + \beta_{3} Percent\_Minority + \beta_{4} Population\_Density + \epsilon$
+
+where vax_maj = 1, then more than 83% received dose 1 of the vaccine, vax_maj = 2, then less than 83% received dose 1 of the vaccine
+
+```{r}
+m4 = comb %>% 
+  filter(year == '2022') %>% 
+  glm(vax_maj ~ segregation_score + median_income + p_minority 
+      + pop_d, data = .)
+
+m4 %>% 
+  broom::tidy() %>% 
+  mutate(OR = exp(estimate),
+         OR_CI_lower = exp(estimate - 1.96*(std.error)),
+         OR_CI_upper = exp(estimate + 1.96*(std.error))) %>% 
+  select(term, log_OR = estimate, OR, OR_CI_lower, OR_CI_upper, p.value) %>% 
+  kbl(
+    caption = "Socioeconomic Factors & COVID Vaccination"
+    , col.names = c("Predictor", "Estimate", "OR", "OR CI, low", "OR CI, high", "p-value")
+    , digits = 5) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+After adjusting for population density, among the socioeconomic factors in the model, median income and % minority (Black and Hispanic) are statistically significant (p < .05).
+
+## SE factors, Race/Ethnicity and Fatalities
+
+$N_{Deaths} \sim \beta_{0} + \beta_{1} Segregation\_Score + \beta_{2} Percent\_Minority + \beta_{3} Median\_Income + \beta_{4} Median\_Age + \beta_{5} Population\_Density + \epsilon$
+
+```{r}
+m5 = comb %>% 
+  filter(year == '2021') %>% 
+  lm(n_deaths ~ segregation_score + p_minority + median_income + medage 
+     + pop_d, data = .)
+
+m5 %>% 
+  broom::tidy() %>%
+  select(term, estimate, p.value) %>% 
+  kbl(
+    caption = "Socioeconomic Factors & COVID Deaths"
+    , col.names = c("Predictor", "Estimate", "p-value")
+    , digits = 3) %>% 
+  kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+Adjusting for median age and population density, segregation score, median income and % minority (Black and Hispanic) are significantly associated with the number of COVID deaths (p <= .05).

@@ -11,7 +11,7 @@
 
 
 
-<title>Socieconomic Factors, Race/Ethnicity and COVID Outbreak</title>
+<title>Statistical Analyses</title>
 
 <script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -331,23 +331,8 @@ div.tocify {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Exploratory Analysis
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="bubble.html">Bubble Plot</a>
-    </li>
-    <li>
-      <a href="chorepleth.htlml">Spatial Analysis</a>
-    </li>
-    <li>
-      <a href="health_factor_eda.html">Health and SES 3</a>
-    </li>
-  </ul>
+        <li>
+  <a href="eda-main.html">Exploratory Analysis</a>
 </li>
 <li>
   <a href="https://jagjit-singh.shinyapps.io/spatial/">Shiny Spatial</a>
@@ -360,10 +345,10 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="web_analysis_1.html">Statistical Analysis 1</a>
+      <a href="web_analysis_1.html">County Health Ranking and COVID</a>
     </li>
     <li>
-      <a href="web_analysis_2.html">Statistical Analysis 2</a>
+      <a href="web_analysis_2.html">Socioeconomic Factors, Race/Ethnicity, and COVID</a>
     </li>
   </ul>
 </li>
@@ -402,17 +387,479 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Socieconomic Factors, Race/Ethnicity and
-COVID Outbreak</h1>
+<h1 class="title toc-ignore">Statistical Analyses</h1>
 
 </div>
 
 
-<div id="socioeconomic-factors-raceethnicity-and-covid"
+<p><br></p>
+<div id="health-ranking-covid-19" class="section level1">
+<h1>Health Ranking &amp; COVID-19</h1>
+<p>In the data visualization for HF and COVID-19, we observe patterns
+across all three COVID-19 variables: fatalities, cases, and vaccination
+for only health behaviors. Therefore, we decided to explore this further
+and test whether this holds true even after adjusting for population
+density and median age, which were often shown to be strongly correlated
+and/or associated with COVID-19. <br></p>
+<div id="health-ranking-and-covid-cases" class="section level2">
+<h2>Health Ranking and COVID Cases</h2>
+<p>First, we tested for association among HF (health behavior, clinical
+care, physical environment, and socioeconomic factors) and COVID-19
+cases after adjusting for median age and population density in each
+county.</p>
+<p><span class="math inline">\(N_{Covid\_Cases} \sim \beta_{0} +
+\beta_{1} Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3}
+Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5} Median\_Age +
+\beta_{6} Population\_Density + \epsilon\)</span></p>
+<pre class="r"><code>m1 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_cases ~ health_beh_r + clinical_care_r + env_r + ses_r + medage + 
+       pop_d, data = .)
+
+m1 %&gt;% 
+  broom::tidy() %&gt;%
+  select(term, estimate, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Health Factor Ranking &amp; COVID Outbreak&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
+    , digits = 3) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Health Factor Ranking &amp; COVID Outbreak
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+190698.492
+</td>
+<td style="text-align:right;">
+0.025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+health_beh_r
+</td>
+<td style="text-align:right;">
+-2399.531
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+clinical_care_r
+</td>
+<td style="text-align:right;">
+844.353
+</td>
+<td style="text-align:right;">
+0.056
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+env_r
+</td>
+<td style="text-align:right;">
+304.032
+</td>
+<td style="text-align:right;">
+0.409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ses_r
+</td>
+<td style="text-align:right;">
+798.434
+</td>
+<td style="text-align:right;">
+0.127
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+medage
+</td>
+<td style="text-align:right;">
+-3583.385
+</td>
+<td style="text-align:right;">
+0.074
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pop_d
+</td>
+<td style="text-align:right;">
+3.042
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+</tbody>
+</table>
+<p>Among the 4 factors, only health behaviors ranking’s p-value is &lt;
+.05, indicating that health behaviors ranking is significantly
+associated with the number of COVID cases.</p>
+</div>
+<div id="health-ranking-covid-deaths" class="section level2">
+<h2>Health Ranking &amp; COVID Deaths</h2>
+<p><span class="math inline">\(N_{Deaths} \sim \beta_{0} + \beta_{1}
+Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3}
+Physical\_Environment + \beta_{4} SES\_Factors + \beta_{5}
+Population\_Density + \beta_{6} Median\_Age + \epsilon\)</span></p>
+<pre class="r"><code>m2 = comb %&gt;% 
+  filter(year == &#39;2021&#39;) %&gt;% 
+  lm(n_deaths ~ health_beh_r + clinical_care_r + env_r + ses_r + 
+       pop_d + medage, data = .)
+
+m2 %&gt;% 
+broom::tidy() %&gt;%
+  select(term, estimate, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Health Factor Ranking &amp; COVID Deaths&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
+    , digits = 3) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Health Factor Ranking &amp; COVID Deaths
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+3346.642
+</td>
+<td style="text-align:right;">
+0.037
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+health_beh_r
+</td>
+<td style="text-align:right;">
+-43.684
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+clinical_care_r
+</td>
+<td style="text-align:right;">
+12.660
+</td>
+<td style="text-align:right;">
+0.127
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+env_r
+</td>
+<td style="text-align:right;">
+6.440
+</td>
+<td style="text-align:right;">
+0.355
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ses_r
+</td>
+<td style="text-align:right;">
+16.106
+</td>
+<td style="text-align:right;">
+0.104
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pop_d
+</td>
+<td style="text-align:right;">
+0.075
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+medage
+</td>
+<td style="text-align:right;">
+-62.656
+</td>
+<td style="text-align:right;">
+0.098
+</td>
+</tr>
+</tbody>
+</table>
+<p>For COVID fatalities, once again, only the p-value for health
+behaviors ranking is statistically significant (p &lt; .05).</p>
+</div>
+<div id="health-ranking-vaccination" class="section level2">
+<h2>Health Ranking &amp; Vaccination</h2>
+<p><span class="math inline">\(Vaccine\_Dose1 \sim \beta_{0} + \beta_{1}
+Health\_Behavior + \beta_{2} Clinical\_Care + \beta_{3} SES\_Factors +
+\beta_{4} Physical\_Environment + \beta_{5} Population\_Density +
+\epsilon\)</span></p>
+<pre class="r"><code>m3 = comb %&gt;% 
+  filter(year == &#39;2022&#39;) %&gt;% 
+  lm(vax_dose1 ~ health_beh_r + clinical_care_r + ses_r + env_r 
+     + pop_d, data = .,)
+
+m3 %&gt;% 
+  broom::tidy() %&gt;%
+  select(term, estimate, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Health Factor Ranking &amp; COVID Vaccination (Dose # 1)&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
+    , digits = 3) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Health Factor Ranking &amp; COVID Vaccination (Dose # 1)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+203186.314
+</td>
+<td style="text-align:right;">
+0.078
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+health_beh_r
+</td>
+<td style="text-align:right;">
+-11691.771
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+clinical_care_r
+</td>
+<td style="text-align:right;">
+2578.554
+</td>
+<td style="text-align:right;">
+0.316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ses_r
+</td>
+<td style="text-align:right;">
+4712.004
+</td>
+<td style="text-align:right;">
+0.095
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+env_r
+</td>
+<td style="text-align:right;">
+4119.234
+</td>
+<td style="text-align:right;">
+0.059
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pop_d
+</td>
+<td style="text-align:right;">
+23.036
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+</tbody>
+</table>
+<p>The results indicate that only health behaviors ranking is
+significantly associated with the number of individuals who received the
+first dose of the vaccine by 2022 (p &lt; .05).</p>
+</div>
+<div id="subanalysis-health-behavior-subfactors" class="section level2">
+<h2>Subanalysis: Health Behavior Subfactors</h2>
+<p><span class="math inline">\(Vaccine\_Dose1 \sim \beta_{0} + \beta_{1}
+percent\_smokers + \beta_{2} percent\_obese + \beta_{3}
+percent\_physically\_inactive + \beta_{4}
+percent\_excessive\_drinking\)</span></p>
+<pre class="r"><code>subm1 =
+  new_comb %&gt;%
+  filter(year == &#39;2021&#39;) %&gt;%
+  lm(vax_dose1 ~ percent_smokers + percent_obese + percent_physically_inactive 
+     + percent_excessive_drinking, data = .)
+
+subm1 %&gt;% 
+  broom::tidy() %&gt;%
+  select(term, estimate, p.value) %&gt;% 
+  kbl(
+    caption = &quot;Health Behavior Subfactors and COVID Vaccination&quot;
+    , col.names = c(&quot;Predictor&quot;, &quot;Estimate&quot;, &quot;p-value&quot;)
+    , digits = 3) %&gt;% 
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;condensed&quot;))</code></pre>
+<table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Health Behavior Subfactors and COVID Vaccination
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Predictor
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+2292873.03
+</td>
+<td style="text-align:right;">
+0.007
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_smokers
+</td>
+<td style="text-align:right;">
+-76643.87
+</td>
+<td style="text-align:right;">
+0.009
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_obese
+</td>
+<td style="text-align:right;">
+-36671.94
+</td>
+<td style="text-align:right;">
+0.028
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_physically_inactive
+</td>
+<td style="text-align:right;">
+49265.75
+</td>
+<td style="text-align:right;">
+0.015
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+percent_excessive_drinking
+</td>
+<td style="text-align:right;">
+-26836.39
+</td>
+<td style="text-align:right;">
+0.410
+</td>
+</tr>
+</tbody>
+</table>
+<p>The regression test showed that % smokers, obese, and physically
+inactive are significantly associated with the number of individuals who
+have received the first dose of COVID vaccine by 2022 (p &lt; .05).
+Meanwhile, % excessive drinkers was not statistically significant (p =
+.41). <br></p>
+</div>
+</div>
+<div id="se-factors-raceethnicity-and-covid" class="section level1">
+<h1>SE Factors, Race/Ethnicity and COVID</h1>
+<div id="se-factors-raceethnicity-and-vaccination"
 class="section level2">
-<h2>Socioeconomic Factors, Race/Ethnicity and Covid</h2>
-<div id="covid-vaccination-rate" class="section level3">
-<h3>COVID Vaccination Rate</h3>
+<h2>SE factors, Race/Ethnicity and Vaccination</h2>
 <p><span class="math inline">\(Vaccination \sim \beta_{0} + \beta_{1}
 Segregation\_Score + \beta_{2} Median\_Income + \beta_{3}
 Percent\_Minority + \beta_{4} Population\_Density +
@@ -568,8 +1015,9 @@ pop_d
 factors in the model, median income and % minority (Black and Hispanic)
 are statistically significant (p &lt; .05).</p>
 </div>
-<div id="covid-fatalities" class="section level3">
-<h3>COVID Fatalities</h3>
+<div id="se-factors-raceethnicity-and-fatalities"
+class="section level2">
+<h2>SE factors, Race/Ethnicity and Fatalities</h2>
 <p><span class="math inline">\(N_{Deaths} \sim \beta_{0} + \beta_{1}
 Segregation\_Score + \beta_{2} Percent\_Minority + \beta_{3}
 Median\_Income + \beta_{4} Median\_Age + \beta_{5} Population\_Density +

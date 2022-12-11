@@ -11,11 +11,7 @@ navbar:
     - text: "Shiny Spatial"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
-      menu:
-      - text: "County Health Ranking and COVID"
-        href : web_analysis_1.html
-      - text: "Socioeconomic Factors, Race/Ethnicity, and COVID"
-        href: web_analysis_2.html
+      href: stat_analysis.html
     - text: "Autoregressive Analysis"
       href: Autoregression.html
     - text: "Screencast"
