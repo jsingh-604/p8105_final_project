@@ -7,13 +7,7 @@ navbar:
       href: Final-Report-Main.html
   right:
     - text: "Exploratory Analysis"
-      menu:
-      - text: "Bubble Plot"
-        href:  bubble.html
-      - text: "Spatial Analysis"
-        href: chorepleth.html
-      - text: "Health Factors and COVID"
-        href: health_factor_eda.html
+      href: eda-main.html
     - text: "Shiny Spatial"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
