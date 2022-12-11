@@ -1,7 +1,7 @@
 ---
 title: "Spatio-temporal Association of Health and Socioeconomic Measures with COVID-19 Risk
   in NY"
-author: "Jagjit Singh, Grace Jang, Ashwini Varghese"
+author: "Jagjit Singh [JS5958], Grace Jang [GEJ2116], Ashwini Varghese [AMV2204]"
 ---
 
 ![](cover.gif){height="40%" width="40%" style="float:right; padding-left:20px; padding-bottom:20px"}.
