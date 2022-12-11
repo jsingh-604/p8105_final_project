@@ -55,7 +55,7 @@ ny_covid = read.csv('./www/shiny.csv')  %>%
 Column {.sidebar}
 --------------------------------------------------------------------------------
 
-This Shiny app contains interactive choropleth maps of the New York state showing covid cases and incidence. The top map shows positive cases per county between the selected date range. The bottom map reflects Covid incidence per county in the selected date range. Incidence = New Cases / Total Population.
+This Shiny app contains interactive choropleth maps of the New York State showing COVID cases and incidence. The top map shows positive cases per county between the selected date range. The bottom map reflects COVID incidence per county in the selected date range. Incidence = New Cases / Total Population.
 
 ```{r}
 ###############################
