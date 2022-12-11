@@ -7,7 +7,7 @@ navbar:
       href: Final-Report-Main.html
   right:
     - text: "Exploratory Analysis"
-      href: eda-main.html
+      href: eda_main.html
     - text: "Shiny Spatial"
       href: https://jagjit-singh.shinyapps.io/spatial/
     - text: "Statistical Analysis"
