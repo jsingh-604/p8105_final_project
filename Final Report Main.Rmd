@@ -462,8 +462,8 @@ fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county,
                marker = list(opacity = 0.5, sizemode = 'diameter'))
 
 fig <- fig %>% layout(title = 'Bubble Plot (Bubble Size = County Population)',
-                      xaxis = list(title = 'Health Score'),
-                      yaxis = list(title = 'Socio-economic Score'),
+                      xaxis = list(title = 'Health Rank'),
+                      yaxis = list(title = 'Socio-economic Rank'),
                       showlegend = FALSE)
 
 fig
@@ -491,7 +491,7 @@ p[[1]] = total %>%
 p[[2]] = total %>%
   ggplot() +
   geom_sf(aes(fill = health_beh_r, geometry = geometry)) + 
-  scale_fill_viridis_c(option = "viridis",name = "Health Factor Score") +
+  scale_fill_viridis_c(option = "viridis",name = "Health Rank") +
   ggtitle("Heath Rank Per County in New York State")
 
 grid.arrange(p[[1]], p[[2]], nrow = 1)
@@ -859,13 +859,7 @@ ggplot(sub_df, aes(x=test_date, y=new_positives)) +
 
 ## Discussions 
 
-Initially, one of our objectives was to test association between county health factors (health behaviors, physical environment, SE factors, and clinical care) and COVID-19 by treating the county health factors' ranking as a substitute for county health factors' scores. However, as we began to run regression tests, we realized that health factors rankings are not ideal predictors. By limiting our analysis to per year and NY state counties, we only had 62 observations. The small sample size resulted in weak models, as seen with regression assumptions tests. Furthermore, surprisingly, important health factors such as the level of clinical care and SE factors were not significant predictors of the number of COVID deaths, cases, or vaccinations. Connecting this to our autocorrelation plots and COVID's infectiousness, this suggests that our model needs to adjust for geographical location (i.e., each county's distance from NYC, the epicenter of COVID). Additionally, points 3 and 31 were observed to be common influential point(s) in health ranking and SE/race and ethnicity models. Therefore, this suggests the need to identify which counties points 3 and 31 correspond to and the need to test these counties further to decide whether they should be kept or removed from the model. 
-
-
-
-## Limitations 
-
-
+Initially, one of our objectives was to test association between county health factors (health behaviors, physical environment, SE factors, and clinical care) and COVID-19 by treating the county health factors' ranking as a substitute for county health factors' scores. However, as we began to run regression tests, we realized that health factors rankings are not ideal predictors. By limiting our analysis to per year and NY state counties, we only had 62 observations. The small sample size resulted in weak models, as seen with regression assumptions tests. Furthermore, surprisingly, important health factors such as the level of clinical care and SE factors were not significant predictors of the number of COVID deaths, cases, or vaccinations. Connecting this to our autocorrelation plots and COVID's infectiousness, this suggests that our model needs to adjust for geographical location (i.e., each county's distance from NYC, the epicenter of COVID). Additionally, points 3 and 31 were observed to be common influential point(s) in health ranking and SE/race and ethnicity models. Therefore, this suggests the need to identify which counties points 3 and 31 correspond to and the need to test these counties further to decide whether they should be kept or removed from the model.In-terms of the temporal association we successfully depicted strong Auto-Regressive behavior, and were able to build a model to help public health officials to predict covid cases in the short term. Furthermore, the shiny app can be really useful as a tool in visualizing the variation in Covid incidence and risk per county in NY State can be used by Public Health Officials to develop targeted interventions. 
 
 
 ## Conclusion 

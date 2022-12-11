@@ -61,8 +61,8 @@ fig <- plot_ly(total, x = ~health_beh_r, y = ~ses_r, text = ~county,
                marker = list(opacity = 0.5, sizemode = 'diameter'))
 
 fig <- fig %>% layout(title = 'Bubble Plot (Bubble Size = County Population)',
-                      xaxis = list(title = 'Health Score'),
-                      yaxis = list(title = 'Socio-economic Score'),
+                      xaxis = list(title = 'Health Rank'),
+                      yaxis = list(title = 'Socio-economic Rank'),
                       showlegend = FALSE)
 
 fig
@@ -87,7 +87,7 @@ p[[1]] = total %>%
 p[[2]] = total %>%
   ggplot() +
   geom_sf(aes(fill = health_beh_r, geometry = geometry)) + 
-  scale_fill_viridis_c(option = "viridis",name = "Health Factor Score") +
+  scale_fill_viridis_c(option = "viridis",name = "Health Rank") +
   ggtitle("Heath Rank Per County in New York State")
 
 grid.arrange(p[[1]], p[[2]], nrow = 1)
