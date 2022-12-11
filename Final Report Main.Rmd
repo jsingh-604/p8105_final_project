@@ -147,12 +147,10 @@ nys_df = left_join(nys_df, area, by = 'county') %>%
 ```
 
 3. **New York State Health Ranking**  
-Same steps were taken for each year except 2019; for this year, the sub-variables from the "Ranked Measure Data" sheet were labeled differently. 
-
-As the original excel files contain multiple sheets. We only imported the sheets that contain variables of interest.  
- <br>Each county's health ranking was imported from the sheet named "Outcomes & Factors SubRankings." From the sheet, only the following variables were selected for future analysis: each county's rank for health outcomes (quality of life, renamed to qol_r; length of life, renamed to longevity_r), health factors (health behaviors, renamed to health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic factors, renamed to ses_r; physical environment, renamed to env_r).
- <br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % Hispanic, p_hispanic; % Black, renamed p_black); and % White; p_white. As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (Hispanic and Black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30. [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)
- <br>Lastly, we imported data from the sheet labeled "Ranked Measure Data" to import health behaviors' sub-variables. We imported the variables county, percent of smokers, percent of adults with obesity, food environment index (0-10 with 10 as the best), percent of adults who are physically inactive, percent of adults with access to location with opportunities to exercise, percent of adults who report excessive drinking, percent of driving related deaths with alcohol involved, the number of chlamydia cases, and the teen birth rate per every 1000 females aged 15-19.
+Same steps were taken for each year except 2019; for this year, the sub-variables from the "Ranked Measure Data" sheet were labeled differently. As the original excel files contain multiple sheets. We only imported the sheets that contain variables of interest.  
+<br>Each county's health ranking was imported from the sheet named "Outcomes & Factors SubRankings." From the sheet, only the following variables were selected for future analysis: each county's rank for health outcomes (quality of life, renamed to qol_r; length of life, renamed to longevity_r), health factors (health behaviors, renamed to health_beh_r; clinical_care, renamed to clinical_care_r; socioeconomic factors, renamed to ses_r; physical environment, renamed to env_r).  
+<br>Additionally, further information on each county's socioeconomic factors and race/ethnicity were imported from the sheet named "Additional Measure Data." The following variables were selected: each county's segregation index (white vs. nonwhite), renamed to segregation_score; median household income, renamed household_income; % Hispanic, p_hispanic; % Black, renamed p_black); and % White; p_white. As we are interested in observing racial and socioeconomic disparities in COVID, we then created the following variables: % minority (Hispanic and Black), named p_minority; binary variable for low vs. moderate/high level of segregation. The cutoff value for level of segregation was set as 30. [(source)](https://www1.udel.edu/uapp800/Lecture%20Material/Index%20of%20Dissimilarity%20Example.htm)  
+<br>Lastly, we imported data from the sheet labeled "Ranked Measure Data" to import health behaviors' sub-variables. We imported the variables county, percent of smokers, percent of adults with obesity, food environment index (0-10 with 10 as the best), percent of adults who are physically inactive, percent of adults with access to location with opportunities to exercise, percent of adults who report excessive drinking, percent of driving related deaths with alcohol involved, the number of chlamydia cases, and the teen birth rate per every 1000 females aged 15-19.
 
 ```{r, results = FALSE, message = FALSE} 
 # 2019 HR Data
@@ -372,7 +370,7 @@ total2022 =
 hr_all = rbind(total2019, total2020, total2021, total2022)
 ```
 
-3. **New York State COVID-19**  
+4. **New York State COVID-19**  
 From the three data sets we extracted the following variables of interest: number of new COVID cases per day, cumulative number of deaths reported per day, cumulative number of individuals who received the first dose of the vaccine. For the dataset with cumulative number of deaths, the county "Manhattan" was replaced with "New York" for consistency. Next, the three datasets were merged by "date" and "county." The merged dataset was then grouped according to "county" and "year" and the following variables were created: total number of new positive cases per year, called n_cases; total number of deaths per year, called n_deaths; and total number of individuals who received the first dose of the vaccine per year, called vax_dose1 (this data is not available for year 2020).
 
 ```{r, results = FALSE, message = FALSE, warnings = FALSE}
@@ -411,7 +409,7 @@ covid_df = covid_df_v1 %>%
             n_deaths = max(n_fatality, na.rm = TRUE))
 ```
 
-4. **Dataset for Analysis**  
+5. **Dataset for Analysis**  
 For the first part of the regression tests, the demographics dataset, health ranking dataset, and COVID dataset were merged into one dataset called "comb." To comb, we added a new binary variable called vax_maj to see whether majority of the residents in the county had received the first dose of vaccine by 2022. The cutoff value used was 83% as it was reported that nearly ~83% of the US population had completed at least one dose of vaccine by November of 2022. [(source)](https://usafacts.org/visualizations/covid-vaccine-tracker-states/state/new-york)  
 
 ```{r, results = FALSE, message = FALSE}
@@ -422,7 +420,7 @@ comb = left_join(covid_hr, nys_df, by = 'county') %>%
                              vax_dose1 < .83*(tpop) ~ 0))
 ```
 
-5. **Dataset for Additional Analysis **  
+6. **Dataset for Additional Analysis **  
 For subanalysis, a new dataset was created by combining census demographics, NY COVID data, and subvariabes dataset from "Ranked Measure Data" sheet.
 
 ```{r, results = FALSE, message = FALSE}
