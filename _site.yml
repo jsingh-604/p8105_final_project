@@ -15,7 +15,7 @@ navbar:
     - text: "Autoregressive Analysis"
       href: Autoregression.html
     - text: "Screencast"
-      href: screencast.html
+      href: https://share.descript.com/view/Mo46M815ZVV
     - icon: fa-envelope fa-lg
       href: mailto:<js5958@cumc.columbia.edu>
     - icon: fa-github fa-lg
